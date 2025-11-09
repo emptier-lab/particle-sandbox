@@ -1746,8 +1746,6 @@
             document.getElementById('trailValue').textContent = trailLength;
             document.getElementById('trailOpacityValue').textContent = trailOpacity.toFixed(2);
             document.getElementById('mouseForceValue').textContent = mouseForce.toFixed(1);
-            const bgTextMap = { 'dark': 'Dark', 'light': 'Light', 'gray': 'Gray', 'black': 'Black' };
-            document.getElementById('bgValue').textContent = bgTextMap[backgroundMode] || 'Dark';
             document.getElementById('mapValue').textContent = document.getElementById('mapSelector').options[document.getElementById('mapSelector').selectedIndex].text;
             document.getElementById('shapeValue').textContent = document.getElementById('shape').options[document.getElementById('shape').selectedIndex].text;
             document.getElementById('sizeVarValue').textContent = sizeVariation + '%';
@@ -2751,49 +2749,42 @@
                 currentColor = '#4a9eff';
                 document.getElementById('gravity').value = 0;
                 document.getElementById('gravityValue').textContent = '0.00';
-                document.getElementById('bgValue').textContent = 'Dark';
             } else if (map === 'moon') {
                 gravity = 0.16;
                 backgroundMode = 'gray';
                 currentColor = '#c0c0c0';
                 document.getElementById('gravity').value = 0.16;
                 document.getElementById('gravityValue').textContent = '0.16';
-                document.getElementById('bgValue').textContent = 'Gray';
             } else if (map === 'mars') {
                 gravity = 0.38;
                 backgroundMode = 'dark';
                 currentColor = '#cd5c5c';
                 document.getElementById('gravity').value = 0.38;
                 document.getElementById('gravityValue').textContent = '0.38';
-                document.getElementById('bgValue').textContent = 'Dark';
             } else if (map === 'void') {
                 gravity = 0;
                 backgroundMode = 'black';
                 currentColor = '#ffffff';
                 document.getElementById('gravity').value = 0;
                 document.getElementById('gravityValue').textContent = '0.00';
-                document.getElementById('bgValue').textContent = 'Black';
             } else if (map === 'white') {
                 gravity = 0.1;
                 backgroundMode = 'gray';
                 currentColor = '#000000';
                 document.getElementById('gravity').value = 0.1;
                 document.getElementById('gravityValue').textContent = '0.10';
-                document.getElementById('bgValue').textContent = 'Gray';
             } else if (map === 'green') {
                 gravity = 0.1;
                 backgroundMode = 'dark';
                 currentColor = '#00ff00';
                 document.getElementById('gravity').value = 0.1;
                 document.getElementById('gravityValue').textContent = '0.10';
-                document.getElementById('bgValue').textContent = 'Dark';
             } else {
                 gravity = 0.1;
                 backgroundMode = 'dark';
                 currentColor = '#4a9eff';
                 document.getElementById('gravity').value = 0.1;
                 document.getElementById('gravityValue').textContent = '0.10';
-                document.getElementById('bgValue').textContent = 'Dark';
             }
             
             document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
