@@ -2014,13 +2014,13 @@
             }
 
             if (crtCurvature > 0) {
-                const curvature = crtCurvature * 0.00005;
+                const curvatureAmount = crtCurvature * 0.01;
                 const centerX = width / 2;
                 const centerY = height / 2;
-                const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
                 
                 ctx.save();
                 ctx.globalCompositeOperation = 'source-over';
+                
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
                 tempCanvas.width = width;
@@ -2028,21 +2028,36 @@
                 tempCtx.drawImage(vhsCanvas, 0, 0);
                 
                 ctx.clearRect(0, 0, width, height);
-                const step = Math.max(1, Math.floor(crtCurvature / 20));
-                for (let y = 0; y < height; y += step) {
-                    for (let x = 0; x < width; x += step) {
-                        const dx = x - centerX;
-                        const dy = y - centerY;
-                        const dist = Math.sqrt(dx * dx + dy * dy) / maxDist;
-                        const curve = Math.pow(dist, 2) * curvature * 20;
-                        const newX = Math.max(0, Math.min(width - 1, x + dx * curve));
-                        const newY = Math.max(0, Math.min(height - 1, y + dy * curve));
+                
+                const segments = Math.max(8, Math.min(32, Math.floor(crtCurvature / 3)));
+                const segmentWidth = width / segments;
+                const segmentHeight = height / segments;
+                
+                for (let sy = 0; sy < segments; sy++) {
+                    for (let sx = 0; sx < segments; sx++) {
+                        const x = sx * segmentWidth;
+                        const y = sy * segmentHeight;
+                        const dx = (x + segmentWidth / 2) - centerX;
+                        const dy = (y + segmentHeight / 2) - centerY;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
+                        const normalizedDist = dist / maxDist;
                         
-                        const imageData = tempCtx.getImageData(newX, newY, 1, 1);
-                        ctx.fillStyle = `rgba(${imageData.data[0]}, ${imageData.data[1]}, ${imageData.data[2]}, ${imageData.data[3] / 255})`;
-                        ctx.fillRect(x, y, step, step);
+                        const curve = Math.pow(normalizedDist, 2) * curvatureAmount * 0.1;
+                        const offsetX = dx * curve;
+                        const offsetY = dy * curve;
+                        
+                        const srcX = Math.max(0, Math.min(width - segmentWidth, x + offsetX));
+                        const srcY = Math.max(0, Math.min(height - segmentHeight, y + offsetY));
+                        
+                        ctx.drawImage(
+                            tempCanvas,
+                            srcX, srcY, segmentWidth, segmentHeight,
+                            x, y, segmentWidth, segmentHeight
+                        );
                     }
                 }
+                
                 ctx.restore();
             }
         }
