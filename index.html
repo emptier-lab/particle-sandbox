@@ -19,6 +19,98 @@
             display: block;
             cursor: crosshair;
         }
+        .start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.60);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            color: #fff;
+            text-align: center;
+            padding: 40px;
+        }
+        .start-screen.hidden {
+            display: none;
+        }
+        .start-content {
+            max-width: 600px;
+            background: rgba(20, 20, 20, 0.60);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .start-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #4a9eff;
+            text-shadow: 0 0 20px rgba(74, 158, 255, 0.5);
+        }
+        .start-warning {
+            background: rgba(255, 100, 100, 0.15);
+            border: 2px solid rgba(255, 100, 100, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .start-warning strong {
+            color: #ff6464;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .start-credits {
+            margin-bottom: 40px;
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.8;
+        }
+        .start-credits strong {
+            color: #fff;
+            font-size: 16px;
+        }
+        .start-button {
+            background: #4a9eff;
+            border: none;
+            color: white;
+            padding: 18px 50px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.4);
+        }
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.6);
+        }
+        .start-button:active {
+            transform: translateY(0);
+        }
+        .canvas-hidden {
+            display: none;
+        }
+        .controls-hidden {
+            display: none;
+        }
         .controls {
             position: absolute;
             top: 20px;
@@ -295,8 +387,22 @@
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <div class="controls" id="controlsPanel">
+    <div class="start-screen" id="startScreen">
+        <div class="start-content">
+            <h1 class="start-title">Particle Sandbox</h1>
+            <div class="start-warning">
+                <strong>Performance Warning</strong>
+                This application is computationally intensive and may not run well on low-end PCs. High particle counts, weather effects, and VHS filters can cause significant performance issues.
+            </div>
+            <div class="start-credits">
+                <strong>Created by empty? / emptyforce</strong><br>
+                An interactive particle physics sandbox with advanced particle interactions.
+            </div>
+            <button class="start-button" onclick="startApplication()">Start</button>
+        </div>
+    </div>
+    <canvas id="canvas" class="canvas-hidden"></canvas>
+    <div class="controls controls-hidden" id="controlsPanel">
         <div class="controls-header">
             <h3><span>Particle Sandbox</span> <span class="stats" id="stats">0 particles | 60 FPS</span></h3>
             <button class="minimize-btn" id="minimizeBtn" onclick="toggleMinimize()">−</button>
@@ -593,7 +699,7 @@
             </div>
         </div>
         
-        <div class="section">
+        <div class="section collapsed">
             <div class="section-title" onclick="toggleSection(this)">Weather</div>
             <div class="section-content">
             <div class="control-group">
@@ -627,6 +733,14 @@
                 <input type="range" id="tsunamiStrength" min="1" max="10" step="0.5" value="3.0">
             </div>
             <div class="control-group">
+                <label>Tsunami Speed: <span class="value-display" id="tsunamiSpeedValue">2.0</span></label>
+                <input type="range" id="tsunamiSpeed" min="0.5" max="5" step="0.1" value="2.0">
+            </div>
+            <div class="control-group">
+                <label>Tsunami Size: <span class="value-display" id="tsunamiSizeValue">150</span></label>
+                <input type="range" id="tsunamiSize" min="50" max="300" step="10" value="150">
+            </div>
+            <div class="control-group">
                 <label>Volcano: <span class="value-display" id="volcanoEnabledValue">OFF</span></label>
                 <select id="volcanoEnabled">
                     <option value="off">OFF</option>
@@ -636,6 +750,14 @@
             <div class="control-group">
                 <label>Volcano Intensity: <span class="value-display" id="volcanoIntensityValue">5.0</span></label>
                 <input type="range" id="volcanoIntensity" min="1" max="10" step="0.5" value="5.0">
+            </div>
+            <div class="control-group">
+                <label>Volcano Speed: <span class="value-display" id="volcanoSpeedValue">1.0</span></label>
+                <input type="range" id="volcanoSpeed" min="0.5" max="5" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label>Volcano Size: <span class="value-display" id="volcanoSizeValue">200</span></label>
+                <input type="range" id="volcanoSize" min="50" max="400" step="10" value="200">
             </div>
             <div class="control-group">
                 <label>Thunder: <span class="value-display" id="thunderEnabledValue">OFF</span></label>
@@ -649,6 +771,14 @@
                 <input type="range" id="thunderFreq" min="0.5" max="5" step="0.1" value="2.0">
             </div>
             <div class="control-group">
+                <label>Thunder Strength: <span class="value-display" id="thunderStrengthValue">5.0</span></label>
+                <input type="range" id="thunderStrength" min="1" max="10" step="0.5" value="5.0">
+            </div>
+            <div class="control-group">
+                <label>Thunder Size: <span class="value-display" id="thunderSizeValue">100</span></label>
+                <input type="range" id="thunderSize" min="50" max="300" step="10" value="100">
+            </div>
+            <div class="control-group">
                 <label>Rain: <span class="value-display" id="rainEnabledValue">OFF</span></label>
                 <select id="rainEnabled">
                     <option value="off">OFF</option>
@@ -658,6 +788,14 @@
             <div class="control-group">
                 <label>Rain Intensity: <span class="value-display" id="rainIntensityValue">3.0</span></label>
                 <input type="range" id="rainIntensity" min="1" max="10" step="0.5" value="3.0">
+            </div>
+            <div class="control-group">
+                <label>Rain Speed: <span class="value-display" id="rainSpeedValue">3.0</span></label>
+                <input type="range" id="rainSpeed" min="0.5" max="8" step="0.1" value="3.0">
+            </div>
+            <div class="control-group">
+                <label>Rain Size: <span class="value-display" id="rainSizeValue">15</span></label>
+                <input type="range" id="rainSize" min="5" max="30" step="1" value="15">
             </div>
             <div class="control-group">
                 <label>Snow: <span class="value-display" id="snowEnabledValue">OFF</span></label>
@@ -671,6 +809,14 @@
                 <input type="range" id="snowIntensity" min="1" max="10" step="0.5" value="2.0">
             </div>
             <div class="control-group">
+                <label>Snow Speed: <span class="value-display" id="snowSpeedValue">1.0</span></label>
+                <input type="range" id="snowSpeed" min="0.3" max="3" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label>Snow Size: <span class="value-display" id="snowSizeValue">3</span></label>
+                <input type="range" id="snowSize" min="1" max="8" step="0.5" value="3">
+            </div>
+            <div class="control-group">
                 <label>Hurricane: <span class="value-display" id="hurricaneEnabledValue">OFF</span></label>
                 <select id="hurricaneEnabled">
                     <option value="off">OFF</option>
@@ -682,6 +828,14 @@
                 <input type="range" id="hurricaneStrength" min="1" max="10" step="0.5" value="6.0">
             </div>
             <div class="control-group">
+                <label>Hurricane Speed: <span class="value-display" id="hurricaneSpeedValue">0.5</span></label>
+                <input type="range" id="hurricaneSpeed" min="0.1" max="2" step="0.1" value="0.5">
+            </div>
+            <div class="control-group">
+                <label>Hurricane Size: <span class="value-display" id="hurricaneSizeValue">300</span></label>
+                <input type="range" id="hurricaneSize" min="100" max="600" step="20" value="300">
+            </div>
+            <div class="control-group">
                 <label>Earthquake: <span class="value-display" id="earthquakeEnabledValue">OFF</span></label>
                 <select id="earthquakeEnabled">
                     <option value="off">OFF</option>
@@ -691,6 +845,14 @@
             <div class="control-group">
                 <label>Earthquake Intensity: <span class="value-display" id="earthquakeIntensityValue">3.0</span></label>
                 <input type="range" id="earthquakeIntensity" min="1" max="10" step="0.5" value="3.0">
+            </div>
+            <div class="control-group">
+                <label>Earthquake Speed: <span class="value-display" id="earthquakeSpeedValue">1.0</span></label>
+                <input type="range" id="earthquakeSpeed" min="0.5" max="3" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label>Earthquake Range: <span class="value-display" id="earthquakeRangeValue">100</span></label>
+                <input type="range" id="earthquakeRange" min="50" max="300" step="10" value="100">
             </div>
             </div>
         </div>
@@ -833,39 +995,97 @@
         let tornado = null;
         let tsunamiEnabled = false;
         let tsunamiStrength = 3.0;
+        let tsunamiSpeed = 2.0;
+        let tsunamiSize = 150;
         let tsunamiWaves = [];
         let volcanoEnabled = false;
         let volcanoIntensity = 5.0;
+        let volcanoSpeed = 1.0;
+        let volcanoSize = 200;
         let volcano = null;
         let thunderEnabled = false;
         let thunderFreq = 2.0;
+        let thunderStrength = 5.0;
+        let thunderSize = 100;
         let thunderTimer = 0;
         let lightningStrikes = [];
         let rainEnabled = false;
         let rainIntensity = 3.0;
+        let rainSpeed = 3.0;
+        let rainSize = 15;
         let rainDrops = [];
         let snowEnabled = false;
         let snowIntensity = 2.0;
+        let snowSpeed = 1.0;
+        let snowSize = 3;
         let snowFlakes = [];
         let hurricaneEnabled = false;
         let hurricaneStrength = 6.0;
+        let hurricaneSpeed = 0.5;
+        let hurricaneSize = 300;
         let hurricane = null;
         let earthquakeEnabled = false;
         let earthquakeIntensity = 3.0;
+        let earthquakeSpeed = 1.0;
+        let earthquakeRange = 100;
         let earthquakeTimer = 0;
         let earthquakeShake = { x: 0, y: 0 };
+
+        let applicationStarted = false;
 
         // Initialize canvas
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
         vhsCanvas = document.createElement('canvas');
         vhsCtx = vhsCanvas.getContext('2d');
-        vhsCanvas.width = canvas.width;
-        vhsCanvas.height = canvas.height;
+
+        function startApplication() {
+            const startScreen = document.getElementById('startScreen');
+            const canvas = document.getElementById('canvas');
+            const controls = document.getElementById('controlsPanel');
+            
+            localStorage.setItem('particleSandbox_warningSeen', 'true');
+            
+            startScreen.classList.add('hidden');
+            canvas.classList.remove('canvas-hidden');
+            controls.classList.remove('controls-hidden');
+            
+            applicationStarted = true;
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            vhsCanvas.width = canvas.width;
+            vhsCanvas.height = canvas.height;
+            
+            animate(performance.now());
+        }
+
+        function checkWarningSeen() {
+            const warningSeen = localStorage.getItem('particleSandbox_warningSeen');
+            if (warningSeen === 'true') {
+                const startScreen = document.getElementById('startScreen');
+                const canvas = document.getElementById('canvas');
+                const controls = document.getElementById('controlsPanel');
+                
+                startScreen.classList.add('hidden');
+                canvas.classList.remove('canvas-hidden');
+                controls.classList.remove('controls-hidden');
+                
+                applicationStarted = true;
+                
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                vhsCanvas.width = canvas.width;
+                vhsCanvas.height = canvas.height;
+                
+                animate(performance.now());
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            checkWarningSeen();
+        });
 
         const colors = [
             '#4a9eff', '#ff4a9e', '#4aff9e', '#ffff4a', 
@@ -1144,6 +1364,16 @@
             document.getElementById('tsunamiStrengthValue').textContent = tsunamiStrength.toFixed(1);
         };
 
+        document.getElementById('tsunamiSpeed').oninput = (e) => {
+            tsunamiSpeed = parseFloat(e.target.value);
+            document.getElementById('tsunamiSpeedValue').textContent = tsunamiSpeed.toFixed(1);
+        };
+
+        document.getElementById('tsunamiSize').oninput = (e) => {
+            tsunamiSize = parseInt(e.target.value);
+            document.getElementById('tsunamiSizeValue').textContent = tsunamiSize;
+        };
+
         document.getElementById('volcanoEnabled').onchange = (e) => {
             volcanoEnabled = e.target.value === 'on';
             document.getElementById('volcanoEnabledValue').textContent = volcanoEnabled ? 'ON' : 'OFF';
@@ -1164,6 +1394,16 @@
             document.getElementById('volcanoIntensityValue').textContent = volcanoIntensity.toFixed(1);
         };
 
+        document.getElementById('volcanoSpeed').oninput = (e) => {
+            volcanoSpeed = parseFloat(e.target.value);
+            document.getElementById('volcanoSpeedValue').textContent = volcanoSpeed.toFixed(1);
+        };
+
+        document.getElementById('volcanoSize').oninput = (e) => {
+            volcanoSize = parseInt(e.target.value);
+            document.getElementById('volcanoSizeValue').textContent = volcanoSize;
+        };
+
         document.getElementById('thunderEnabled').onchange = (e) => {
             thunderEnabled = e.target.value === 'on';
             document.getElementById('thunderEnabledValue').textContent = thunderEnabled ? 'ON' : 'OFF';
@@ -1173,6 +1413,16 @@
         document.getElementById('thunderFreq').oninput = (e) => {
             thunderFreq = parseFloat(e.target.value);
             document.getElementById('thunderFreqValue').textContent = thunderFreq.toFixed(1);
+        };
+
+        document.getElementById('thunderStrength').oninput = (e) => {
+            thunderStrength = parseFloat(e.target.value);
+            document.getElementById('thunderStrengthValue').textContent = thunderStrength.toFixed(1);
+        };
+
+        document.getElementById('thunderSize').oninput = (e) => {
+            thunderSize = parseInt(e.target.value);
+            document.getElementById('thunderSizeValue').textContent = thunderSize;
         };
 
         document.getElementById('rainEnabled').onchange = (e) => {
@@ -1186,6 +1436,16 @@
             document.getElementById('rainIntensityValue').textContent = rainIntensity.toFixed(1);
         };
 
+        document.getElementById('rainSpeed').oninput = (e) => {
+            rainSpeed = parseFloat(e.target.value);
+            document.getElementById('rainSpeedValue').textContent = rainSpeed.toFixed(1);
+        };
+
+        document.getElementById('rainSize').oninput = (e) => {
+            rainSize = parseInt(e.target.value);
+            document.getElementById('rainSizeValue').textContent = rainSize;
+        };
+
         document.getElementById('snowEnabled').onchange = (e) => {
             snowEnabled = e.target.value === 'on';
             document.getElementById('snowEnabledValue').textContent = snowEnabled ? 'ON' : 'OFF';
@@ -1195,6 +1455,16 @@
         document.getElementById('snowIntensity').oninput = (e) => {
             snowIntensity = parseFloat(e.target.value);
             document.getElementById('snowIntensityValue').textContent = snowIntensity.toFixed(1);
+        };
+
+        document.getElementById('snowSpeed').oninput = (e) => {
+            snowSpeed = parseFloat(e.target.value);
+            document.getElementById('snowSpeedValue').textContent = snowSpeed.toFixed(1);
+        };
+
+        document.getElementById('snowSize').oninput = (e) => {
+            snowSize = parseFloat(e.target.value);
+            document.getElementById('snowSizeValue').textContent = snowSize.toFixed(1);
         };
 
         document.getElementById('hurricaneEnabled').onchange = (e) => {
@@ -1217,6 +1487,16 @@
             document.getElementById('hurricaneStrengthValue').textContent = hurricaneStrength.toFixed(1);
         };
 
+        document.getElementById('hurricaneSpeed').oninput = (e) => {
+            hurricaneSpeed = parseFloat(e.target.value);
+            document.getElementById('hurricaneSpeedValue').textContent = hurricaneSpeed.toFixed(1);
+        };
+
+        document.getElementById('hurricaneSize').oninput = (e) => {
+            hurricaneSize = parseInt(e.target.value);
+            document.getElementById('hurricaneSizeValue').textContent = hurricaneSize;
+        };
+
         document.getElementById('earthquakeEnabled').onchange = (e) => {
             earthquakeEnabled = e.target.value === 'on';
             document.getElementById('earthquakeEnabledValue').textContent = earthquakeEnabled ? 'ON' : 'OFF';
@@ -1226,6 +1506,16 @@
         document.getElementById('earthquakeIntensity').oninput = (e) => {
             earthquakeIntensity = parseFloat(e.target.value);
             document.getElementById('earthquakeIntensityValue').textContent = earthquakeIntensity.toFixed(1);
+        };
+
+        document.getElementById('earthquakeSpeed').oninput = (e) => {
+            earthquakeSpeed = parseFloat(e.target.value);
+            document.getElementById('earthquakeSpeedValue').textContent = earthquakeSpeed.toFixed(1);
+        };
+
+        document.getElementById('earthquakeRange').oninput = (e) => {
+            earthquakeRange = parseInt(e.target.value);
+            document.getElementById('earthquakeRangeValue').textContent = earthquakeRange;
         };
 
         function togglePhysics() {
@@ -2760,6 +3050,8 @@
         }
 
         function animate(currentTime) {
+            if (!applicationStarted) return;
+            
             const deltaTime = currentTime - lastTime;
             lastTime = currentTime;
             
@@ -2955,8 +3247,8 @@
                 tsunamiWaves.push({
                     y: canvas.height - 50,
                     direction: Math.random() < 0.5 ? 1 : -1,
-                    speed: 2 + Math.random() * 2,
-                    width: 150 + Math.random() * 100
+                    speed: tsunamiSpeed + Math.random() * tsunamiSpeed,
+                    width: tsunamiSize + Math.random() * (tsunamiSize * 0.5)
                 });
             }
             
@@ -3002,16 +3294,16 @@
             
             volcano.eruptionTimer++;
             
-            if (volcano.eruptionTimer > 60 / volcanoIntensity) {
+            if (volcano.eruptionTimer > 60 / (volcanoIntensity * volcanoSpeed)) {
                 volcano.eruptionTimer = 0;
                 
                 for (let i = 0; i < 5; i++) {
                     if (devMode || particles.length < maxParticles) {
                         const angle = (Math.PI / 2) + (Math.random() - 0.5) * 0.8;
-                        const speed = 2 + Math.random() * 2;
+                        const speed = volcanoSpeed * (2 + Math.random() * 2);
                         const color = `hsl(${Math.random() * 30 + 10}, 100%, ${50 + Math.random() * 20}%)`;
                         const particle = new Particle(
-                            volcano.x + (Math.random() - 0.5) * 20,
+                            volcano.x + (Math.random() - 0.5) * (volcanoSize * 0.1),
                             volcano.y,
                             color,
                             Math.cos(angle) * speed,
@@ -3028,8 +3320,8 @@
             
             ctx.save();
             
-            const baseWidth = 80;
-            const height = 60;
+            const baseWidth = volcanoSize * 0.4;
+            const height = volcanoSize * 0.3;
             
             ctx.fillStyle = 'rgba(60, 40, 30, 0.8)';
             ctx.beginPath();
@@ -3042,7 +3334,7 @@
             if (volcano.eruptionTimer < 10) {
                 ctx.fillStyle = `rgba(255, ${100 + volcano.eruptionTimer * 10}, 0, ${0.8 - volcano.eruptionTimer * 0.08})`;
                 ctx.beginPath();
-                ctx.arc(volcano.x, volcano.y - height, 15, 0, Math.PI * 2);
+                ctx.arc(volcano.x, volcano.y - height, volcanoSize * 0.075, 0, Math.PI * 2);
                 ctx.fill();
             }
             
@@ -3064,27 +3356,27 @@
                     endY: Math.random() * canvas.height * 0.7 + canvas.height * 0.1,
                     branches: [],
                     life: 20,
-                    intensity: 0.8 + Math.random() * 0.2
+                    intensity: (thunderStrength / 10) * (0.8 + Math.random() * 0.2)
                 };
                 
                 for (let i = 0; i < 3; i++) {
                     strike.branches.push({
-                        x: strike.x + (Math.random() - 0.5) * 100,
+                        x: strike.x + (Math.random() - 0.5) * thunderSize,
                         y: strike.endY * (0.3 + Math.random() * 0.4),
-                        endX: strike.x + (Math.random() - 0.5) * 150,
-                        endY: strike.endY + (Math.random() - 0.5) * 50
+                        endX: strike.x + (Math.random() - 0.5) * (thunderSize * 1.5),
+                        endY: strike.endY + (Math.random() - 0.5) * (thunderSize * 0.5)
                     });
                 }
                 
                 lightningStrikes.push(strike);
                 
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < Math.floor(thunderStrength * 4); i++) {
                     if (devMode || particles.length < maxParticles) {
                         const angle = Math.random() * Math.PI * 2;
-                        const speed = 1 + Math.random() * 2;
+                        const speed = thunderStrength * (1 + Math.random() * 2);
                         const particle = new Particle(
-                            strike.x + (Math.random() - 0.5) * 30,
-                            strike.endY + (Math.random() - 0.5) * 30,
+                            strike.x + (Math.random() - 0.5) * (thunderSize * 0.3),
+                            strike.endY + (Math.random() - 0.5) * (thunderSize * 0.3),
                             '#ffffaa',
                             Math.cos(angle) * speed,
                             Math.sin(angle) * speed
@@ -3149,8 +3441,8 @@
                     rainDrops.push({
                         x: Math.random() * canvas.width,
                         y: -10,
-                        speed: 3 + Math.random() * 3,
-                        length: 10 + Math.random() * 15
+                        speed: rainSpeed + Math.random() * rainSpeed,
+                        length: rainSize + Math.random() * (rainSize * 0.5)
                     });
                 }
             }
@@ -3169,7 +3461,7 @@
         function drawRain() {
             ctx.save();
             ctx.strokeStyle = 'rgba(150, 200, 255, 0.6)';
-            ctx.lineWidth = 1;
+            ctx.lineWidth = Math.max(1, rainSize * 0.1);
             
             for (const drop of rainDrops) {
                 ctx.beginPath();
@@ -3191,8 +3483,8 @@
                     snowFlakes.push({
                         x: Math.random() * canvas.width,
                         y: -10,
-                        speed: 0.5 + Math.random() * 1,
-                        size: 2 + Math.random() * 3,
+                        speed: snowSpeed * (0.5 + Math.random() * 0.5),
+                        size: snowSize + Math.random() * (snowSize * 0.5),
                         drift: (Math.random() - 0.5) * 0.5
                     });
                 }
@@ -3225,10 +3517,10 @@
         function updateHurricane() {
             if (!hurricane || !hurricane.active) return;
             
-            hurricane.rotation += 0.02;
+            hurricane.rotation += hurricaneSpeed * 0.04;
             
-            const driftX = Math.sin(hurricane.rotation * 0.1) * 0.5;
-            const driftY = Math.cos(hurricane.rotation * 0.1) * 0.3;
+            const driftX = Math.sin(hurricane.rotation * 0.1) * hurricaneSpeed;
+            const driftY = Math.cos(hurricane.rotation * 0.1) * (hurricaneSpeed * 0.6);
             
             hurricane.x += driftX;
             hurricane.y += driftY;
@@ -3247,7 +3539,7 @@
             
             const centerX = hurricane.x;
             const centerY = hurricane.y;
-            const radius = 300;
+            const radius = hurricaneSize;
             
             const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.2, centerX, centerY, radius);
             gradient.addColorStop(0, 'rgba(100, 150, 200, 0.6)');
@@ -3284,7 +3576,7 @@
             
             earthquakeTimer++;
             
-            if (earthquakeTimer > 30) {
+            if (earthquakeTimer > (30 / earthquakeSpeed)) {
                 earthquakeTimer = 0;
                 earthquakeShake.x = (Math.random() - 0.5) * earthquakeIntensity * 2;
                 earthquakeShake.y = (Math.random() - 0.5) * earthquakeIntensity * 2;
@@ -3295,13 +3587,12 @@
         }
 
         window.addEventListener('resize', () => {
+            if (!applicationStarted) return;
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             vhsCanvas.width = canvas.width;
             vhsCanvas.height = canvas.height;
         });
-
-        animate(performance.now());
     </script>
 </body>
 </html>
