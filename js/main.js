@@ -86,6 +86,7 @@
         let conveyorSpeed = 2.0;
         let conveyorDirection = 'right';
         let conveyors = [];
+        let placementHistory = [];
         let ragdolls = [];
         let devMode = false;
         let tornadoEnabled = false;
@@ -160,6 +161,7 @@
             vhsCanvas.width = canvas.width;
             vhsCanvas.height = canvas.height;
             
+            setTimeout(() => promptLoadParticles(), 100);
             animate(performance.now());
         }
         
@@ -183,12 +185,376 @@
                 vhsCanvas.width = canvas.width;
                 vhsCanvas.height = canvas.height;
                 
+                setTimeout(() => promptLoadParticles(), 100);
                 animate(performance.now());
             }
         }
 
+        function getSectionStates() {
+            const sections = document.querySelectorAll('.section');
+            const states = {};
+            sections.forEach(section => {
+                const title = section.querySelector('.section-title');
+                if (title) {
+                    const sectionName = title.textContent.trim();
+                    states[sectionName] = section.classList.contains('collapsed');
+                }
+            });
+            return states;
+        }
+
+        function restoreSectionStates(states) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                const title = section.querySelector('.section-title');
+                if (title) {
+                    const sectionName = title.textContent.trim();
+                    if (states[sectionName] !== undefined) {
+                        if (states[sectionName]) {
+                            section.classList.add('collapsed');
+                        } else {
+                            section.classList.remove('collapsed');
+                        }
+                    }
+                }
+            });
+        }
+
+        function saveSettings() {
+            const settings = {
+                particleSize, count: particleCount, speed, lifetime, trailLength, trailOpacity,
+                gravity, friction, interactionForce, mouseForce, currentMap, particleShape,
+                sizeVariation, windX, windY, collisionsEnabled, bounce, emitterMode, emitRate,
+                colorMode, customColor, magneticField, vortexStrength, noiseAmount, flockingEnabled,
+                sizeOverLife, colorOverLife, blendMode, velocityViz, maxParticles: maxParticles === Infinity ? 999999999 : maxParticles,
+                vhsMode, scanlinesIntensity, chromaticAberration, filmGrain, vhsTracking,
+                staticNoise, colorBleed, crtCurvature, vhsGlitch, pixelation, pixelSize,
+                gravWavesEnabled, blackHoleCount, blackHoleStrength, eventHorizonSize, waveIntensity,
+                buildingMode, selectedBlockType, blockSize, blockColor, snapToGrid, gridSize,
+                blockPhysicsEnabled, blockMaterial, conveyorSpeed, conveyorDirection,
+                tornadoEnabled, tornadoStrength, tornadoSpeed, tornadoSize,
+                tsunamiEnabled, tsunamiStrength, volcanoEnabled, volcanoIntensity,
+                thunderEnabled, thunderFreq, rainEnabled, rainIntensity,
+                snowEnabled, snowIntensity, hurricaneEnabled, hurricaneStrength,
+                earthquakeEnabled, earthquakeIntensity,
+                sectionStates: getSectionStates()
+            };
+            localStorage.setItem('particleSandbox_settings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('particleSandbox_settings');
+            if (!saved) return false;
+            
+            try {
+                const settings = JSON.parse(saved);
+                
+                particleSize = settings.particleSize ?? particleSize;
+                particleCount = settings.count ?? particleCount;
+                speed = settings.speed ?? speed;
+                lifetime = settings.lifetime ?? lifetime;
+                trailLength = settings.trailLength ?? trailLength;
+                trailOpacity = settings.trailOpacity ?? trailOpacity;
+                gravity = settings.gravity ?? gravity;
+                friction = settings.friction ?? friction;
+                interactionForce = settings.interactionForce ?? interactionForce;
+                mouseForce = settings.mouseForce ?? mouseForce;
+                currentMap = settings.currentMap ?? currentMap;
+                particleShape = settings.particleShape ?? particleShape;
+                sizeVariation = settings.sizeVariation ?? sizeVariation;
+                windX = settings.windX ?? windX;
+                windY = settings.windY ?? windY;
+                collisionsEnabled = settings.collisionsEnabled ?? collisionsEnabled;
+                bounce = settings.bounce ?? bounce;
+                emitterMode = settings.emitterMode ?? emitterMode;
+                emitRate = settings.emitRate ?? emitRate;
+                colorMode = settings.colorMode ?? colorMode;
+                if (settings.customColor) customColor = settings.customColor;
+                magneticField = settings.magneticField ?? magneticField;
+                vortexStrength = settings.vortexStrength ?? vortexStrength;
+                noiseAmount = settings.noiseAmount ?? noiseAmount;
+                flockingEnabled = settings.flockingEnabled ?? flockingEnabled;
+                sizeOverLife = settings.sizeOverLife ?? sizeOverLife;
+                colorOverLife = settings.colorOverLife ?? colorOverLife;
+                blendMode = settings.blendMode ?? blendMode;
+                velocityViz = settings.velocityViz ?? velocityViz;
+                maxParticles = settings.maxParticles === 999999999 ? Infinity : (settings.maxParticles ?? maxParticles);
+                vhsMode = settings.vhsMode ?? vhsMode;
+                scanlinesIntensity = settings.scanlinesIntensity ?? scanlinesIntensity;
+                chromaticAberration = settings.chromaticAberration ?? chromaticAberration;
+                filmGrain = settings.filmGrain ?? filmGrain;
+                vhsTracking = settings.vhsTracking ?? vhsTracking;
+                staticNoise = settings.staticNoise ?? staticNoise;
+                colorBleed = settings.colorBleed ?? colorBleed;
+                crtCurvature = settings.crtCurvature ?? crtCurvature;
+                vhsGlitch = settings.vhsGlitch ?? vhsGlitch;
+                pixelation = settings.pixelation ?? pixelation;
+                pixelSize = settings.pixelSize ?? pixelSize;
+                gravWavesEnabled = settings.gravWavesEnabled ?? gravWavesEnabled;
+                blackHoleCount = settings.blackHoleCount ?? blackHoleCount;
+                blackHoleStrength = settings.blackHoleStrength ?? blackHoleStrength;
+                eventHorizonSize = settings.eventHorizonSize ?? eventHorizonSize;
+                waveIntensity = settings.waveIntensity ?? waveIntensity;
+                buildingMode = settings.buildingMode ?? buildingMode;
+                selectedBlockType = settings.selectedBlockType ?? selectedBlockType;
+                blockSize = settings.blockSize ?? blockSize;
+                blockColor = settings.blockColor ?? blockColor;
+                snapToGrid = settings.snapToGrid ?? snapToGrid;
+                gridSize = settings.gridSize ?? gridSize;
+                blockPhysicsEnabled = settings.blockPhysicsEnabled ?? blockPhysicsEnabled;
+                blockMaterial = settings.blockMaterial ?? blockMaterial;
+                conveyorSpeed = settings.conveyorSpeed ?? conveyorSpeed;
+                conveyorDirection = settings.conveyorDirection ?? conveyorDirection;
+                tornadoEnabled = settings.tornadoEnabled ?? tornadoEnabled;
+                tornadoStrength = settings.tornadoStrength ?? tornadoStrength;
+                tornadoSpeed = settings.tornadoSpeed ?? tornadoSpeed;
+                tornadoSize = settings.tornadoSize ?? tornadoSize;
+                tsunamiEnabled = settings.tsunamiEnabled ?? tsunamiEnabled;
+                tsunamiStrength = settings.tsunamiStrength ?? tsunamiStrength;
+                volcanoEnabled = settings.volcanoEnabled ?? volcanoEnabled;
+                volcanoIntensity = settings.volcanoIntensity ?? volcanoIntensity;
+                thunderEnabled = settings.thunderEnabled ?? thunderEnabled;
+                thunderFreq = settings.thunderFreq ?? thunderFreq;
+                rainEnabled = settings.rainEnabled ?? rainEnabled;
+                rainIntensity = settings.rainIntensity ?? rainIntensity;
+                snowEnabled = settings.snowEnabled ?? snowEnabled;
+                snowIntensity = settings.snowIntensity ?? snowIntensity;
+                hurricaneEnabled = settings.hurricaneEnabled ?? hurricaneEnabled;
+                hurricaneStrength = settings.hurricaneStrength ?? hurricaneStrength;
+                earthquakeEnabled = settings.earthquakeEnabled ?? earthquakeEnabled;
+                earthquakeIntensity = settings.earthquakeIntensity ?? earthquakeIntensity;
+                
+                if (currentMap) switchMap(currentMap);
+                if (gravWavesEnabled) initializeBlackHoles();
+                
+                updateUIFromVariables();
+                
+                if (settings.sectionStates) {
+                    setTimeout(() => {
+                        restoreSectionStates(settings.sectionStates);
+                    }, 50);
+                }
+                
+                return true;
+            } catch (e) {
+                console.error('Error loading settings:', e);
+                return false;
+            }
+        }
+
+        function saveParticles() {
+            const particlesData = particles.map(p => ({
+                x: p.x, y: p.y, vx: p.vx, vy: p.vy,
+                size: p.size, color: p.color, age: p.age, lifetime: p.lifetime
+            }));
+            localStorage.setItem('particleSandbox_particles', JSON.stringify(particlesData));
+        }
+
+        function loadParticles() {
+            const saved = localStorage.getItem('particleSandbox_particles');
+            if (!saved) return false;
+            
+            try {
+                const particlesData = JSON.parse(saved);
+                particles = particlesData.map(data => {
+                    const p = new Particle(data.x, data.y);
+                    p.vx = data.vx ?? 0;
+                    p.vy = data.vy ?? 0;
+                    p.size = data.size ?? particleSize;
+                    p.color = data.color ?? customColor;
+                    p.age = data.age ?? 0;
+                    p.lifetime = data.lifetime ?? (lifetime * 60);
+                    return p;
+                });
+                return true;
+            } catch (e) {
+                console.error('Error loading particles:', e);
+                return false;
+            }
+        }
+
+        let particlesLoadPrompted = false;
+        function promptLoadParticles() {
+            if (particlesLoadPrompted) return;
+            const savedParticles = localStorage.getItem('particleSandbox_particles');
+            const savedSettings = localStorage.getItem('particleSandbox_settings');
+            
+            if (!savedParticles && !savedSettings) return;
+            
+            particlesLoadPrompted = true;
+            const hasParticles = !!savedParticles;
+            const hasSettings = !!savedSettings;
+            
+            let message = 'Load previous state?';
+            if (hasParticles && hasSettings) {
+                message = 'Load previous particles, settings, and UI state?';
+            } else if (hasParticles) {
+                message = 'Load previous particles?';
+            } else if (hasSettings) {
+                message = 'Load previous settings and UI state?';
+            }
+            
+            showNotification(
+                'Load Previous State',
+                message,
+                [
+                    {
+                        text: 'Load',
+                        primary: true,
+                        action: () => {
+                            if (hasSettings) {
+                                loadSettings();
+                            }
+                            if (hasParticles) {
+                                loadParticles();
+                            }
+                        }
+                    },
+                    {
+                        text: 'Cancel',
+                        action: () => {
+                            if (hasParticles) {
+                                localStorage.removeItem('particleSandbox_particles');
+                            }
+                            if (hasSettings) {
+                                localStorage.removeItem('particleSandbox_settings');
+                            }
+                        }
+                    }
+                ]
+            );
+        }
+
+        let lastParticleSave = 0;
+        function autoSaveParticles() {
+            const now = Date.now();
+            if (now - lastParticleSave > 5000 && particles.length > 0) {
+                saveParticles();
+                lastParticleSave = now;
+            }
+        }
+
+        let lagNotificationShown = false;
+        let lastLagCheck = 0;
+        const LAG_THRESHOLD = 30;
+        const LAG_CHECK_INTERVAL = 3000;
+
+        let notificationStack = [];
+        let notificationTopOffset = 20;
+
+        function showNotification(title, message, buttons = []) {
+            const existing = document.querySelectorAll('.notification');
+            const notificationCount = existing.length;
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.top = `${notificationTopOffset + (notificationCount * 120)}px`;
+            
+            notification.innerHTML = `
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+                ${buttons.length > 0 ? `
+                    <div class="notification-buttons">
+                        ${buttons.map((btn, i) => 
+                            `<button class="notification-btn ${btn.primary ? 'primary' : ''}" data-action="${i}">${btn.text}</button>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+            `;
+
+            document.body.appendChild(notification);
+            notificationStack.push(notification);
+
+            buttons.forEach((btn, i) => {
+                const btnEl = notification.querySelector(`[data-action="${i}"]`);
+                if (btnEl) {
+                    btnEl.onclick = () => {
+                        if (btn.action) btn.action();
+                        hideNotification(notification);
+                    };
+                }
+            });
+
+            if (buttons.length === 0) {
+                setTimeout(() => hideNotification(notification), 3000);
+            }
+
+            updateNotificationPositions();
+            return notification;
+        }
+
+        function updateNotificationPositions() {
+            const notifications = document.querySelectorAll('.notification:not(.hiding)');
+            notifications.forEach((notif, index) => {
+                notif.style.top = `${notificationTopOffset + (index * 120)}px`;
+            });
+        }
+
+        function hideNotification(notification) {
+            notification.classList.add('hiding');
+            const index = notificationStack.indexOf(notification);
+            if (index > -1) {
+                notificationStack.splice(index, 1);
+            }
+            setTimeout(() => {
+                notification.remove();
+                updateNotificationPositions();
+            }, 300);
+        }
+
+        function checkLag() {
+            const now = Date.now();
+            if (now - lastLagCheck < LAG_CHECK_INTERVAL) return;
+            lastLagCheck = now;
+
+            if (fps < LAG_THRESHOLD && particles.length > 100 && !lagNotificationShown) {
+                lagNotificationShown = true;
+                const oldCount = particles.length;
+                const cleanAmount = Math.floor(particles.length * 0.5);
+
+                showNotification(
+                    'Performance Notice',
+                    `Hey, looks like you're experiencing some lag (${Math.round(fps)} FPS). Do you want to clean all old particles or ${cleanAmount} old particles?`,
+                    [
+                        {
+                            text: `Clean ${cleanAmount}`,
+                            primary: true,
+                            action: () => {
+                                const sorted = [...particles].sort((a, b) => a.age - b.age);
+                                particles = sorted.slice(cleanAmount);
+                                lagNotificationShown = false;
+                            }
+                        },
+                        {
+                            text: 'Clean All',
+                            action: () => {
+                                clearParticles();
+                                lagNotificationShown = false;
+                            }
+                        },
+                        {
+                            text: 'Dismiss',
+                            action: () => {
+                                lagNotificationShown = false;
+                            }
+                        }
+                    ]
+                );
+            } else if (fps >= LAG_THRESHOLD + 10) {
+                lagNotificationShown = false;
+            }
+        }
+
+        window.addEventListener('beforeunload', () => {
+            saveSettings();
+            if (particles.length > 0) {
+                saveParticles();
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
             checkWarningSeen();
+            loadSettings();
         });
 
         const colors = [
@@ -214,6 +580,14 @@
             document.getElementById('stats').textContent = `${particles.length} particles | ${Math.round(fps)} FPS`;
         }
 
+        let saveSettingsTimeout = null;
+        function autoSaveSettings() {
+            if (saveSettingsTimeout) clearTimeout(saveSettingsTimeout);
+            saveSettingsTimeout = setTimeout(() => {
+                saveSettings();
+            }, 500);
+        }
+
         function syncInputs(rangeId, inputId, updateFunc) {
             const range = document.getElementById(rangeId);
             const input = document.getElementById(inputId);
@@ -221,12 +595,14 @@
                 range.oninput = (e) => {
                     input.value = e.target.value;
                     updateFunc(e.target.value);
+                    autoSaveSettings();
                 };
                 input.oninput = (e) => {
                     const val = parseFloat(e.target.value);
                     if (!isNaN(val)) {
                         range.value = val;
                         updateFunc(val);
+                        autoSaveSettings();
                     }
                 };
             }
@@ -290,17 +666,20 @@
         document.getElementById('mode').onchange = (e) => {
             mode = e.target.value;
             document.getElementById('modeValue').textContent = e.target.options[e.target.selectedIndex].text;
+            autoSaveSettings();
         };
 
         document.getElementById('mapSelector').onchange = (e) => {
             currentMap = e.target.value;
             document.getElementById('mapValue').textContent = e.target.options[e.target.selectedIndex].text;
             switchMap(currentMap);
+            autoSaveSettings();
         };
 
         document.getElementById('shape').onchange = (e) => {
             particleShape = e.target.value;
             document.getElementById('shapeValue').textContent = e.target.options[e.target.selectedIndex].text;
+            autoSaveSettings();
         };
 
         syncInputs('sizeVar', 'sizeVarInput', (val) => {
@@ -321,6 +700,7 @@
         document.getElementById('collisions').onchange = (e) => {
             collisionsEnabled = e.target.value === 'on';
             document.getElementById('collisionValue').textContent = collisionsEnabled ? 'ON' : 'OFF';
+            autoSaveSettings();
         };
 
         syncInputs('bounce', 'bounceInput', (val) => {
@@ -331,6 +711,7 @@
         document.getElementById('emitter').onchange = (e) => {
             emitterMode = e.target.value;
             document.getElementById('emitterValue').textContent = e.target.options[e.target.selectedIndex].text.toUpperCase();
+            autoSaveSettings();
         };
 
         syncInputs('emitRate', 'emitRateInput', (val) => {
@@ -341,10 +722,12 @@
         document.getElementById('colorMode').onchange = (e) => {
             colorMode = e.target.value;
             document.getElementById('colorModeValue').textContent = e.target.options[e.target.selectedIndex].text;
+            autoSaveSettings();
         };
 
         document.getElementById('customColor').oninput = (e) => {
             currentColor = e.target.value;
+            customColor = currentColor;
             document.querySelectorAll('.color-btn').forEach(b => {
                 if (b.style.background === currentColor) {
                     b.classList.add('active');
@@ -352,6 +735,7 @@
                     b.classList.remove('active');
                 }
             });
+            autoSaveSettings();
         };
 
         syncInputs('magnetic', 'magneticInput', (val) => {
@@ -792,11 +1176,34 @@
 
         function clearAllBlocks() {
             placedBlocks = [];
+            conveyors = [];
+            placementHistory = [];
         }
 
         function removeLastBlock() {
-            if (placedBlocks.length > 0) {
-                placedBlocks.pop();
+            if (placementHistory.length > 0) {
+                const lastItem = placementHistory.pop();
+                if (lastItem.type === 'conveyor') {
+                    const index = conveyors.findIndex(c => 
+                        c.x === lastItem.x && c.y === lastItem.y
+                    );
+                    if (index !== -1) {
+                        conveyors.splice(index, 1);
+                    }
+                } else {
+                    const index = placedBlocks.findIndex(b => 
+                        b.x === lastItem.x && b.y === lastItem.y
+                    );
+                    if (index !== -1) {
+                        placedBlocks.splice(index, 1);
+                    }
+                }
+            } else {
+                if (conveyors.length > 0) {
+                    conveyors.pop();
+                } else if (placedBlocks.length > 0) {
+                    placedBlocks.pop();
+                }
             }
         }
 
@@ -825,14 +1232,16 @@
                         Math.abs(c.y - placeY) < blockSize * 0.5
                     );
                     if (!existingConveyor) {
-                        conveyors.push({
+                        const newConveyor = {
                             x: placeX,
                             y: placeY,
                             width: blockSize * 4,
                             height: blockSize * 0.8,
                             direction: conveyorDirection,
                             speed: conveyorSpeed
-                        });
+                        };
+                        conveyors.push(newConveyor);
+                        placementHistory.push({ type: 'conveyor', x: placeX, y: placeY });
                     }
                 } else {
                     const newBlock = {
@@ -849,6 +1258,7 @@
                         angularVelocity: 0
                     };
                     placedBlocks.push(newBlock);
+                    placementHistory.push({ type: 'block', x: placeX, y: placeY });
                 }
             }
         }
@@ -1347,6 +1757,7 @@
         function toggleSection(titleElement) {
             const section = titleElement.parentElement;
             section.classList.toggle('collapsed');
+            autoSaveSettings();
         }
 
         function setupValueDoubleClick(valueId, sliderId, setter, parser = parseInt, formatter = (v) => v) {
@@ -1719,6 +2130,7 @@
             conveyorSpeed = 2.0;
             conveyorDirection = 'right';
             conveyors = [];
+            placementHistory = [];
             ragdolls = [];
             gravWavesEnabled = false;
             blackHoleCount = 3;
@@ -2880,9 +3292,9 @@
                             }
                             
                             updateUIFromVariables();
-                            alert('Configuration loaded!');
+                            showNotification('Success', 'Configuration loaded!');
                         } catch (error) {
-                            alert('Error loading configuration: ' + error.message);
+                            showNotification('Error', 'Error loading configuration: ' + error.message);
                         }
                     };
                     reader.readAsText(file);
@@ -2903,12 +3315,12 @@
                 gifRecording = true;
                 gifFrames = [];
                 gifFrameCount = 0;
-                alert('Recording GIF... Click Export GIF again to stop and download.');
+                showNotification('GIF Recording', 'Recording GIF... Click Export GIF again to stop and download.');
             } else {
                 gifRecording = false;
-                alert('GIF recording stopped. Processing frames...');
+                showNotification('GIF Recording', 'GIF recording stopped. Processing frames...');
                 setTimeout(() => {
-                    alert('GIF export feature requires a library. Use Export Image for screenshots.');
+                    showNotification('GIF Export', 'GIF export feature requires a library. Use Export Image for screenshots.');
                 }, 100);
             }
         }
@@ -3125,6 +3537,8 @@
                 frameCount = 0;
                 fpsTimer = 0;
                 updateStats();
+                autoSaveParticles();
+                checkLag();
             }
 
             ctx.globalCompositeOperation = 'source-over';
