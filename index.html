@@ -263,6 +263,33 @@
             background: #1a1a1a;
             color: #fff;
         }
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .input-wrapper input[type="range"] {
+            flex: 1;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 6px 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+        input[type="number"]:focus {
+            border-color: #4a9eff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+            cursor: pointer;
+        }
         button {
             background: #4a9eff;
             border: none;
@@ -442,11 +469,17 @@
             </div>
             <div class="control-group">
                 <label>Particle Count: <span class="value-display" id="countValue">20</span></label>
-                <input type="range" id="count" min="1" max="200" value="20">
+                <div class="input-wrapper">
+                    <input type="range" id="count" min="1" max="200" value="20">
+                    <input type="number" id="countInput" min="1" max="200" value="20">
+                </div>
             </div>
             <div class="control-group">
                 <label>Speed: <span class="value-display" id="speedValue">1.0</span></label>
-                <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1.0">
+                <div class="input-wrapper">
+                    <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1.0">
+                    <input type="number" id="speedInput" min="0.1" max="5" step="0.1" value="1.0">
+                </div>
             </div>
             </div>
         </div>
@@ -456,15 +489,24 @@
             <div class="section-content">
             <div class="control-group">
                 <label>Size: <span class="value-display" id="sizeValue">3</span></label>
-                <input type="range" id="size" min="1" max="20" value="3">
+                <div class="input-wrapper">
+                    <input type="range" id="size" min="1" max="20" value="3">
+                    <input type="number" id="sizeInput" min="1" max="20" value="3">
+                </div>
             </div>
             <div class="control-group">
                 <label>Lifetime: <span class="value-display" id="lifetimeValue">100</span>%</label>
-                <input type="range" id="lifetime" min="10" max="200" value="100">
+                <div class="input-wrapper">
+                    <input type="range" id="lifetime" min="10" max="200" value="100">
+                    <input type="number" id="lifetimeInput" min="10" max="200" value="100">
+                </div>
             </div>
             <div class="control-group">
                 <label>Trail Length: <span class="value-display" id="trailValue">5</span></label>
-                <input type="range" id="trail" min="0" max="20" value="5">
+                <div class="input-wrapper">
+                    <input type="range" id="trail" min="0" max="20" value="5">
+                    <input type="number" id="trailInput" min="0" max="20" value="5">
+                </div>
             </div>
             </div>
         </div>
@@ -474,19 +516,31 @@
             <div class="section-content">
             <div class="control-group">
                 <label>Gravity: <span class="value-display" id="gravityValue">0.1</span></label>
-                <input type="range" id="gravity" min="0" max="1" step="0.05" value="0.1">
+                <div class="input-wrapper">
+                    <input type="range" id="gravity" min="0" max="1" step="0.05" value="0.1">
+                    <input type="number" id="gravityInput" min="0" max="1" step="0.05" value="0.1">
+                </div>
             </div>
             <div class="control-group">
                 <label>Friction: <span class="value-display" id="frictionValue">0.99</span></label>
-                <input type="range" id="friction" min="0.85" max="1" step="0.01" value="0.99">
+                <div class="input-wrapper">
+                    <input type="range" id="friction" min="0.85" max="1" step="0.01" value="0.99">
+                    <input type="number" id="frictionInput" min="0.85" max="1" step="0.01" value="0.99">
+                </div>
             </div>
             <div class="control-group">
                 <label>Interaction: <span class="value-display" id="interactionValue">0.5</span></label>
-                <input type="range" id="interaction" min="0" max="3" step="0.1" value="0.5">
+                <div class="input-wrapper">
+                    <input type="range" id="interaction" min="0" max="3" step="0.1" value="0.5">
+                    <input type="number" id="interactionInput" min="0" max="3" step="0.1" value="0.5">
+                </div>
             </div>
             <div class="control-group">
                 <label>Mouse Force: <span class="value-display" id="mouseForceValue">1.0</span></label>
-                <input type="range" id="mouseForce" min="0" max="5" step="0.1" value="1.0">
+                <div class="input-wrapper">
+                    <input type="range" id="mouseForce" min="0" max="5" step="0.1" value="1.0">
+                    <input type="number" id="mouseForceInput" min="0" max="5" step="0.1" value="1.0">
+                </div>
             </div>
             </div>
         </div>
@@ -506,15 +560,24 @@
             </div>
             <div class="control-group">
                 <label>Size Variation: <span class="value-display" id="sizeVarValue">50</span>%</label>
-                <input type="range" id="sizeVar" min="0" max="100" value="50">
+                <div class="input-wrapper">
+                    <input type="range" id="sizeVar" min="0" max="100" value="50">
+                    <input type="number" id="sizeVarInput" min="0" max="100" value="50">
+                </div>
             </div>
             <div class="control-group">
                 <label>Connection Distance: <span class="value-display" id="distanceValue">100</span></label>
-                <input type="range" id="distance" min="0" max="300" value="100">
+                <div class="input-wrapper">
+                    <input type="range" id="distance" min="0" max="300" value="100">
+                    <input type="number" id="distanceInput" min="0" max="300" value="100">
+                </div>
             </div>
             <div class="control-group">
                 <label>Trail Opacity: <span class="value-display" id="trailOpacityValue">0.3</span></label>
-                <input type="range" id="trailOpacity" min="0" max="1" step="0.05" value="0.3">
+                <div class="input-wrapper">
+                    <input type="range" id="trailOpacity" min="0" max="1" step="0.05" value="0.3">
+                    <input type="number" id="trailOpacityInput" min="0" max="1" step="0.05" value="0.3">
+                </div>
             </div>
             </div>
         </div>
@@ -524,11 +587,17 @@
             <div class="section-content">
             <div class="control-group">
                 <label>Wind X: <span class="value-display" id="windXValue">0.0</span></label>
-                <input type="range" id="windX" min="-2" max="2" step="0.1" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="windX" min="-2" max="2" step="0.1" value="0">
+                    <input type="number" id="windXInput" min="-2" max="2" step="0.1" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Wind Y: <span class="value-display" id="windYValue">0.0</span></label>
-                <input type="range" id="windY" min="-2" max="2" step="0.1" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="windY" min="-2" max="2" step="0.1" value="0">
+                    <input type="number" id="windYInput" min="-2" max="2" step="0.1" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Collisions: <span class="value-display" id="collisionValue">OFF</span></label>
@@ -539,7 +608,10 @@
             </div>
             <div class="control-group">
                 <label>Bounce: <span class="value-display" id="bounceValue">0.8</span></label>
-                <input type="range" id="bounce" min="0" max="1" step="0.1" value="0.8">
+                <div class="input-wrapper">
+                    <input type="range" id="bounce" min="0" max="1" step="0.1" value="0.8">
+                    <input type="number" id="bounceInput" min="0" max="1" step="0.1" value="0.8">
+                </div>
             </div>
             </div>
         </div>
@@ -558,7 +630,10 @@
             </div>
             <div class="control-group">
                 <label>Emit Rate: <span class="value-display" id="emitRateValue">5</span></label>
-                <input type="range" id="emitRate" min="1" max="50" value="5">
+                <div class="input-wrapper">
+                    <input type="range" id="emitRate" min="1" max="50" value="5">
+                    <input type="number" id="emitRateInput" min="1" max="50" value="5">
+                </div>
             </div>
             </div>
         </div>
@@ -592,15 +667,24 @@
             <div class="section-content">
             <div class="control-group">
                 <label>Magnetic Field: <span class="value-display" id="magneticValue">0.0</span></label>
-                <input type="range" id="magnetic" min="0" max="5" step="0.1" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="magnetic" min="0" max="5" step="0.1" value="0">
+                    <input type="number" id="magneticInput" min="0" max="5" step="0.1" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Vortex Strength: <span class="value-display" id="vortexValue">0.0</span></label>
-                <input type="range" id="vortex" min="0" max="5" step="0.1" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="vortex" min="0" max="5" step="0.1" value="0">
+                    <input type="number" id="vortexInput" min="0" max="5" step="0.1" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Noise: <span class="value-display" id="noiseValue">0.0</span></label>
-                <input type="range" id="noise" min="0" max="2" step="0.1" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="noise" min="0" max="2" step="0.1" value="0">
+                    <input type="number" id="noiseInput" min="0" max="2" step="0.1" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Flocking: <span class="value-display" id="flockingValue">OFF</span></label>
@@ -659,7 +743,10 @@
             </div>
             <div class="control-group">
                 <label>Max Particles: <span class="value-display" id="maxParticlesValue">10000</span></label>
-                <input type="range" id="maxParticles" min="100" max="50000" step="100" value="10000">
+                <div class="input-wrapper">
+                    <input type="range" id="maxParticles" min="100" max="50000" step="100" value="10000">
+                    <input type="number" id="maxParticlesInput" min="100" max="50000" step="100" value="10000">
+                </div>
             </div>
             </div>
         </div>
@@ -676,35 +763,221 @@
             </div>
             <div class="control-group">
                 <label>Scanlines: <span class="value-display" id="scanlinesValue">0</span>%</label>
-                <input type="range" id="scanlines" min="0" max="100" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="scanlines" min="0" max="100" value="0">
+                    <input type="number" id="scanlinesInput" min="0" max="100" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Chromatic Aberration: <span class="value-display" id="chromaticValue">0</span></label>
-                <input type="range" id="chromatic" min="0" max="10" step="0.5" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="chromatic" min="0" max="10" step="0.5" value="0">
+                    <input type="number" id="chromaticInput" min="0" max="10" step="0.5" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Film Grain: <span class="value-display" id="grainValue">0</span>%</label>
-                <input type="range" id="grain" min="0" max="100" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="grain" min="0" max="100" value="0">
+                    <input type="number" id="grainInput" min="0" max="100" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>VHS Tracking: <span class="value-display" id="trackingValue">0</span>%</label>
-                <input type="range" id="tracking" min="0" max="100" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="tracking" min="0" max="100" value="0">
+                    <input type="number" id="trackingInput" min="0" max="100" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Static Noise: <span class="value-display" id="staticValue">0</span>%</label>
-                <input type="range" id="static" min="0" max="100" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="static" min="0" max="100" value="0">
+                    <input type="number" id="staticInput" min="0" max="100" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Color Bleed: <span class="value-display" id="bleedValue">0</span>%</label>
-                <input type="range" id="bleed" min="0" max="100" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="bleed" min="0" max="100" value="0">
+                    <input type="number" id="bleedInput" min="0" max="100" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>CRT Curvature: <span class="value-display" id="curvatureValue">0</span>%</label>
-                <input type="range" id="curvature" min="0" max="100" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="curvature" min="0" max="100" value="0">
+                    <input type="number" id="curvatureInput" min="0" max="100" value="0">
+                </div>
             </div>
             <div class="control-group">
                 <label>VHS Glitch: <span class="value-display" id="glitchValue">0</span>%</label>
-                <input type="range" id="glitch" min="0" max="100" value="0">
+                <div class="input-wrapper">
+                    <input type="range" id="glitch" min="0" max="100" value="0">
+                    <input type="number" id="glitchInput" min="0" max="100" value="0">
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Pixelation: <span class="value-display" id="pixelationValue">OFF</span></label>
+                <select id="pixelation">
+                    <option value="off">OFF</option>
+                    <option value="1">1-bit</option>
+                    <option value="2">2-bit</option>
+                    <option value="4">4-bit</option>
+                    <option value="8">8-bit</option>
+                    <option value="16">16-bit</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Pixel Size: <span class="value-display" id="pixelSizeValue">4</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="pixelSize" min="1" max="32" value="4">
+                    <input type="number" id="pixelSizeInput" min="1" max="32" value="4">
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <div class="section collapsed">
+            <div class="section-title" onclick="toggleSection(this)">Gravitational Waves</div>
+            <div class="section-content">
+            <div class="control-group">
+                <label>Gravitational Waves: <span class="value-display" id="gravWavesEnabledValue">OFF</span></label>
+                <select id="gravWavesEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Black Holes: <span class="value-display" id="blackHoleCountValue">3</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="blackHoleCount" min="1" max="10" value="3">
+                    <input type="number" id="blackHoleCountInput" min="1" max="10" value="3">
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Black Hole Strength: <span class="value-display" id="blackHoleStrengthValue">50.0</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="blackHoleStrength" min="10" max="200" step="5" value="50">
+                    <input type="number" id="blackHoleStrengthInput" min="10" max="200" step="5" value="50">
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Event Horizon Size: <span class="value-display" id="eventHorizonSizeValue">30</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="eventHorizonSize" min="10" max="100" step="5" value="30">
+                    <input type="number" id="eventHorizonSizeInput" min="10" max="100" step="5" value="30">
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Wave Intensity: <span class="value-display" id="waveIntensityValue">5.0</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="waveIntensity" min="0" max="20" step="0.5" value="5">
+                    <input type="number" id="waveIntensityInput" min="0" max="20" step="0.5" value="5">
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <div class="section collapsed">
+            <div class="section-title" onclick="toggleSection(this)">Building Toolbox</div>
+            <div class="section-content">
+            <div class="control-group">
+                <label>Building Mode: <span class="value-display" id="buildingModeValue">OFF</span></label>
+                <select id="buildingMode">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Selected Block: <span class="value-display" id="selectedBlockValue">Square</span></label>
+                <select id="blockType">
+                    <option value="square">Square</option>
+                    <option value="rectangle">Rectangle</option>
+                    <option value="circle">Circle</option>
+                    <option value="triangle">Triangle</option>
+                    <option value="hexagon">Hexagon</option>
+                    <option value="star">Star</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Block Size: <span class="value-display" id="blockSizeValue">30</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="blockSize" min="10" max="100" step="5" value="30">
+                    <input type="number" id="blockSizeInput" min="10" max="100" step="5" value="30">
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Block Color: <span class="value-display" id="blockColorValue">#4a9eff</span></label>
+                <input type="color" id="blockColorPicker" value="#4a9eff">
+            </div>
+            <div class="control-group">
+                <label>Snap to Grid: <span class="value-display" id="snapToGridValue">ON</span></label>
+                <select id="snapToGrid">
+                    <option value="on">ON</option>
+                    <option value="off">OFF</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Grid Size: <span class="value-display" id="gridSizeValue">20</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="gridSize" min="5" max="50" step="5" value="20">
+                    <input type="number" id="gridSizeInput" min="5" max="50" step="5" value="20">
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Block Physics: <span class="value-display" id="blockPhysicsValue">OFF</span></label>
+                <select id="blockPhysics">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Block Type: <span class="value-display" id="blockMaterialValue">Solid</span></label>
+                <select id="blockMaterial">
+                    <option value="solid">Solid</option>
+                    <option value="breakable">Breakable</option>
+                </select>
+            </div>
+            <div class="button-group" style="margin-top: 15px;">
+                <button onclick="clearAllBlocks()">Clear All Blocks</button>
+                <button onclick="removeLastBlock()">Remove Last</button>
+            </div>
+            <div class="control-group" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <label style="font-weight: bold; color: #fff;">Conveyor Belts</label>
+            </div>
+            <div class="control-group">
+                <label>Conveyor Belt: <span class="value-display" id="conveyorEnabledValue">OFF</span></label>
+                <select id="conveyorEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Conveyor Speed: <span class="value-display" id="conveyorSpeedValue">2.0</span></label>
+                <div class="input-wrapper">
+                    <input type="range" id="conveyorSpeed" min="0.5" max="10" step="0.5" value="2.0">
+                    <input type="number" id="conveyorSpeedInput" min="0.5" max="10" step="0.5" value="2.0">
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Conveyor Direction: <span class="value-display" id="conveyorDirectionValue">Right</span></label>
+                <select id="conveyorDirection">
+                    <option value="right">Right</option>
+                    <option value="left">Left</option>
+                    <option value="up">Up</option>
+                    <option value="down">Down</option>
+                </select>
+            </div>
+            <div class="control-group" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <label style="font-weight: bold; color: #fff;">Ragdoll</label>
+            </div>
+            <div class="button-group" style="margin-top: 10px;">
+                <button onclick="spawnRagdoll()">Spawn Ragdoll</button>
+                <button onclick="clearRagdolls()">Clear Ragdolls</button>
+            </div>
+            <div class="control-group" style="margin-top: 15px;">
+                <label style="font-size: 12px; color: #aaa;">Click to place blocks/conveyors. Click and drag ragdolls to grab/throw them.</label>
             </div>
             </div>
         </div>
@@ -721,15 +994,24 @@
             </div>
             <div class="control-group">
                 <label>Tornado Strength: <span class="value-display" id="tornadoStrengthValue">5.0</span></label>
-                <input type="range" id="tornadoStrength" min="1" max="10" step="0.5" value="5.0">
+                <div class="input-wrapper">
+                    <input type="range" id="tornadoStrength" min="1" max="10" step="0.5" value="5.0">
+                    <input type="number" id="tornadoStrengthInput" min="1" max="10" step="0.5" value="5.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Tornado Speed: <span class="value-display" id="tornadoSpeedValue">2.0</span></label>
-                <input type="range" id="tornadoSpeed" min="0.5" max="5" step="0.1" value="2.0">
+                <div class="input-wrapper">
+                    <input type="range" id="tornadoSpeed" min="0.5" max="5" step="0.1" value="2.0">
+                    <input type="number" id="tornadoSpeedInput" min="0.5" max="5" step="0.1" value="2.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Tornado Size: <span class="value-display" id="tornadoSizeValue">150</span></label>
-                <input type="range" id="tornadoSize" min="50" max="300" step="10" value="150">
+                <div class="input-wrapper">
+                    <input type="range" id="tornadoSize" min="50" max="300" step="10" value="150">
+                    <input type="number" id="tornadoSizeInput" min="50" max="300" step="10" value="150">
+                </div>
             </div>
             <div class="control-group">
                 <label>Tsunami: <span class="value-display" id="tsunamiEnabledValue">OFF</span></label>
@@ -740,15 +1022,24 @@
             </div>
             <div class="control-group">
                 <label>Tsunami Strength: <span class="value-display" id="tsunamiStrengthValue">3.0</span></label>
-                <input type="range" id="tsunamiStrength" min="1" max="10" step="0.5" value="3.0">
+                <div class="input-wrapper">
+                    <input type="range" id="tsunamiStrength" min="1" max="10" step="0.5" value="3.0">
+                    <input type="number" id="tsunamiStrengthInput" min="1" max="10" step="0.5" value="3.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Tsunami Speed: <span class="value-display" id="tsunamiSpeedValue">2.0</span></label>
-                <input type="range" id="tsunamiSpeed" min="0.5" max="5" step="0.1" value="2.0">
+                <div class="input-wrapper">
+                    <input type="range" id="tsunamiSpeed" min="0.5" max="5" step="0.1" value="2.0">
+                    <input type="number" id="tsunamiSpeedInput" min="0.5" max="5" step="0.1" value="2.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Tsunami Size: <span class="value-display" id="tsunamiSizeValue">150</span></label>
-                <input type="range" id="tsunamiSize" min="50" max="300" step="10" value="150">
+                <div class="input-wrapper">
+                    <input type="range" id="tsunamiSize" min="50" max="300" step="10" value="150">
+                    <input type="number" id="tsunamiSizeInput" min="50" max="300" step="10" value="150">
+                </div>
             </div>
             <div class="control-group">
                 <label>Volcano: <span class="value-display" id="volcanoEnabledValue">OFF</span></label>
@@ -759,15 +1050,24 @@
             </div>
             <div class="control-group">
                 <label>Volcano Intensity: <span class="value-display" id="volcanoIntensityValue">5.0</span></label>
-                <input type="range" id="volcanoIntensity" min="1" max="10" step="0.5" value="5.0">
+                <div class="input-wrapper">
+                    <input type="range" id="volcanoIntensity" min="1" max="10" step="0.5" value="5.0">
+                    <input type="number" id="volcanoIntensityInput" min="1" max="10" step="0.5" value="5.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Volcano Speed: <span class="value-display" id="volcanoSpeedValue">1.0</span></label>
-                <input type="range" id="volcanoSpeed" min="0.5" max="5" step="0.1" value="1.0">
+                <div class="input-wrapper">
+                    <input type="range" id="volcanoSpeed" min="0.5" max="5" step="0.1" value="1.0">
+                    <input type="number" id="volcanoSpeedInput" min="0.5" max="5" step="0.1" value="1.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Volcano Size: <span class="value-display" id="volcanoSizeValue">200</span></label>
-                <input type="range" id="volcanoSize" min="50" max="400" step="10" value="200">
+                <div class="input-wrapper">
+                    <input type="range" id="volcanoSize" min="50" max="400" step="10" value="200">
+                    <input type="number" id="volcanoSizeInput" min="50" max="400" step="10" value="200">
+                </div>
             </div>
             <div class="control-group">
                 <label>Thunder: <span class="value-display" id="thunderEnabledValue">OFF</span></label>
@@ -778,15 +1078,24 @@
             </div>
             <div class="control-group">
                 <label>Thunder Frequency: <span class="value-display" id="thunderFreqValue">2.0</span></label>
-                <input type="range" id="thunderFreq" min="0.5" max="5" step="0.1" value="2.0">
+                <div class="input-wrapper">
+                    <input type="range" id="thunderFreq" min="0.5" max="5" step="0.1" value="2.0">
+                    <input type="number" id="thunderFreqInput" min="0.5" max="5" step="0.1" value="2.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Thunder Strength: <span class="value-display" id="thunderStrengthValue">5.0</span></label>
-                <input type="range" id="thunderStrength" min="1" max="10" step="0.5" value="5.0">
+                <div class="input-wrapper">
+                    <input type="range" id="thunderStrength" min="1" max="10" step="0.5" value="5.0">
+                    <input type="number" id="thunderStrengthInput" min="1" max="10" step="0.5" value="5.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Thunder Size: <span class="value-display" id="thunderSizeValue">100</span></label>
-                <input type="range" id="thunderSize" min="50" max="300" step="10" value="100">
+                <div class="input-wrapper">
+                    <input type="range" id="thunderSize" min="50" max="300" step="10" value="100">
+                    <input type="number" id="thunderSizeInput" min="50" max="300" step="10" value="100">
+                </div>
             </div>
             <div class="control-group">
                 <label>Rain: <span class="value-display" id="rainEnabledValue">OFF</span></label>
@@ -797,15 +1106,24 @@
             </div>
             <div class="control-group">
                 <label>Rain Intensity: <span class="value-display" id="rainIntensityValue">3.0</span></label>
-                <input type="range" id="rainIntensity" min="1" max="10" step="0.5" value="3.0">
+                <div class="input-wrapper">
+                    <input type="range" id="rainIntensity" min="1" max="10" step="0.5" value="3.0">
+                    <input type="number" id="rainIntensityInput" min="1" max="10" step="0.5" value="3.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Rain Speed: <span class="value-display" id="rainSpeedValue">3.0</span></label>
-                <input type="range" id="rainSpeed" min="0.5" max="8" step="0.1" value="3.0">
+                <div class="input-wrapper">
+                    <input type="range" id="rainSpeed" min="0.5" max="8" step="0.1" value="3.0">
+                    <input type="number" id="rainSpeedInput" min="0.5" max="8" step="0.1" value="3.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Rain Size: <span class="value-display" id="rainSizeValue">15</span></label>
-                <input type="range" id="rainSize" min="5" max="30" step="1" value="15">
+                <div class="input-wrapper">
+                    <input type="range" id="rainSize" min="5" max="30" step="1" value="15">
+                    <input type="number" id="rainSizeInput" min="5" max="30" step="1" value="15">
+                </div>
             </div>
             <div class="control-group">
                 <label>Snow: <span class="value-display" id="snowEnabledValue">OFF</span></label>
@@ -816,15 +1134,24 @@
             </div>
             <div class="control-group">
                 <label>Snow Intensity: <span class="value-display" id="snowIntensityValue">2.0</span></label>
-                <input type="range" id="snowIntensity" min="1" max="10" step="0.5" value="2.0">
+                <div class="input-wrapper">
+                    <input type="range" id="snowIntensity" min="1" max="10" step="0.5" value="2.0">
+                    <input type="number" id="snowIntensityInput" min="1" max="10" step="0.5" value="2.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Snow Speed: <span class="value-display" id="snowSpeedValue">1.0</span></label>
-                <input type="range" id="snowSpeed" min="0.3" max="3" step="0.1" value="1.0">
+                <div class="input-wrapper">
+                    <input type="range" id="snowSpeed" min="0.3" max="3" step="0.1" value="1.0">
+                    <input type="number" id="snowSpeedInput" min="0.3" max="3" step="0.1" value="1.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Snow Size: <span class="value-display" id="snowSizeValue">3</span></label>
-                <input type="range" id="snowSize" min="1" max="8" step="0.5" value="3">
+                <div class="input-wrapper">
+                    <input type="range" id="snowSize" min="1" max="8" step="0.5" value="3">
+                    <input type="number" id="snowSizeInput" min="1" max="8" step="0.5" value="3">
+                </div>
             </div>
             <div class="control-group">
                 <label>Hurricane: <span class="value-display" id="hurricaneEnabledValue">OFF</span></label>
@@ -835,15 +1162,24 @@
             </div>
             <div class="control-group">
                 <label>Hurricane Strength: <span class="value-display" id="hurricaneStrengthValue">6.0</span></label>
-                <input type="range" id="hurricaneStrength" min="1" max="10" step="0.5" value="6.0">
+                <div class="input-wrapper">
+                    <input type="range" id="hurricaneStrength" min="1" max="10" step="0.5" value="6.0">
+                    <input type="number" id="hurricaneStrengthInput" min="1" max="10" step="0.5" value="6.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Hurricane Speed: <span class="value-display" id="hurricaneSpeedValue">0.5</span></label>
-                <input type="range" id="hurricaneSpeed" min="0.1" max="2" step="0.1" value="0.5">
+                <div class="input-wrapper">
+                    <input type="range" id="hurricaneSpeed" min="0.1" max="2" step="0.1" value="0.5">
+                    <input type="number" id="hurricaneSpeedInput" min="0.1" max="2" step="0.1" value="0.5">
+                </div>
             </div>
             <div class="control-group">
                 <label>Hurricane Size: <span class="value-display" id="hurricaneSizeValue">300</span></label>
-                <input type="range" id="hurricaneSize" min="100" max="600" step="20" value="300">
+                <div class="input-wrapper">
+                    <input type="range" id="hurricaneSize" min="100" max="600" step="20" value="300">
+                    <input type="number" id="hurricaneSizeInput" min="100" max="600" step="20" value="300">
+                </div>
             </div>
             <div class="control-group">
                 <label>Earthquake: <span class="value-display" id="earthquakeEnabledValue">OFF</span></label>
@@ -854,15 +1190,24 @@
             </div>
             <div class="control-group">
                 <label>Earthquake Intensity: <span class="value-display" id="earthquakeIntensityValue">3.0</span></label>
-                <input type="range" id="earthquakeIntensity" min="1" max="10" step="0.5" value="3.0">
+                <div class="input-wrapper">
+                    <input type="range" id="earthquakeIntensity" min="1" max="10" step="0.5" value="3.0">
+                    <input type="number" id="earthquakeIntensityInput" min="1" max="10" step="0.5" value="3.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Earthquake Speed: <span class="value-display" id="earthquakeSpeedValue">1.0</span></label>
-                <input type="range" id="earthquakeSpeed" min="0.5" max="3" step="0.1" value="1.0">
+                <div class="input-wrapper">
+                    <input type="range" id="earthquakeSpeed" min="0.5" max="3" step="0.1" value="1.0">
+                    <input type="number" id="earthquakeSpeedInput" min="0.5" max="3" step="0.1" value="1.0">
+                </div>
             </div>
             <div class="control-group">
                 <label>Earthquake Range: <span class="value-display" id="earthquakeRangeValue">100</span></label>
-                <input type="range" id="earthquakeRange" min="50" max="300" step="10" value="100">
+                <div class="input-wrapper">
+                    <input type="range" id="earthquakeRange" min="50" max="300" step="10" value="100">
+                    <input type="number" id="earthquakeRangeInput" min="50" max="300" step="10" value="100">
+                </div>
             </div>
             </div>
         </div>
@@ -998,6 +1343,29 @@
         let crtCurvature = 0;
         let vhsGlitch = 0;
         let glitchTimer = 0;
+        let pixelation = 'off';
+        let pixelSize = 4;
+        let gravWavesEnabled = false;
+        let blackHoleCount = 3;
+        let blackHoleStrength = 50;
+        let eventHorizonSize = 30;
+        let waveIntensity = 5;
+        let blackHoles = [];
+        let buildingMode = false;
+        let selectedBlockType = 'square';
+        let blockSize = 30;
+        let blockColor = '#4a9eff';
+        let snapToGrid = true;
+        let gridSize = 20;
+        let placedBlocks = [];
+        let lastBlockPlaceTime = 0;
+        let blockPhysicsEnabled = false;
+        let blockMaterial = 'solid';
+        let conveyorEnabled = false;
+        let conveyorSpeed = 2.0;
+        let conveyorDirection = 'right';
+        let conveyors = [];
+        let ragdolls = [];
         let devMode = false;
         let tornadoEnabled = false;
         let tornadoStrength = 5.0;
@@ -1073,6 +1441,8 @@
             
             animate(performance.now());
         }
+        
+        window.startApplication = startApplication;
 
         function checkWarningSeen() {
             const warningSeen = localStorage.getItem('particleSandbox_warningSeen');
@@ -1123,60 +1493,78 @@
             document.getElementById('stats').textContent = `${particles.length} particles | ${Math.round(fps)} FPS`;
         }
 
-        document.getElementById('size').oninput = (e) => {
-            particleSize = parseInt(e.target.value);
+        function syncInputs(rangeId, inputId, updateFunc) {
+            const range = document.getElementById(rangeId);
+            const input = document.getElementById(inputId);
+            if (range && input) {
+                range.oninput = (e) => {
+                    input.value = e.target.value;
+                    updateFunc(e.target.value);
+                };
+                input.oninput = (e) => {
+                    const val = parseFloat(e.target.value);
+                    if (!isNaN(val)) {
+                        range.value = val;
+                        updateFunc(val);
+                    }
+                };
+            }
+        }
+
+        syncInputs('size', 'sizeInput', (val) => {
+            particleSize = parseInt(val);
             document.getElementById('sizeValue').textContent = particleSize;
-        };
+        });
 
-        document.getElementById('gravity').oninput = (e) => {
-            gravity = parseFloat(e.target.value);
+        syncInputs('gravity', 'gravityInput', (val) => {
+            gravity = parseFloat(val);
             document.getElementById('gravityValue').textContent = gravity.toFixed(2);
-        };
+        });
 
-        document.getElementById('friction').oninput = (e) => {
-            friction = parseFloat(e.target.value);
+        syncInputs('friction', 'frictionInput', (val) => {
+            friction = parseFloat(val);
             document.getElementById('frictionValue').textContent = friction.toFixed(2);
-        };
+        });
 
-        document.getElementById('interaction').oninput = (e) => {
-            interactionForce = parseFloat(e.target.value);
+        syncInputs('interaction', 'interactionInput', (val) => {
+            interactionForce = parseFloat(val);
             document.getElementById('interactionValue').textContent = interactionForce.toFixed(1);
-        };
+        });
 
-        document.getElementById('distance').oninput = (e) => {
-            connectionDistance = parseInt(e.target.value);
+        syncInputs('distance', 'distanceInput', (val) => {
+            connectionDistance = parseInt(val);
             document.getElementById('distanceValue').textContent = connectionDistance;
-        };
+        });
 
-        document.getElementById('count').oninput = (e) => {
-            particleCount = parseInt(e.target.value);
+        syncInputs('count', 'countInput', (val) => {
+            particleCount = parseInt(val);
             document.getElementById('countValue').textContent = particleCount;
-        };
+        });
 
-        document.getElementById('speed').oninput = (e) => {
-            speed = parseFloat(e.target.value);
+        syncInputs('speed', 'speedInput', (val) => {
+            speed = parseFloat(val);
             document.getElementById('speedValue').textContent = speed.toFixed(1);
-        };
+        });
 
-        document.getElementById('lifetime').oninput = (e) => {
-            lifetime = parseInt(e.target.value);
+        syncInputs('lifetime', 'lifetimeInput', (val) => {
+            lifetime = parseInt(val);
             document.getElementById('lifetimeValue').textContent = lifetime + '%';
-        };
+        });
 
-        document.getElementById('trail').oninput = (e) => {
-            trailLength = parseInt(e.target.value);
+        syncInputs('trail', 'trailInput', (val) => {
+            trailLength = parseInt(val);
             document.getElementById('trailValue').textContent = trailLength;
-        };
+        });
 
-        document.getElementById('trailOpacity').oninput = (e) => {
-            trailOpacity = parseFloat(e.target.value);
+        syncInputs('trailOpacity', 'trailOpacityInput', (val) => {
+            trailOpacity = parseFloat(val);
             document.getElementById('trailOpacityValue').textContent = trailOpacity.toFixed(2);
-        };
+        });
 
-        document.getElementById('mouseForce').oninput = (e) => {
-            mouseForce = parseFloat(e.target.value);
+        syncInputs('mouseForce', 'mouseForceInput', (val) => {
+            mouseForce = parseFloat(val);
             document.getElementById('mouseForceValue').textContent = mouseForce.toFixed(1);
-        };
+        });
 
         document.getElementById('mode').onchange = (e) => {
             mode = e.target.value;
@@ -1194,40 +1582,40 @@
             document.getElementById('shapeValue').textContent = e.target.options[e.target.selectedIndex].text;
         };
 
-        document.getElementById('sizeVar').oninput = (e) => {
-            sizeVariation = parseInt(e.target.value);
+        syncInputs('sizeVar', 'sizeVarInput', (val) => {
+            sizeVariation = parseInt(val);
             document.getElementById('sizeVarValue').textContent = sizeVariation + '%';
-        };
+        });
 
-        document.getElementById('windX').oninput = (e) => {
-            windX = parseFloat(e.target.value);
+        syncInputs('windX', 'windXInput', (val) => {
+            windX = parseFloat(val);
             document.getElementById('windXValue').textContent = windX.toFixed(1);
-        };
+        });
 
-        document.getElementById('windY').oninput = (e) => {
-            windY = parseFloat(e.target.value);
+        syncInputs('windY', 'windYInput', (val) => {
+            windY = parseFloat(val);
             document.getElementById('windYValue').textContent = windY.toFixed(1);
-        };
+        });
 
         document.getElementById('collisions').onchange = (e) => {
             collisionsEnabled = e.target.value === 'on';
             document.getElementById('collisionValue').textContent = collisionsEnabled ? 'ON' : 'OFF';
         };
 
-        document.getElementById('bounce').oninput = (e) => {
-            bounce = parseFloat(e.target.value);
+        syncInputs('bounce', 'bounceInput', (val) => {
+            bounce = parseFloat(val);
             document.getElementById('bounceValue').textContent = bounce.toFixed(1);
-        };
+        });
 
         document.getElementById('emitter').onchange = (e) => {
             emitterMode = e.target.value;
             document.getElementById('emitterValue').textContent = e.target.options[e.target.selectedIndex].text.toUpperCase();
         };
 
-        document.getElementById('emitRate').oninput = (e) => {
-            emitRate = parseInt(e.target.value);
+        syncInputs('emitRate', 'emitRateInput', (val) => {
+            emitRate = parseInt(val);
             document.getElementById('emitRateValue').textContent = emitRate;
-        };
+        });
 
         document.getElementById('colorMode').onchange = (e) => {
             colorMode = e.target.value;
@@ -1245,20 +1633,20 @@
             });
         };
 
-        document.getElementById('magnetic').oninput = (e) => {
-            magneticField = parseFloat(e.target.value);
+        syncInputs('magnetic', 'magneticInput', (val) => {
+            magneticField = parseFloat(val);
             document.getElementById('magneticValue').textContent = magneticField.toFixed(1);
-        };
+        });
 
-        document.getElementById('vortex').oninput = (e) => {
-            vortexStrength = parseFloat(e.target.value);
+        syncInputs('vortex', 'vortexInput', (val) => {
+            vortexStrength = parseFloat(val);
             document.getElementById('vortexValue').textContent = vortexStrength.toFixed(1);
-        };
+        });
 
-        document.getElementById('noise').oninput = (e) => {
-            noiseAmount = parseFloat(e.target.value);
+        syncInputs('noise', 'noiseInput', (val) => {
+            noiseAmount = parseFloat(val);
             document.getElementById('noiseValue').textContent = noiseAmount.toFixed(1);
-        };
+        });
 
         document.getElementById('flocking').onchange = (e) => {
             flockingEnabled = e.target.value === 'on';
@@ -1286,55 +1674,720 @@
             document.getElementById('velocityVizValue').textContent = velocityViz ? 'ON' : 'OFF';
         };
 
-        document.getElementById('maxParticles').oninput = (e) => {
-            maxParticles = parseInt(e.target.value);
-            document.getElementById('maxParticlesValue').textContent = maxParticles;
-        };
+        syncInputs('maxParticles', 'maxParticlesInput', (val) => {
+            maxParticles = parseInt(val);
+            document.getElementById('maxParticlesValue').textContent = maxParticles === Infinity ? 'UNLIMITED' : maxParticles;
+        });
 
         document.getElementById('vhsMode').onchange = (e) => {
             vhsMode = e.target.value === 'on';
             document.getElementById('vhsModeValue').textContent = vhsMode ? 'ON' : 'OFF';
         };
 
-        document.getElementById('scanlines').oninput = (e) => {
-            scanlinesIntensity = parseInt(e.target.value);
+        syncInputs('scanlines', 'scanlinesInput', (val) => {
+            scanlinesIntensity = parseInt(val);
             document.getElementById('scanlinesValue').textContent = scanlinesIntensity + '%';
-        };
+        });
 
-        document.getElementById('chromatic').oninput = (e) => {
-            chromaticAberration = parseFloat(e.target.value);
+        syncInputs('chromatic', 'chromaticInput', (val) => {
+            chromaticAberration = parseFloat(val);
             document.getElementById('chromaticValue').textContent = chromaticAberration.toFixed(1);
-        };
+        });
 
-        document.getElementById('grain').oninput = (e) => {
-            filmGrain = parseInt(e.target.value);
+        syncInputs('grain', 'grainInput', (val) => {
+            filmGrain = parseInt(val);
             document.getElementById('grainValue').textContent = filmGrain + '%';
-        };
+        });
 
-        document.getElementById('tracking').oninput = (e) => {
-            vhsTracking = parseInt(e.target.value);
+        syncInputs('tracking', 'trackingInput', (val) => {
+            vhsTracking = parseInt(val);
             document.getElementById('trackingValue').textContent = vhsTracking + '%';
-        };
+        });
 
-        document.getElementById('static').oninput = (e) => {
-            staticNoise = parseInt(e.target.value);
+        syncInputs('static', 'staticInput', (val) => {
+            staticNoise = parseInt(val);
             document.getElementById('staticValue').textContent = staticNoise + '%';
-        };
+        });
 
-        document.getElementById('bleed').oninput = (e) => {
-            colorBleed = parseInt(e.target.value);
+        syncInputs('bleed', 'bleedInput', (val) => {
+            colorBleed = parseInt(val);
             document.getElementById('bleedValue').textContent = colorBleed + '%';
-        };
+        });
 
-        document.getElementById('curvature').oninput = (e) => {
-            crtCurvature = parseInt(e.target.value);
+        syncInputs('curvature', 'curvatureInput', (val) => {
+            crtCurvature = parseInt(val);
             document.getElementById('curvatureValue').textContent = crtCurvature + '%';
+        });
+
+        syncInputs('glitch', 'glitchInput', (val) => {
+            vhsGlitch = parseInt(val);
+            document.getElementById('glitchValue').textContent = vhsGlitch + '%';
+        });
+
+        document.getElementById('pixelation').onchange = (e) => {
+            pixelation = e.target.value;
+            document.getElementById('pixelationValue').textContent = pixelation === 'off' ? 'OFF' : pixelation + '-bit';
         };
 
-        document.getElementById('glitch').oninput = (e) => {
-            vhsGlitch = parseInt(e.target.value);
-            document.getElementById('glitchValue').textContent = vhsGlitch + '%';
+        syncInputs('pixelSize', 'pixelSizeInput', (val) => {
+            pixelSize = parseInt(val);
+            document.getElementById('pixelSizeValue').textContent = pixelSize;
+        });
+
+        document.getElementById('gravWavesEnabled').onchange = (e) => {
+            gravWavesEnabled = e.target.value === 'on';
+            document.getElementById('gravWavesEnabledValue').textContent = gravWavesEnabled ? 'ON' : 'OFF';
+            if (gravWavesEnabled && blackHoles.length === 0) {
+                initializeBlackHoles();
+            } else if (!gravWavesEnabled) {
+                blackHoles = [];
+            }
         };
+
+        syncInputs('blackHoleCount', 'blackHoleCountInput', (val) => {
+            blackHoleCount = parseInt(val);
+            document.getElementById('blackHoleCountValue').textContent = blackHoleCount;
+            if (gravWavesEnabled) {
+                initializeBlackHoles();
+            }
+        });
+
+        syncInputs('blackHoleStrength', 'blackHoleStrengthInput', (val) => {
+            blackHoleStrength = parseFloat(val);
+            document.getElementById('blackHoleStrengthValue').textContent = blackHoleStrength.toFixed(1);
+        });
+
+        syncInputs('eventHorizonSize', 'eventHorizonSizeInput', (val) => {
+            eventHorizonSize = parseInt(val);
+            document.getElementById('eventHorizonSizeValue').textContent = eventHorizonSize;
+        });
+
+        syncInputs('waveIntensity', 'waveIntensityInput', (val) => {
+            waveIntensity = parseFloat(val);
+            document.getElementById('waveIntensityValue').textContent = waveIntensity.toFixed(1);
+        });
+
+        function initializeBlackHoles() {
+            blackHoles = [];
+            for (let i = 0; i < blackHoleCount; i++) {
+                blackHoles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    rotation: 0
+                });
+            }
+        }
+
+        document.getElementById('buildingMode').onchange = (e) => {
+            buildingMode = e.target.value === 'on';
+            document.getElementById('buildingModeValue').textContent = buildingMode ? 'ON' : 'OFF';
+        };
+
+        document.getElementById('blockType').onchange = (e) => {
+            selectedBlockType = e.target.value;
+            document.getElementById('selectedBlockValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        syncInputs('blockSize', 'blockSizeInput', (val) => {
+            blockSize = parseInt(val);
+            document.getElementById('blockSizeValue').textContent = blockSize;
+        });
+
+        document.getElementById('blockColorPicker').oninput = (e) => {
+            blockColor = e.target.value;
+            document.getElementById('blockColorValue').textContent = blockColor;
+        };
+
+        document.getElementById('snapToGrid').onchange = (e) => {
+            snapToGrid = e.target.value === 'on';
+            document.getElementById('snapToGridValue').textContent = snapToGrid ? 'ON' : 'OFF';
+        };
+
+        syncInputs('gridSize', 'gridSizeInput', (val) => {
+            gridSize = parseInt(val);
+            document.getElementById('gridSizeValue').textContent = gridSize;
+        });
+
+        document.getElementById('blockPhysics').onchange = (e) => {
+            blockPhysicsEnabled = e.target.value === 'on';
+            document.getElementById('blockPhysicsValue').textContent = blockPhysicsEnabled ? 'ON' : 'OFF';
+            placedBlocks.forEach(block => {
+                if (!block.vx) block.vx = 0;
+                if (!block.vy) block.vy = 0;
+                if (!block.rotation) block.rotation = 0;
+                if (!block.angularVelocity) block.angularVelocity = 0;
+            });
+        };
+
+        document.getElementById('blockMaterial').onchange = (e) => {
+            blockMaterial = e.target.value;
+            document.getElementById('blockMaterialValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('conveyorEnabled').onchange = (e) => {
+            conveyorEnabled = e.target.value === 'on';
+            document.getElementById('conveyorEnabledValue').textContent = conveyorEnabled ? 'ON' : 'OFF';
+            if (!conveyorEnabled) {
+                conveyors = [];
+            }
+        };
+
+        syncInputs('conveyorSpeed', 'conveyorSpeedInput', (val) => {
+            conveyorSpeed = parseFloat(val);
+            document.getElementById('conveyorSpeedValue').textContent = conveyorSpeed.toFixed(1);
+        });
+
+        document.getElementById('conveyorDirection').onchange = function(e) {
+            conveyorDirection = e.target.value;
+            document.getElementById('conveyorDirectionValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        let grabbedRagdollPart = null;
+        let grabOffsetX = 0;
+        let grabOffsetY = 0;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+
+        function spawnRagdoll() {
+            const ragdoll = {
+                parts: [],
+                joints: [],
+                id: Date.now() + Math.random()
+            };
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            const head = {
+                x: centerX,
+                y: centerY - 45,
+                radius: 14,
+                vx: 0,
+                vy: 0,
+                mass: 1.2,
+                type: 'head',
+                ragdollId: ragdoll.id
+            };
+            
+            const torso = {
+                x: centerX,
+                y: centerY - 5,
+                width: 28,
+                height: 42,
+                vx: 0,
+                vy: 0,
+                rotation: 0,
+                angularVelocity: 0,
+                mass: 2.5,
+                type: 'torso',
+                ragdollId: ragdoll.id
+            };
+            
+            const leftUpperArm = {
+                x: centerX - 22,
+                y: centerY - 3,
+                width: 7,
+                height: 22,
+                vx: 0,
+                vy: 0,
+                rotation: 0.3,
+                angularVelocity: 0,
+                mass: 0.7,
+                type: 'upperArm',
+                side: 'left',
+                ragdollId: ragdoll.id
+            };
+            
+            const leftLowerArm = {
+                x: centerX - 22,
+                y: centerY + 20,
+                width: 6,
+                height: 20,
+                vx: 0,
+                vy: 0,
+                rotation: 0,
+                angularVelocity: 0,
+                mass: 0.5,
+                type: 'lowerArm',
+                side: 'left',
+                ragdollId: ragdoll.id
+            };
+            
+            const rightUpperArm = {
+                x: centerX + 22,
+                y: centerY - 3,
+                width: 7,
+                height: 22,
+                vx: 0,
+                vy: 0,
+                rotation: -0.3,
+                angularVelocity: 0,
+                mass: 0.7,
+                type: 'upperArm',
+                side: 'right',
+                ragdollId: ragdoll.id
+            };
+            
+            const rightLowerArm = {
+                x: centerX + 22,
+                y: centerY + 20,
+                width: 6,
+                height: 20,
+                vx: 0,
+                vy: 0,
+                rotation: 0,
+                angularVelocity: 0,
+                mass: 0.5,
+                type: 'lowerArm',
+                side: 'right',
+                ragdollId: ragdoll.id
+            };
+            
+            const leftUpperLeg = {
+                x: centerX - 9,
+                y: centerY + 35,
+                width: 9,
+                height: 24,
+                vx: 0,
+                vy: 0,
+                rotation: 0,
+                angularVelocity: 0,
+                mass: 1.0,
+                type: 'upperLeg',
+                side: 'left',
+                ragdollId: ragdoll.id
+            };
+            
+            const leftLowerLeg = {
+                x: centerX - 9,
+                y: centerY + 60,
+                width: 7,
+                height: 22,
+                vx: 0,
+                vy: 0,
+                rotation: 0,
+                angularVelocity: 0,
+                mass: 0.7,
+                type: 'lowerLeg',
+                side: 'left',
+                ragdollId: ragdoll.id
+            };
+            
+            const rightUpperLeg = {
+                x: centerX + 9,
+                y: centerY + 35,
+                width: 9,
+                height: 24,
+                vx: 0,
+                vy: 0,
+                rotation: 0,
+                angularVelocity: 0,
+                mass: 1.0,
+                type: 'upperLeg',
+                side: 'right',
+                ragdollId: ragdoll.id
+            };
+            
+            const rightLowerLeg = {
+                x: centerX + 9,
+                y: centerY + 60,
+                width: 7,
+                height: 22,
+                vx: 0,
+                vy: 0,
+                rotation: 0,
+                angularVelocity: 0,
+                mass: 0.7,
+                type: 'lowerLeg',
+                side: 'right',
+                ragdollId: ragdoll.id
+            };
+            
+            ragdoll.parts = [
+                head, torso,
+                leftUpperArm, leftLowerArm,
+                rightUpperArm, rightLowerArm,
+                leftUpperLeg, leftLowerLeg,
+                rightUpperLeg, rightLowerLeg
+            ];
+            
+            ragdoll.joints = [
+                { part1: head, part2: torso, offset1: { x: 0, y: 14 }, offset2: { x: 0, y: -21 }, maxDist: 2, stiffness: 0.8 },
+                { part1: torso, part2: leftUpperArm, offset1: { x: -14, y: -10 }, offset2: { x: 0, y: -11 }, maxDist: 2, stiffness: 0.7 },
+                { part1: leftUpperArm, part2: leftLowerArm, offset1: { x: 0, y: 11 }, offset2: { x: 0, y: -10 }, maxDist: 2, stiffness: 0.7 },
+                { part1: torso, part2: rightUpperArm, offset1: { x: 14, y: -10 }, offset2: { x: 0, y: -11 }, maxDist: 2, stiffness: 0.7 },
+                { part1: rightUpperArm, part2: rightLowerArm, offset1: { x: 0, y: 11 }, offset2: { x: 0, y: -10 }, maxDist: 2, stiffness: 0.7 },
+                { part1: torso, part2: leftUpperLeg, offset1: { x: -9, y: 21 }, offset2: { x: 0, y: -12 }, maxDist: 2, stiffness: 0.8 },
+                { part1: leftUpperLeg, part2: leftLowerLeg, offset1: { x: 0, y: 12 }, offset2: { x: 0, y: -11 }, maxDist: 2, stiffness: 0.7 },
+                { part1: torso, part2: rightUpperLeg, offset1: { x: 9, y: 21 }, offset2: { x: 0, y: -12 }, maxDist: 2, stiffness: 0.8 },
+                { part1: rightUpperLeg, part2: rightLowerLeg, offset1: { x: 0, y: 12 }, offset2: { x: 0, y: -11 }, maxDist: 2, stiffness: 0.7 }
+            ];
+            
+            ragdolls.push(ragdoll);
+        }
+
+        function getRagdollPartAt(x, y) {
+            for (const ragdoll of ragdolls) {
+                for (const part of ragdoll.parts) {
+                    let dist;
+                    if (part.type === 'head') {
+                        dist = Math.sqrt((x - part.x) ** 2 + (y - part.y) ** 2);
+                        if (dist < part.radius) {
+                            return part;
+                        }
+                    } else {
+                        const cos = Math.cos(part.rotation || 0);
+                        const sin = Math.sin(part.rotation || 0);
+                        const dx = x - part.x;
+                        const dy = y - part.y;
+                        const localX = dx * cos + dy * sin;
+                        const localY = -dx * sin + dy * cos;
+                        
+                        if (Math.abs(localX) < part.width / 2 && Math.abs(localY) < part.height / 2) {
+                            return part;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        function clearRagdolls() {
+            ragdolls = [];
+        }
+
+        function clearAllBlocks() {
+            placedBlocks = [];
+        }
+
+        function removeLastBlock() {
+            if (placedBlocks.length > 0) {
+                placedBlocks.pop();
+            }
+        }
+
+        function placeBlock(x, y) {
+            const now = Date.now();
+            if (now - lastBlockPlaceTime < 50) return;
+            lastBlockPlaceTime = now;
+            
+            let placeX = x;
+            let placeY = y;
+            
+            if (snapToGrid) {
+                placeX = Math.round(x / gridSize) * gridSize;
+                placeY = Math.round(y / gridSize) * gridSize;
+            }
+            
+            const existingBlock = placedBlocks.find(b => 
+                Math.abs(b.x - placeX) < blockSize * 0.5 && 
+                Math.abs(b.y - placeY) < blockSize * 0.5
+            );
+            
+            if (!existingBlock) {
+                const newBlock = {
+                    type: selectedBlockType,
+                    x: placeX,
+                    y: placeY,
+                    size: blockSize,
+                    color: blockColor,
+                    material: blockMaterial,
+                    health: blockMaterial === 'breakable' ? 100 : Infinity,
+                    vx: 0,
+                    vy: 0,
+                    rotation: 0,
+                    angularVelocity: 0
+                };
+                placedBlocks.push(newBlock);
+            }
+        }
+
+        function drawBlock(block) {
+            let blockColor = block.color;
+            let opacity = 1;
+            
+            if (block.material === 'breakable' && block.health < Infinity) {
+                opacity = Math.max(0.3, block.health / 100);
+                const healthPercent = block.health / 100;
+                if (healthPercent < 0.5) {
+                    blockColor = `rgba(255, ${Math.floor(100 * healthPercent)}, 0, ${opacity})`;
+                }
+            }
+            
+            ctx.save();
+            ctx.translate(block.x, block.y);
+            if (block.rotation) {
+                ctx.rotate(block.rotation);
+            }
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = blockColor;
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.lineWidth = 2;
+            
+            switch(block.type) {
+                case 'square':
+                    ctx.fillRect(-block.size / 2, -block.size / 2, block.size, block.size);
+                    ctx.strokeRect(-block.size / 2, -block.size / 2, block.size, block.size);
+                    break;
+                case 'rectangle':
+                    ctx.fillRect(-block.size / 2, -block.size / 3, block.size, block.size * 0.67);
+                    ctx.strokeRect(-block.size / 2, -block.size / 3, block.size, block.size * 0.67);
+                    break;
+                case 'circle':
+                    ctx.beginPath();
+                    ctx.arc(0, 0, block.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'triangle':
+                    ctx.beginPath();
+                    ctx.moveTo(0, -block.size / 2);
+                    ctx.lineTo(-block.size / 2, block.size / 2);
+                    ctx.lineTo(block.size / 2, block.size / 2);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'hexagon':
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (Math.PI / 3) * i;
+                        const hx = (block.size / 2) * Math.cos(angle);
+                        const hy = (block.size / 2) * Math.sin(angle);
+                        if (i === 0) ctx.moveTo(hx, hy);
+                        else ctx.lineTo(hx, hy);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'star':
+                    ctx.beginPath();
+                    const spikes = 5;
+                    const outerRadius = block.size / 2;
+                    const innerRadius = outerRadius * 0.4;
+                    for (let i = 0; i < spikes * 2; i++) {
+                        const angle = (Math.PI / spikes) * i;
+                        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                        const sx = radius * Math.cos(angle - Math.PI / 2);
+                        const sy = radius * Math.sin(angle - Math.PI / 2);
+                        if (i === 0) ctx.moveTo(sx, sy);
+                        else ctx.lineTo(sx, sy);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+            }
+            
+            if (block.material === 'breakable' && block.health < 100 && block.health > 0) {
+                const crackCount = Math.floor((100 - block.health) / 20);
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < crackCount; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo((Math.random() - 0.5) * block.size * 0.5, (Math.random() - 0.5) * block.size * 0.5);
+                    ctx.lineTo((Math.random() - 0.5) * block.size * 0.5, (Math.random() - 0.5) * block.size * 0.5);
+                    ctx.stroke();
+                }
+            }
+            
+            ctx.restore();
+        }
+
+        function drawConveyor(conveyor) {
+            ctx.fillStyle = 'rgba(60, 60, 60, 0.8)';
+            ctx.fillRect(conveyor.x, conveyor.y, conveyor.width, conveyor.height);
+            
+            ctx.strokeStyle = 'rgba(100, 100, 100, 0.9)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(conveyor.x, conveyor.y, conveyor.width, conveyor.height);
+            
+            const time = Date.now() * 0.01;
+            const stripeWidth = 20;
+            ctx.fillStyle = 'rgba(80, 80, 80, 0.6)';
+            
+            let offset = (time * conveyor.speed * 10) % (stripeWidth * 2);
+            if (conveyor.direction === 'left' || conveyor.direction === 'up') {
+                offset = -offset;
+            }
+            
+            if (conveyor.direction === 'right' || conveyor.direction === 'left') {
+                for (let x = conveyor.x - stripeWidth + offset; x < conveyor.x + conveyor.width; x += stripeWidth * 2) {
+                    ctx.fillRect(x, conveyor.y, stripeWidth, conveyor.height);
+                }
+            } else {
+                for (let y = conveyor.y - stripeWidth + offset; y < conveyor.y + conveyor.height; y += stripeWidth * 2) {
+                    ctx.fillRect(conveyor.x, y, conveyor.width, stripeWidth);
+                }
+            }
+            
+            const arrowSize = 15;
+            const cx = conveyor.x + conveyor.width / 2;
+            const cy = conveyor.y + conveyor.height / 2;
+            
+            ctx.fillStyle = 'rgba(200, 200, 200, 0.9)';
+            ctx.beginPath();
+            switch(conveyor.direction) {
+                case 'right':
+                    ctx.moveTo(cx + arrowSize, cy);
+                    ctx.lineTo(cx - arrowSize / 2, cy - arrowSize / 2);
+                    ctx.lineTo(cx - arrowSize / 2, cy + arrowSize / 2);
+                    break;
+                case 'left':
+                    ctx.moveTo(cx - arrowSize, cy);
+                    ctx.lineTo(cx + arrowSize / 2, cy - arrowSize / 2);
+                    ctx.lineTo(cx + arrowSize / 2, cy + arrowSize / 2);
+                    break;
+                case 'up':
+                    ctx.moveTo(cx, cy - arrowSize);
+                    ctx.lineTo(cx - arrowSize / 2, cy + arrowSize / 2);
+                    ctx.lineTo(cx + arrowSize / 2, cy + arrowSize / 2);
+                    break;
+                case 'down':
+                    ctx.moveTo(cx, cy + arrowSize);
+                    ctx.lineTo(cx - arrowSize / 2, cy - arrowSize / 2);
+                    ctx.lineTo(cx + arrowSize / 2, cy - arrowSize / 2);
+                    break;
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawRagdoll(ragdoll) {
+            ragdoll.parts.forEach(part => {
+                ctx.save();
+                ctx.translate(part.x, part.y);
+                if (part.rotation) {
+                    ctx.rotate(part.rotation);
+                }
+                
+                let fillColor = '#4a9eff';
+                if (part.type === 'head') {
+                    fillColor = '#ffdbac';
+                } else if (part.type === 'torso') {
+                    fillColor = '#2c5aa0';
+                } else if (part.type === 'upperArm' || part.type === 'lowerArm') {
+                    fillColor = '#ffdbac';
+                } else if (part.type === 'upperLeg' || part.type === 'lowerLeg') {
+                    fillColor = '#1a3d7a';
+                }
+                
+                if (part === grabbedRagdollPart) {
+                    ctx.globalAlpha = 0.8;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+                }
+                
+                if (part.type === 'head') {
+                    const headGradient = ctx.createRadialGradient(0, -part.radius * 0.3, 0, 0, 0, part.radius);
+                    headGradient.addColorStop(0, '#ffe4c4');
+                    headGradient.addColorStop(1, fillColor);
+                    ctx.fillStyle = headGradient;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, part.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(-4, -3, 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(4, -3, 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#8b4513';
+                    ctx.beginPath();
+                    ctx.arc(0, 1, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    const partGradient = ctx.createLinearGradient(
+                        -part.width / 2, -part.height / 2,
+                        part.width / 2, part.height / 2
+                    );
+                    if (part.type === 'torso') {
+                        partGradient.addColorStop(0, '#3d6ba8');
+                        partGradient.addColorStop(1, fillColor);
+                    } else if (part.type === 'upperLeg' || part.type === 'lowerLeg') {
+                        partGradient.addColorStop(0, '#2a4d7a');
+                        partGradient.addColorStop(1, fillColor);
+                    } else {
+                        partGradient.addColorStop(0, '#ffe4c4');
+                        partGradient.addColorStop(1, fillColor);
+                    }
+                    ctx.fillStyle = partGradient;
+                    ctx.fillRect(-part.width / 2, -part.height / 2, part.width, part.height);
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeRect(-part.width / 2, -part.height / 2, part.width, part.height);
+                }
+                
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1;
+                ctx.restore();
+            });
+            
+            ragdoll.joints.forEach(joint => {
+                const p1 = joint.part1;
+                const p2 = joint.part2;
+                
+                let p1X = p1.x, p1Y = p1.y;
+                let p2X = p2.x, p2Y = p2.y;
+                
+                if (p1.type === 'head') {
+                    p1X += joint.offset1.x;
+                    p1Y += joint.offset1.y;
+                } else {
+                    const cos1 = Math.cos(p1.rotation || 0);
+                    const sin1 = Math.sin(p1.rotation || 0);
+                    p1X += joint.offset1.x * cos1 - joint.offset1.y * sin1;
+                    p1Y += joint.offset1.x * sin1 + joint.offset1.y * cos1;
+                }
+                
+                if (p2.type === 'head') {
+                    p2X += joint.offset2.x;
+                    p2Y += joint.offset2.y;
+                } else {
+                    const cos2 = Math.cos(p2.rotation || 0);
+                    const sin2 = Math.sin(p2.rotation || 0);
+                    p2X += joint.offset2.x * cos2 - joint.offset2.y * sin2;
+                    p2Y += joint.offset2.x * sin2 + joint.offset2.y * cos2;
+                }
+                
+                ctx.strokeStyle = 'rgba(80, 80, 80, 0.3)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(p1X, p1Y);
+                ctx.lineTo(p2X, p2Y);
+                ctx.stroke();
+            });
+        }
+
+        function drawGrid() {
+            if (!snapToGrid || !buildingMode) return;
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
 
         document.getElementById('tornadoEnabled').onchange = (e) => {
             tornadoEnabled = e.target.value === 'on';
@@ -1352,20 +2405,20 @@
             }
         };
 
-        document.getElementById('tornadoStrength').oninput = (e) => {
-            tornadoStrength = parseFloat(e.target.value);
+        syncInputs('tornadoStrength', 'tornadoStrengthInput', (val) => {
+            tornadoStrength = parseFloat(val);
             document.getElementById('tornadoStrengthValue').textContent = tornadoStrength.toFixed(1);
-        };
+        });
 
-        document.getElementById('tornadoSpeed').oninput = (e) => {
-            tornadoSpeed = parseFloat(e.target.value);
+        syncInputs('tornadoSpeed', 'tornadoSpeedInput', (val) => {
+            tornadoSpeed = parseFloat(val);
             document.getElementById('tornadoSpeedValue').textContent = tornadoSpeed.toFixed(1);
-        };
+        });
 
-        document.getElementById('tornadoSize').oninput = (e) => {
-            tornadoSize = parseInt(e.target.value);
+        syncInputs('tornadoSize', 'tornadoSizeInput', (val) => {
+            tornadoSize = parseInt(val);
             document.getElementById('tornadoSizeValue').textContent = tornadoSize;
-        };
+        });
 
         document.getElementById('tsunamiEnabled').onchange = (e) => {
             tsunamiEnabled = e.target.value === 'on';
@@ -1373,20 +2426,20 @@
             if (!tsunamiEnabled) tsunamiWaves = [];
         };
 
-        document.getElementById('tsunamiStrength').oninput = (e) => {
-            tsunamiStrength = parseFloat(e.target.value);
+        syncInputs('tsunamiStrength', 'tsunamiStrengthInput', (val) => {
+            tsunamiStrength = parseFloat(val);
             document.getElementById('tsunamiStrengthValue').textContent = tsunamiStrength.toFixed(1);
-        };
+        });
 
-        document.getElementById('tsunamiSpeed').oninput = (e) => {
-            tsunamiSpeed = parseFloat(e.target.value);
+        syncInputs('tsunamiSpeed', 'tsunamiSpeedInput', (val) => {
+            tsunamiSpeed = parseFloat(val);
             document.getElementById('tsunamiSpeedValue').textContent = tsunamiSpeed.toFixed(1);
-        };
+        });
 
-        document.getElementById('tsunamiSize').oninput = (e) => {
-            tsunamiSize = parseInt(e.target.value);
+        syncInputs('tsunamiSize', 'tsunamiSizeInput', (val) => {
+            tsunamiSize = parseInt(val);
             document.getElementById('tsunamiSizeValue').textContent = tsunamiSize;
-        };
+        });
 
         document.getElementById('volcanoEnabled').onchange = (e) => {
             volcanoEnabled = e.target.value === 'on';
@@ -1403,20 +2456,20 @@
             }
         };
 
-        document.getElementById('volcanoIntensity').oninput = (e) => {
-            volcanoIntensity = parseFloat(e.target.value);
+        syncInputs('volcanoIntensity', 'volcanoIntensityInput', (val) => {
+            volcanoIntensity = parseFloat(val);
             document.getElementById('volcanoIntensityValue').textContent = volcanoIntensity.toFixed(1);
-        };
+        });
 
-        document.getElementById('volcanoSpeed').oninput = (e) => {
-            volcanoSpeed = parseFloat(e.target.value);
+        syncInputs('volcanoSpeed', 'volcanoSpeedInput', (val) => {
+            volcanoSpeed = parseFloat(val);
             document.getElementById('volcanoSpeedValue').textContent = volcanoSpeed.toFixed(1);
-        };
+        });
 
-        document.getElementById('volcanoSize').oninput = (e) => {
-            volcanoSize = parseInt(e.target.value);
+        syncInputs('volcanoSize', 'volcanoSizeInput', (val) => {
+            volcanoSize = parseInt(val);
             document.getElementById('volcanoSizeValue').textContent = volcanoSize;
-        };
+        });
 
         document.getElementById('thunderEnabled').onchange = (e) => {
             thunderEnabled = e.target.value === 'on';
@@ -1424,20 +2477,20 @@
             if (!thunderEnabled) lightningStrikes = [];
         };
 
-        document.getElementById('thunderFreq').oninput = (e) => {
-            thunderFreq = parseFloat(e.target.value);
+        syncInputs('thunderFreq', 'thunderFreqInput', (val) => {
+            thunderFreq = parseFloat(val);
             document.getElementById('thunderFreqValue').textContent = thunderFreq.toFixed(1);
-        };
+        });
 
-        document.getElementById('thunderStrength').oninput = (e) => {
-            thunderStrength = parseFloat(e.target.value);
+        syncInputs('thunderStrength', 'thunderStrengthInput', (val) => {
+            thunderStrength = parseFloat(val);
             document.getElementById('thunderStrengthValue').textContent = thunderStrength.toFixed(1);
-        };
+        });
 
-        document.getElementById('thunderSize').oninput = (e) => {
-            thunderSize = parseInt(e.target.value);
+        syncInputs('thunderSize', 'thunderSizeInput', (val) => {
+            thunderSize = parseInt(val);
             document.getElementById('thunderSizeValue').textContent = thunderSize;
-        };
+        });
 
         document.getElementById('rainEnabled').onchange = (e) => {
             rainEnabled = e.target.value === 'on';
@@ -1445,20 +2498,20 @@
             if (!rainEnabled) rainDrops = [];
         };
 
-        document.getElementById('rainIntensity').oninput = (e) => {
-            rainIntensity = parseFloat(e.target.value);
+        syncInputs('rainIntensity', 'rainIntensityInput', (val) => {
+            rainIntensity = parseFloat(val);
             document.getElementById('rainIntensityValue').textContent = rainIntensity.toFixed(1);
-        };
+        });
 
-        document.getElementById('rainSpeed').oninput = (e) => {
-            rainSpeed = parseFloat(e.target.value);
+        syncInputs('rainSpeed', 'rainSpeedInput', (val) => {
+            rainSpeed = parseFloat(val);
             document.getElementById('rainSpeedValue').textContent = rainSpeed.toFixed(1);
-        };
+        });
 
-        document.getElementById('rainSize').oninput = (e) => {
-            rainSize = parseInt(e.target.value);
+        syncInputs('rainSize', 'rainSizeInput', (val) => {
+            rainSize = parseInt(val);
             document.getElementById('rainSizeValue').textContent = rainSize;
-        };
+        });
 
         document.getElementById('snowEnabled').onchange = (e) => {
             snowEnabled = e.target.value === 'on';
@@ -1466,20 +2519,20 @@
             if (!snowEnabled) snowFlakes = [];
         };
 
-        document.getElementById('snowIntensity').oninput = (e) => {
-            snowIntensity = parseFloat(e.target.value);
+        syncInputs('snowIntensity', 'snowIntensityInput', (val) => {
+            snowIntensity = parseFloat(val);
             document.getElementById('snowIntensityValue').textContent = snowIntensity.toFixed(1);
-        };
+        });
 
-        document.getElementById('snowSpeed').oninput = (e) => {
-            snowSpeed = parseFloat(e.target.value);
+        syncInputs('snowSpeed', 'snowSpeedInput', (val) => {
+            snowSpeed = parseFloat(val);
             document.getElementById('snowSpeedValue').textContent = snowSpeed.toFixed(1);
-        };
+        });
 
-        document.getElementById('snowSize').oninput = (e) => {
-            snowSize = parseFloat(e.target.value);
+        syncInputs('snowSize', 'snowSizeInput', (val) => {
+            snowSize = parseFloat(val);
             document.getElementById('snowSizeValue').textContent = snowSize.toFixed(1);
-        };
+        });
 
         document.getElementById('hurricaneEnabled').onchange = (e) => {
             hurricaneEnabled = e.target.value === 'on';
@@ -1496,20 +2549,20 @@
             }
         };
 
-        document.getElementById('hurricaneStrength').oninput = (e) => {
-            hurricaneStrength = parseFloat(e.target.value);
+        syncInputs('hurricaneStrength', 'hurricaneStrengthInput', (val) => {
+            hurricaneStrength = parseFloat(val);
             document.getElementById('hurricaneStrengthValue').textContent = hurricaneStrength.toFixed(1);
-        };
+        });
 
-        document.getElementById('hurricaneSpeed').oninput = (e) => {
-            hurricaneSpeed = parseFloat(e.target.value);
+        syncInputs('hurricaneSpeed', 'hurricaneSpeedInput', (val) => {
+            hurricaneSpeed = parseFloat(val);
             document.getElementById('hurricaneSpeedValue').textContent = hurricaneSpeed.toFixed(1);
-        };
+        });
 
-        document.getElementById('hurricaneSize').oninput = (e) => {
-            hurricaneSize = parseInt(e.target.value);
+        syncInputs('hurricaneSize', 'hurricaneSizeInput', (val) => {
+            hurricaneSize = parseInt(val);
             document.getElementById('hurricaneSizeValue').textContent = hurricaneSize;
-        };
+        });
 
         document.getElementById('earthquakeEnabled').onchange = (e) => {
             earthquakeEnabled = e.target.value === 'on';
@@ -1517,20 +2570,20 @@
             earthquakeShake = { x: 0, y: 0 };
         };
 
-        document.getElementById('earthquakeIntensity').oninput = (e) => {
-            earthquakeIntensity = parseFloat(e.target.value);
+        syncInputs('earthquakeIntensity', 'earthquakeIntensityInput', (val) => {
+            earthquakeIntensity = parseFloat(val);
             document.getElementById('earthquakeIntensityValue').textContent = earthquakeIntensity.toFixed(1);
-        };
+        });
 
-        document.getElementById('earthquakeSpeed').oninput = (e) => {
-            earthquakeSpeed = parseFloat(e.target.value);
+        syncInputs('earthquakeSpeed', 'earthquakeSpeedInput', (val) => {
+            earthquakeSpeed = parseFloat(val);
             document.getElementById('earthquakeSpeedValue').textContent = earthquakeSpeed.toFixed(1);
-        };
+        });
 
-        document.getElementById('earthquakeRange').oninput = (e) => {
-            earthquakeRange = parseInt(e.target.value);
+        syncInputs('earthquakeRange', 'earthquakeRangeInput', (val) => {
+            earthquakeRange = parseInt(val);
             document.getElementById('earthquakeRangeValue').textContent = earthquakeRange;
-        };
+        });
 
         function togglePhysics() {
             physicsEnabled = !physicsEnabled;
@@ -1693,46 +2746,53 @@
         }
 
         function updateUIFromVariables() {
-            document.getElementById('size').value = particleSize;
-            document.getElementById('gravity').value = gravity;
-            document.getElementById('friction').value = friction;
-            document.getElementById('interaction').value = interactionForce;
-            document.getElementById('distance').value = connectionDistance;
-            document.getElementById('count').value = particleCount;
+            function syncValue(rangeId, inputId, value) {
+                const range = document.getElementById(rangeId);
+                const input = document.getElementById(inputId);
+                if (range) range.value = value;
+                if (input) input.value = value;
+            }
+
+            syncValue('size', 'sizeInput', particleSize);
+            syncValue('gravity', 'gravityInput', gravity);
+            syncValue('friction', 'frictionInput', friction);
+            syncValue('interaction', 'interactionInput', interactionForce);
+            syncValue('distance', 'distanceInput', connectionDistance);
+            syncValue('count', 'countInput', particleCount);
             document.getElementById('mode').value = mode;
-            document.getElementById('speed').value = speed;
-            document.getElementById('lifetime').value = lifetime;
-            document.getElementById('trail').value = trailLength;
-            document.getElementById('trailOpacity').value = trailOpacity;
-            document.getElementById('mouseForce').value = mouseForce;
+            syncValue('speed', 'speedInput', speed);
+            syncValue('lifetime', 'lifetimeInput', lifetime);
+            syncValue('trail', 'trailInput', trailLength);
+            syncValue('trailOpacity', 'trailOpacityInput', trailOpacity);
+            syncValue('mouseForce', 'mouseForceInput', mouseForce);
             document.getElementById('mapSelector').value = currentMap;
             document.getElementById('shape').value = particleShape;
-            document.getElementById('sizeVar').value = sizeVariation;
-            document.getElementById('windX').value = windX;
-            document.getElementById('windY').value = windY;
+            syncValue('sizeVar', 'sizeVarInput', sizeVariation);
+            syncValue('windX', 'windXInput', windX);
+            syncValue('windY', 'windYInput', windY);
             document.getElementById('collisions').value = collisionsEnabled ? 'on' : 'off';
-            document.getElementById('bounce').value = bounce;
+            syncValue('bounce', 'bounceInput', bounce);
             document.getElementById('emitter').value = emitterMode;
-            document.getElementById('emitRate').value = emitRate;
+            syncValue('emitRate', 'emitRateInput', emitRate);
             document.getElementById('colorMode').value = colorMode;
-            document.getElementById('magnetic').value = magneticField;
-            document.getElementById('vortex').value = vortexStrength;
-            document.getElementById('noise').value = noiseAmount;
+            syncValue('magnetic', 'magneticInput', magneticField);
+            syncValue('vortex', 'vortexInput', vortexStrength);
+            syncValue('noise', 'noiseInput', noiseAmount);
             document.getElementById('flocking').value = flockingEnabled ? 'on' : 'off';
             document.getElementById('sizeOverLife').value = sizeOverLife;
             document.getElementById('colorOverLife').value = colorOverLife;
             document.getElementById('blendMode').value = blendMode;
             document.getElementById('velocityViz').value = velocityViz ? 'on' : 'off';
-            document.getElementById('maxParticles').value = maxParticles;
+            syncValue('maxParticles', 'maxParticlesInput', maxParticles === Infinity ? 999999999 : maxParticles);
             document.getElementById('vhsMode').value = vhsMode ? 'on' : 'off';
-            document.getElementById('scanlines').value = scanlinesIntensity;
-            document.getElementById('chromatic').value = chromaticAberration;
-            document.getElementById('grain').value = filmGrain;
-            document.getElementById('tracking').value = vhsTracking;
-            document.getElementById('static').value = staticNoise;
-            document.getElementById('bleed').value = colorBleed;
-            document.getElementById('curvature').value = crtCurvature;
-            document.getElementById('glitch').value = vhsGlitch;
+            syncValue('scanlines', 'scanlinesInput', scanlinesIntensity);
+            syncValue('chromatic', 'chromaticInput', chromaticAberration);
+            syncValue('grain', 'grainInput', filmGrain);
+            syncValue('tracking', 'trackingInput', vhsTracking);
+            syncValue('static', 'staticInput', staticNoise);
+            syncValue('bleed', 'bleedInput', colorBleed);
+            syncValue('curvature', 'curvatureInput', crtCurvature);
+            syncValue('glitch', 'glitchInput', vhsGlitch);
             
             document.getElementById('sizeValue').textContent = particleSize;
             document.getElementById('gravityValue').textContent = gravity.toFixed(2);
@@ -1774,24 +2834,74 @@
             document.getElementById('bleedValue').textContent = colorBleed + '%';
             document.getElementById('curvatureValue').textContent = crtCurvature + '%';
             document.getElementById('glitchValue').textContent = vhsGlitch + '%';
+            document.getElementById('buildingMode').value = buildingMode ? 'on' : 'off';
+            document.getElementById('buildingModeValue').textContent = buildingMode ? 'ON' : 'OFF';
+            document.getElementById('blockType').value = selectedBlockType;
+            document.getElementById('selectedBlockValue').textContent = document.getElementById('blockType').options[document.getElementById('blockType').selectedIndex].text;
+            syncValue('blockSize', 'blockSizeInput', blockSize);
+            document.getElementById('blockSizeValue').textContent = blockSize;
+            document.getElementById('blockColorPicker').value = blockColor;
+            document.getElementById('blockColorValue').textContent = blockColor;
+            document.getElementById('snapToGrid').value = snapToGrid ? 'on' : 'off';
+            document.getElementById('snapToGridValue').textContent = snapToGrid ? 'ON' : 'OFF';
+            syncValue('gridSize', 'gridSizeInput', gridSize);
+            document.getElementById('gridSizeValue').textContent = gridSize;
+            document.getElementById('blockPhysics').value = blockPhysicsEnabled ? 'on' : 'off';
+            document.getElementById('blockPhysicsValue').textContent = blockPhysicsEnabled ? 'ON' : 'OFF';
+            document.getElementById('blockMaterial').value = blockMaterial;
+            document.getElementById('blockMaterialValue').textContent = document.getElementById('blockMaterial').options[document.getElementById('blockMaterial').selectedIndex].text;
+            document.getElementById('conveyorEnabled').value = conveyorEnabled ? 'on' : 'off';
+            document.getElementById('conveyorEnabledValue').textContent = conveyorEnabled ? 'ON' : 'OFF';
+            syncValue('conveyorSpeed', 'conveyorSpeedInput', conveyorSpeed);
+            document.getElementById('conveyorSpeedValue').textContent = conveyorSpeed.toFixed(1);
+            document.getElementById('conveyorDirection').value = conveyorDirection;
+            document.getElementById('conveyorDirectionValue').textContent = document.getElementById('conveyorDirection').options[document.getElementById('conveyorDirection').selectedIndex].text;
+            document.getElementById('pixelation').value = pixelation;
+            document.getElementById('pixelationValue').textContent = pixelation === 'off' ? 'OFF' : pixelation + '-bit';
+            syncValue('pixelSize', 'pixelSizeInput', pixelSize);
+            document.getElementById('pixelSizeValue').textContent = pixelSize;
+            document.getElementById('gravWavesEnabled').value = gravWavesEnabled ? 'on' : 'off';
+            document.getElementById('gravWavesEnabledValue').textContent = gravWavesEnabled ? 'ON' : 'OFF';
+            syncValue('blackHoleCount', 'blackHoleCountInput', blackHoleCount);
+            document.getElementById('blackHoleCountValue').textContent = blackHoleCount;
+            syncValue('blackHoleStrength', 'blackHoleStrengthInput', blackHoleStrength);
+            document.getElementById('blackHoleStrengthValue').textContent = blackHoleStrength.toFixed(1);
+            syncValue('eventHorizonSize', 'eventHorizonSizeInput', eventHorizonSize);
+            document.getElementById('eventHorizonSizeValue').textContent = eventHorizonSize;
+            syncValue('waveIntensity', 'waveIntensityInput', waveIntensity);
+            document.getElementById('waveIntensityValue').textContent = waveIntensity.toFixed(1);
             document.getElementById('tornadoEnabled').value = tornadoEnabled ? 'on' : 'off';
-            document.getElementById('tornadoStrength').value = tornadoStrength;
-            document.getElementById('tornadoSpeed').value = tornadoSpeed;
-            document.getElementById('tornadoSize').value = tornadoSize;
+            syncValue('tornadoStrength', 'tornadoStrengthInput', tornadoStrength);
+            syncValue('tornadoSpeed', 'tornadoSpeedInput', tornadoSpeed);
+            syncValue('tornadoSize', 'tornadoSizeInput', tornadoSize);
             document.getElementById('tsunamiEnabled').value = tsunamiEnabled ? 'on' : 'off';
-            document.getElementById('tsunamiStrength').value = tsunamiStrength;
+            syncValue('tsunamiStrength', 'tsunamiStrengthInput', tsunamiStrength);
+            syncValue('tsunamiSpeed', 'tsunamiSpeedInput', tsunamiSpeed);
+            syncValue('tsunamiSize', 'tsunamiSizeInput', tsunamiSize);
             document.getElementById('volcanoEnabled').value = volcanoEnabled ? 'on' : 'off';
-            document.getElementById('volcanoIntensity').value = volcanoIntensity;
+            syncValue('volcanoIntensity', 'volcanoIntensityInput', volcanoIntensity);
+            syncValue('volcanoSpeed', 'volcanoSpeedInput', volcanoSpeed);
+            syncValue('volcanoSize', 'volcanoSizeInput', volcanoSize);
             document.getElementById('thunderEnabled').value = thunderEnabled ? 'on' : 'off';
-            document.getElementById('thunderFreq').value = thunderFreq;
+            syncValue('thunderFreq', 'thunderFreqInput', thunderFreq);
+            syncValue('thunderStrength', 'thunderStrengthInput', thunderStrength);
+            syncValue('thunderSize', 'thunderSizeInput', thunderSize);
             document.getElementById('rainEnabled').value = rainEnabled ? 'on' : 'off';
-            document.getElementById('rainIntensity').value = rainIntensity;
+            syncValue('rainIntensity', 'rainIntensityInput', rainIntensity);
+            syncValue('rainSpeed', 'rainSpeedInput', rainSpeed);
+            syncValue('rainSize', 'rainSizeInput', rainSize);
             document.getElementById('snowEnabled').value = snowEnabled ? 'on' : 'off';
-            document.getElementById('snowIntensity').value = snowIntensity;
+            syncValue('snowIntensity', 'snowIntensityInput', snowIntensity);
+            syncValue('snowSpeed', 'snowSpeedInput', snowSpeed);
+            syncValue('snowSize', 'snowSizeInput', snowSize);
             document.getElementById('hurricaneEnabled').value = hurricaneEnabled ? 'on' : 'off';
-            document.getElementById('hurricaneStrength').value = hurricaneStrength;
+            syncValue('hurricaneStrength', 'hurricaneStrengthInput', hurricaneStrength);
+            syncValue('hurricaneSpeed', 'hurricaneSpeedInput', hurricaneSpeed);
+            syncValue('hurricaneSize', 'hurricaneSizeInput', hurricaneSize);
             document.getElementById('earthquakeEnabled').value = earthquakeEnabled ? 'on' : 'off';
-            document.getElementById('earthquakeIntensity').value = earthquakeIntensity;
+            syncValue('earthquakeIntensity', 'earthquakeIntensityInput', earthquakeIntensity);
+            syncValue('earthquakeSpeed', 'earthquakeSpeedInput', earthquakeSpeed);
+            syncValue('earthquakeRange', 'earthquakeRangeInput', earthquakeRange);
             
             document.getElementById('tornadoEnabledValue').textContent = tornadoEnabled ? 'ON' : 'OFF';
             document.getElementById('tornadoStrengthValue').textContent = tornadoStrength.toFixed(1);
@@ -1857,6 +2967,28 @@
             colorBleed = 0;
             crtCurvature = 0;
             vhsGlitch = 0;
+            pixelation = 'off';
+            pixelSize = 4;
+            buildingMode = false;
+            selectedBlockType = 'square';
+            blockSize = 30;
+            blockColor = '#4a9eff';
+            snapToGrid = true;
+            gridSize = 20;
+            placedBlocks = [];
+            blockPhysicsEnabled = false;
+            blockMaterial = 'solid';
+            conveyorEnabled = false;
+            conveyorSpeed = 2.0;
+            conveyorDirection = 'right';
+            conveyors = [];
+            ragdolls = [];
+            gravWavesEnabled = false;
+            blackHoleCount = 3;
+            blackHoleStrength = 50;
+            eventHorizonSize = 30;
+            waveIntensity = 5;
+            blackHoles = [];
             tornadoEnabled = false;
             tornadoStrength = 5.0;
             tornadoSpeed = 2.0;
@@ -2803,8 +3935,37 @@
                 mouseDown = true;
                 mouseX = e.clientX;
                 mouseY = e.clientY;
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
                 
-                if (mode === 'click' || mode === 'explosion' || mode === 'fountain' || mode === 'spiral' || mode === 'rain') {
+                const part = getRagdollPartAt(mouseX, mouseY);
+                if (part) {
+                    grabbedRagdollPart = part;
+                    grabOffsetX = mouseX - part.x;
+                    grabOffsetY = mouseY - part.y;
+                    part.vx = 0;
+                    part.vy = 0;
+                    if (part.angularVelocity !== undefined) {
+                        part.angularVelocity = 0;
+                    }
+                } else if (conveyorEnabled && buildingMode && !mouseDown) {
+                    let placeX = mouseX;
+                    let placeY = mouseY;
+                    if (snapToGrid) {
+                        placeX = Math.round(mouseX / gridSize) * gridSize;
+                        placeY = Math.round(mouseY / gridSize) * gridSize;
+                    }
+                    conveyors.push({
+                        x: placeX,
+                        y: placeY,
+                        width: 200,
+                        height: 40,
+                        direction: conveyorDirection,
+                        speed: conveyorSpeed
+                    });
+                } else if (buildingMode && !conveyorEnabled) {
+                    placeBlock(mouseX, mouseY);
+                } else if (mode === 'click' || mode === 'explosion' || mode === 'fountain' || mode === 'spiral' || mode === 'rain') {
                     spawnParticles(mouseX, mouseY, particleCount, mode);
                 }
             } else if (e.button === 2) {
@@ -2819,10 +3980,24 @@
         });
 
         canvas.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            const newMouseX = e.clientX;
+            const newMouseY = e.clientY;
             
-            if (mouseDown && mode === 'click') {
+            if (grabbedRagdollPart) {
+                grabbedRagdollPart.x = newMouseX - grabOffsetX;
+                grabbedRagdollPart.y = newMouseY - grabOffsetY;
+                grabbedRagdollPart.vx = (newMouseX - lastMouseX) * 0.5;
+                grabbedRagdollPart.vy = (newMouseY - lastMouseY) * 0.5;
+            }
+            
+            mouseX = newMouseX;
+            mouseY = newMouseY;
+            lastMouseX = newMouseX;
+            lastMouseY = newMouseY;
+            
+            if (buildingMode && mouseDown && !grabbedRagdollPart) {
+                placeBlock(mouseX, mouseY);
+            } else if (mouseDown && mode === 'click' && !grabbedRagdollPart) {
                 if (devMode || particles.length < maxParticles) {
                     spawnParticles(mouseX, mouseY, 1, 'click');
                 }
@@ -2830,7 +4005,24 @@
         });
 
         canvas.addEventListener('mouseup', (e) => {
-            if (e.button === 0) mouseDown = false;
+            if (e.button === 0) {
+                if (grabbedRagdollPart) {
+                    const throwSpeed = 1.2;
+                    const dx = mouseX - lastMouseX;
+                    const dy = mouseY - lastMouseY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const speed = Math.min(dist * 0.1, 15);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    grabbedRagdollPart.vx = Math.cos(angle) * speed * throwSpeed;
+                    grabbedRagdollPart.vy = Math.sin(angle) * speed * throwSpeed;
+                    if (grabbedRagdollPart.angularVelocity !== undefined) {
+                        grabbedRagdollPart.angularVelocity = (Math.random() - 0.5) * 0.3;
+                    }
+                    grabbedRagdollPart = null;
+                }
+                mouseDown = false;
+            }
             if (e.button === 2) rightMouseDown = false;
             if (e.button === 1) middleMouseDown = false;
         });
@@ -3002,7 +4194,7 @@
         function applyVHSEffects() {
             if (!vhsMode && scanlinesIntensity === 0 && chromaticAberration === 0 && 
                 filmGrain === 0 && vhsTracking === 0 && staticNoise === 0 && 
-                colorBleed === 0 && crtCurvature === 0 && vhsGlitch === 0) {
+                colorBleed === 0 && crtCurvature === 0 && vhsGlitch === 0 && pixelation === 'off') {
                 return;
             }
 
@@ -3018,7 +4210,7 @@
             glitchTimer++;
 
             if (chromaticAberration > 0) {
-                const offset = chromaticAberration * 2;
+                const offset = chromaticAberration * 4;
                 const rData = new Uint8ClampedArray(data);
                 const gData = new Uint8ClampedArray(data);
                 const bData = new Uint8ClampedArray(data);
@@ -3043,7 +4235,7 @@
             }
 
             if (colorBleed > 0) {
-                const bleedAmount = colorBleed * 0.01;
+                const bleedAmount = colorBleed * 0.03;
                 for (let y = 0; y < height; y++) {
                     for (let x = 1; x < width; x++) {
                         const idx = (y * width + x) * 4;
@@ -3054,7 +4246,7 @@
             }
 
             if (filmGrain > 0) {
-                const grainAmount = filmGrain * 2.55;
+                const grainAmount = filmGrain * 5;
                 for (let i = 0; i < data.length; i += 4) {
                     const noise = (Math.random() - 0.5) * grainAmount;
                     data[i] = Math.max(0, Math.min(255, data[i] + noise));
@@ -3064,7 +4256,7 @@
             }
 
             if (staticNoise > 0) {
-                const staticAmount = staticNoise * 0.01;
+                const staticAmount = staticNoise * 0.03;
                 for (let i = 0; i < data.length; i += 4) {
                     if (Math.random() < staticAmount) {
                         const val = Math.random() * 255;
@@ -3075,10 +4267,10 @@
                 }
             }
 
-            if (vhsGlitch > 0 && Math.random() < vhsGlitch * 0.01) {
-                const glitchHeight = Math.random() * 20 + 5;
+            if (vhsGlitch > 0 && Math.random() < vhsGlitch * 0.02) {
+                const glitchHeight = Math.random() * 40 + 10;
                 const glitchY = Math.random() * (height - glitchHeight);
-                const glitchOffset = (Math.random() - 0.5) * 30;
+                const glitchOffset = (Math.random() - 0.5) * 60;
                 for (let y = glitchY; y < Math.min(height, glitchY + glitchHeight); y++) {
                     for (let x = 0; x < width; x++) {
                         const srcX = Math.max(0, Math.min(width - 1, x + glitchOffset));
@@ -3097,18 +4289,18 @@
             ctx.drawImage(vhsCanvas, 0, 0);
 
             if (scanlinesIntensity > 0) {
-                ctx.fillStyle = `rgba(0, 0, 0, ${scanlinesIntensity * 0.01})`;
+                ctx.fillStyle = `rgba(0, 0, 0, ${scanlinesIntensity * 0.02})`;
                 for (let y = 0; y < height; y += 2) {
                     ctx.fillRect(0, y, width, 1);
                 }
             }
 
             if (vhsTracking > 0) {
-                const trackingLines = Math.floor(vhsTracking * 0.1);
+                const trackingLines = Math.floor(vhsTracking * 0.2);
                 for (let i = 0; i < trackingLines; i++) {
                     const y = (glitchTimer * 0.5 + i * 50) % height;
-                    ctx.strokeStyle = `rgba(255, 0, 0, ${vhsTracking * 0.01})`;
-                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = `rgba(255, 0, 0, ${vhsTracking * 0.02})`;
+                    ctx.lineWidth = 2;
                     ctx.beginPath();
                     ctx.moveTo(0, y);
                     ctx.lineTo(width, y);
@@ -3163,6 +4355,39 @@
                 
                 ctx.restore();
             }
+
+            if (pixelation !== 'off') {
+                const pixelCanvas = document.createElement('canvas');
+                const pixelCtx = pixelCanvas.getContext('2d');
+                pixelCanvas.width = Math.floor(width / pixelSize);
+                pixelCanvas.height = Math.floor(height / pixelSize);
+                
+                pixelCtx.drawImage(vhsCanvas, 0, 0, pixelCanvas.width, pixelCanvas.height);
+                
+                const pixelImageData = pixelCtx.getImageData(0, 0, pixelCanvas.width, pixelCanvas.height);
+                const pixelData = pixelImageData.data;
+                
+                const bits = parseInt(pixelation);
+                const levels = Math.pow(2, bits);
+                const step = 255 / (levels - 1);
+                
+                for (let i = 0; i < pixelData.length; i += 4) {
+                    const r = Math.floor(pixelData[i] / step) * step;
+                    const g = Math.floor(pixelData[i + 1] / step) * step;
+                    const b = Math.floor(pixelData[i + 2] / step) * step;
+                    
+                    pixelData[i] = r;
+                    pixelData[i + 1] = g;
+                    pixelData[i + 2] = b;
+                }
+                
+                pixelCtx.putImageData(pixelImageData, 0, 0);
+                
+                ctx.clearRect(0, 0, width, height);
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(pixelCanvas, 0, 0, width, height);
+                ctx.imageSmoothingEnabled = true;
+            }
         }
 
         function animate(currentTime) {
@@ -3181,6 +4406,10 @@
             }
 
             ctx.globalCompositeOperation = 'source-over';
+            
+            if (buildingMode) {
+                drawGrid();
+            }
             
             if (currentMap === 'space') {
                 const spaceGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -3858,6 +5087,270 @@
                 particles = particles.slice(-maxParticles);
             }
 
+            if (blockPhysicsEnabled) {
+                placedBlocks.forEach((block, index) => {
+                    block.vy += gravity * 0.5;
+                    block.vx *= friction;
+                    block.vy *= friction;
+                    block.angularVelocity *= 0.98;
+                    
+                    block.x += block.vx;
+                    block.y += block.vy;
+                    block.rotation += block.angularVelocity;
+                    
+                    if (block.y + block.size / 2 > canvas.height) {
+                        block.y = canvas.height - block.size / 2;
+                        block.vy *= -0.6;
+                        block.vx *= 0.8;
+                        if (block.material === 'breakable') {
+                            block.health -= 5;
+                        }
+                    }
+                    
+                    if (block.x - block.size / 2 < 0) {
+                        block.x = block.size / 2;
+                        block.vx *= -0.6;
+                    }
+                    if (block.x + block.size / 2 > canvas.width) {
+                        block.x = canvas.width - block.size / 2;
+                        block.vx *= -0.6;
+                    }
+                    
+                    for (let i = index + 1; i < placedBlocks.length; i++) {
+                        const other = placedBlocks[i];
+                        const dx = block.x - other.x;
+                        const dy = block.y - other.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const minDist = (block.size + other.size) / 2;
+                        
+                        if (dist < minDist && dist > 0) {
+                            const overlap = minDist - dist;
+                            const angle = Math.atan2(dy, dx);
+                            const moveX = Math.cos(angle) * overlap * 0.5;
+                            const moveY = Math.sin(angle) * overlap * 0.5;
+                            
+                            block.x += moveX;
+                            block.y += moveY;
+                            other.x -= moveX;
+                            other.y -= moveY;
+                            
+                            const relativeVx = block.vx - other.vx;
+                            const relativeVy = block.vy - other.vy;
+                            const separationVx = Math.cos(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
+                            const separationVy = Math.sin(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
+                            
+                            block.vx -= separationVx * 0.3;
+                            block.vy -= separationVy * 0.3;
+                            other.vx += separationVx * 0.3;
+                            other.vy += separationVy * 0.3;
+                            
+                            if (block.material === 'breakable') {
+                                block.health -= 2;
+                            }
+                            if (other.material === 'breakable') {
+                                other.health -= 2;
+                            }
+                        }
+                    }
+                    
+                    conveyors.forEach(conveyor => {
+                        const cx = conveyor.x + conveyor.width / 2;
+                        const cy = conveyor.y + conveyor.height / 2;
+                        const distX = Math.abs(block.x - cx);
+                        const distY = Math.abs(block.y - cy);
+                        
+                        let isOnConveyor = false;
+                        if (conveyor.direction === 'right' || conveyor.direction === 'left') {
+                            isOnConveyor = distX < conveyor.width / 2 && distY < conveyor.height / 2 + block.size / 2;
+                        } else {
+                            isOnConveyor = distX < conveyor.width / 2 + block.size / 2 && distY < conveyor.height / 2;
+                        }
+                        
+                        if (isOnConveyor) {
+                            let pushX = 0, pushY = 0;
+                            switch(conveyor.direction) {
+                                case 'right':
+                                    pushX = conveyor.speed;
+                                    break;
+                                case 'left':
+                                    pushX = -conveyor.speed;
+                                    break;
+                                case 'up':
+                                    pushY = -conveyor.speed;
+                                    break;
+                                case 'down':
+                                    pushY = conveyor.speed;
+                                    break;
+                            }
+                            block.vx += pushX * 0.1;
+                            block.vy += pushY * 0.1;
+                        }
+                    });
+                });
+                
+                placedBlocks = placedBlocks.filter(block => block.health > 0);
+            }
+
+            ragdolls.forEach(ragdoll => {
+                ragdoll.parts.forEach(part => {
+                    if (part !== grabbedRagdollPart) {
+                        part.vy += gravity * 0.5;
+                        part.vx *= 0.985;
+                        part.vy *= 0.985;
+                        if (part.angularVelocity !== undefined) {
+                            part.angularVelocity *= 0.98;
+                            part.rotation += part.angularVelocity;
+                        }
+                        
+                        part.x += part.vx;
+                        part.y += part.vy;
+                    }
+                    
+                    if (part.type === 'head') {
+                        if (part.y + part.radius > canvas.height) {
+                            part.y = canvas.height - part.radius;
+                            part.vy *= -0.4;
+                            part.vx *= 0.8;
+                        }
+                        if (part.x - part.radius < 0) {
+                            part.x = part.radius;
+                            part.vx *= -0.4;
+                        }
+                        if (part.x + part.radius > canvas.width) {
+                            part.x = canvas.width - part.radius;
+                            part.vx *= -0.4;
+                        }
+                    } else {
+                        const cos = Math.cos(part.rotation || 0);
+                        const sin = Math.sin(part.rotation || 0);
+                        const halfW = part.width / 2;
+                        const halfH = part.height / 2;
+                        
+                        const corners = [
+                            { x: -halfW, y: -halfH },
+                            { x: halfW, y: -halfH },
+                            { x: halfW, y: halfH },
+                            { x: -halfW, y: halfH }
+                        ].map(c => ({
+                            x: part.x + c.x * cos - c.y * sin,
+                            y: part.y + c.x * sin + c.y * cos
+                        }));
+                        
+                        let minY = Math.min(...corners.map(c => c.y));
+                        let maxY = Math.max(...corners.map(c => c.y));
+                        let minX = Math.min(...corners.map(c => c.x));
+                        let maxX = Math.max(...corners.map(c => c.x));
+                        
+                        if (maxY > canvas.height) {
+                            const overlap = maxY - canvas.height;
+                            part.y -= overlap;
+                            part.vy *= -0.4;
+                            part.vx *= 0.8;
+                        }
+                        if (minX < 0) {
+                            const overlap = -minX;
+                            part.x += overlap;
+                            part.vx *= -0.4;
+                        }
+                        if (maxX > canvas.width) {
+                            const overlap = maxX - canvas.width;
+                            part.x -= overlap;
+                            part.vx *= -0.4;
+                        }
+                    }
+                });
+                
+                for (let iter = 0; iter < 5; iter++) {
+                    ragdoll.joints.forEach(joint => {
+                        const p1 = joint.part1;
+                        const p2 = joint.part2;
+                        const maxDist = joint.maxDist || 5;
+                        
+                        let p1X = p1.x, p1Y = p1.y;
+                        let p2X = p2.x, p2Y = p2.y;
+                        
+                        if (p1.type === 'head') {
+                            p1X += joint.offset1.x;
+                            p1Y += joint.offset1.y;
+                        } else {
+                            const cos1 = Math.cos(p1.rotation || 0);
+                            const sin1 = Math.sin(p1.rotation || 0);
+                            p1X += joint.offset1.x * cos1 - joint.offset1.y * sin1;
+                            p1Y += joint.offset1.x * sin1 + joint.offset1.y * cos1;
+                        }
+                        
+                        if (p2.type === 'head') {
+                            p2X += joint.offset2.x;
+                            p2Y += joint.offset2.y;
+                        } else {
+                            const cos2 = Math.cos(p2.rotation || 0);
+                            const sin2 = Math.sin(p2.rotation || 0);
+                            p2X += joint.offset2.x * cos2 - joint.offset2.y * sin2;
+                            p2Y += joint.offset2.x * sin2 + joint.offset2.y * cos2;
+                        }
+                        
+                        const dx = p2X - p1X;
+                        const dy = p2Y - p1Y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist > maxDist) {
+                            const stiffness = joint.stiffness || 0.5;
+                            const angle = Math.atan2(dy, dx);
+                            const moveX = Math.cos(angle) * (dist - maxDist) * stiffness;
+                            const moveY = Math.sin(angle) * (dist - maxDist) * stiffness;
+                            
+                            const totalMass = (p1.mass || 1) + (p2.mass || 1);
+                            const p1Ratio = (p2.mass || 1) / totalMass;
+                            const p2Ratio = (p1.mass || 1) / totalMass;
+                            
+                            if (p1 !== grabbedRagdollPart) {
+                                p1.x += moveX * p1Ratio;
+                                p1.y += moveY * p1Ratio;
+                            }
+                            if (p2 !== grabbedRagdollPart) {
+                                p2.x -= moveX * p2Ratio;
+                                p2.y -= moveY * p2Ratio;
+                            }
+                        }
+                    });
+                }
+            });
+
+            if (gravWavesEnabled) {
+                blackHoles.forEach(blackHole => {
+                    blackHole.x += blackHole.vx;
+                    blackHole.y += blackHole.vy;
+                    blackHole.rotation += 0.02;
+                    
+                    if (blackHole.x < 0 || blackHole.x > canvas.width) blackHole.vx *= -1;
+                    if (blackHole.y < 0 || blackHole.y > canvas.height) blackHole.vy *= -1;
+                    
+                    blackHole.x = Math.max(0, Math.min(canvas.width, blackHole.x));
+                    blackHole.y = Math.max(0, Math.min(canvas.height, blackHole.y));
+                });
+                
+                particles.forEach(particle => {
+                    blackHoles.forEach(blackHole => {
+                        const dx = blackHole.x - particle.x;
+                        const dy = blackHole.y - particle.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const minDist = 5;
+                        
+                        if (dist < minDist) {
+                            particle.x = blackHole.x + (Math.random() - 0.5) * 10;
+                            particle.y = blackHole.y + (Math.random() - 0.5) * 10;
+                            particle.vx = (Math.random() - 0.5) * 2;
+                            particle.vy = (Math.random() - 0.5) * 2;
+                        } else if (dist < eventHorizonSize * 3) {
+                            const force = blackHoleStrength / (dist * dist + 1);
+                            const angle = Math.atan2(dy, dx);
+                            particle.vx += Math.cos(angle) * force * 0.1;
+                            particle.vy += Math.sin(angle) * force * 0.1;
+                        }
+                    });
+                });
+            }
+
             particles.forEach(particle => {
                 particle.update();
             });
@@ -3907,6 +5400,149 @@
 
             if (earthquakeEnabled) {
                 updateEarthquake();
+            }
+
+            conveyors.forEach(conveyor => {
+                drawConveyor(conveyor);
+            });
+
+            if (buildingMode) {
+                placedBlocks.forEach(block => {
+                    drawBlock(block);
+                });
+                
+                let previewX = mouseX;
+                let previewY = mouseY;
+                
+                if (snapToGrid) {
+                    previewX = Math.round(mouseX / gridSize) * gridSize;
+                    previewY = Math.round(mouseY / gridSize) * gridSize;
+                }
+                
+                ctx.globalAlpha = 0.5;
+                ctx.fillStyle = blockColor;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 2;
+                
+                switch(selectedBlockType) {
+                    case 'square':
+                        ctx.fillRect(previewX - blockSize / 2, previewY - blockSize / 2, blockSize, blockSize);
+                        ctx.strokeRect(previewX - blockSize / 2, previewY - blockSize / 2, blockSize, blockSize);
+                        break;
+                    case 'rectangle':
+                        ctx.fillRect(previewX - blockSize / 2, previewY - blockSize / 3, blockSize, blockSize * 0.67);
+                        ctx.strokeRect(previewX - blockSize / 2, previewY - blockSize / 3, blockSize, blockSize * 0.67);
+                        break;
+                    case 'circle':
+                        ctx.beginPath();
+                        ctx.arc(previewX, previewY, blockSize / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'triangle':
+                        ctx.beginPath();
+                        ctx.moveTo(previewX, previewY - blockSize / 2);
+                        ctx.lineTo(previewX - blockSize / 2, previewY + blockSize / 2);
+                        ctx.lineTo(previewX + blockSize / 2, previewY + blockSize / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'hexagon':
+                        ctx.beginPath();
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (Math.PI / 3) * i;
+                            const hx = previewX + (blockSize / 2) * Math.cos(angle);
+                            const hy = previewY + (blockSize / 2) * Math.sin(angle);
+                            if (i === 0) ctx.moveTo(hx, hy);
+                            else ctx.lineTo(hx, hy);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'star':
+                        ctx.beginPath();
+                        const spikes = 5;
+                        const outerRadius = blockSize / 2;
+                        const innerRadius = outerRadius * 0.4;
+                        for (let i = 0; i < spikes * 2; i++) {
+                            const angle = (Math.PI / spikes) * i;
+                            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                            const sx = previewX + radius * Math.cos(angle - Math.PI / 2);
+                            const sy = previewY + radius * Math.sin(angle - Math.PI / 2);
+                            if (i === 0) ctx.moveTo(sx, sy);
+                            else ctx.lineTo(sx, sy);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                }
+                
+                ctx.globalAlpha = 1;
+            }
+
+            ragdolls.forEach(ragdoll => {
+                drawRagdoll(ragdoll);
+            });
+
+            if (gravWavesEnabled) {
+                blackHoles.forEach((blackHole, index) => {
+                    const time = Date.now() * 0.001;
+                    
+                    for (let wave = 0; wave < 5; wave++) {
+                        const waveRadius = eventHorizonSize + wave * 15 + Math.sin(time * 2 + wave + index) * waveIntensity;
+                        const opacity = (1 - wave * 0.15) * (0.3 + Math.sin(time * 3 + wave) * 0.2);
+                        
+                        ctx.strokeStyle = `rgba(100, 150, 255, ${opacity})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(blackHole.x, blackHole.y, waveRadius, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                    
+                    const accretionGradient = ctx.createRadialGradient(
+                        blackHole.x, blackHole.y, 0,
+                        blackHole.x, blackHole.y, eventHorizonSize * 1.5
+                    );
+                    accretionGradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
+                    accretionGradient.addColorStop(0.7, 'rgba(50, 0, 100, 0.6)');
+                    accretionGradient.addColorStop(1, 'rgba(100, 50, 150, 0)');
+                    
+                    ctx.fillStyle = accretionGradient;
+                    ctx.beginPath();
+                    ctx.arc(blackHole.x, blackHole.y, eventHorizonSize * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.95)';
+                    ctx.beginPath();
+                    ctx.arc(blackHole.x, blackHole.y, eventHorizonSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = 'rgba(150, 100, 255, 0.8)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(blackHole.x, blackHole.y, eventHorizonSize, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    const ringGradient = ctx.createRadialGradient(
+                        blackHole.x, blackHole.y, eventHorizonSize * 0.8,
+                        blackHole.x, blackHole.y, eventHorizonSize * 1.2
+                    );
+                    ringGradient.addColorStop(0, 'rgba(200, 150, 255, 0)');
+                    ringGradient.addColorStop(0.5, 'rgba(150, 100, 255, 0.4)');
+                    ringGradient.addColorStop(1, 'rgba(100, 50, 200, 0)');
+                    
+                    ctx.save();
+                    ctx.translate(blackHole.x, blackHole.y);
+                    ctx.rotate(blackHole.rotation);
+                    ctx.fillStyle = ringGradient;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, eventHorizonSize * 1.2, eventHorizonSize * 0.3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
             }
 
             ctx.globalAlpha = 1;
@@ -4491,6 +6127,10 @@
             window.whiteCorners = null;
             window.greenPatterns = null;
             window.greenGrid = null;
+            
+            if (gravWavesEnabled) {
+                initializeBlackHoles();
+            }
         });
     </script>
 </body>
