@@ -69,7 +69,7 @@ An advanced interactive particle physics sandbox built with HTML5 Canvas and Jav
 
 ## Usage
 
-1. Open `particle-sandbox.html` in a modern web browser
+1. Open `index.html` in a modern web browser
 2. Use the control panel on the left to adjust settings
 3. Click and drag to spawn particles
 4. Right-click to repel particles
