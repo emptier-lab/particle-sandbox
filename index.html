@@ -409,6 +409,24 @@
         </div>
         
         <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">Map</div>
+            <div class="section-content">
+            <div class="control-group">
+                <label>Map: <span class="value-display" id="mapValue">Void</span></label>
+                <select id="mapSelector">
+                    <option value="void">Void</option>
+                    <option value="earth">Earth</option>
+                    <option value="space">Space</option>
+                    <option value="moon">Moon</option>
+                    <option value="mars">Mars</option>
+                    <option value="white">White Room</option>
+                    <option value="green">Green Room</option>
+                </select>
+            </div>
+            </div>
+        </div>
+        
+        <div class="section">
             <div class="section-title" onclick="toggleSection(this)">Spawn</div>
             <div class="section-content">
             <div class="control-group">
@@ -497,14 +515,6 @@
             <div class="control-group">
                 <label>Trail Opacity: <span class="value-display" id="trailOpacityValue">0.3</span></label>
                 <input type="range" id="trailOpacity" min="0" max="1" step="0.05" value="0.3">
-            </div>
-            <div class="control-group">
-                <label>Background: <span class="value-display" id="bgValue">Dark</span></label>
-                <select id="background">
-                    <option value="dark">Dark</option>
-                    <option value="black">Black</option>
-                    <option value="gray">Gray</option>
-                </select>
             </div>
             </div>
         </div>
@@ -946,6 +956,7 @@
         let trailOpacity = 0.3;
         let mouseForce = 1.0;
         let backgroundMode = 'dark';
+        let currentMap = 'void';
         let lastTime = performance.now();
         let fps = 60;
         let frameCount = 0;
@@ -1175,6 +1186,12 @@
         document.getElementById('background').onchange = (e) => {
             backgroundMode = e.target.value;
             document.getElementById('bgValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('mapSelector').onchange = (e) => {
+            currentMap = e.target.value;
+            document.getElementById('mapValue').textContent = e.target.options[e.target.selectedIndex].text;
+            switchMap(currentMap);
         };
 
         document.getElementById('shape').onchange = (e) => {
@@ -1694,6 +1711,7 @@
             document.getElementById('trailOpacity').value = trailOpacity;
             document.getElementById('mouseForce').value = mouseForce;
             document.getElementById('background').value = backgroundMode;
+            document.getElementById('mapSelector').value = currentMap;
             document.getElementById('shape').value = particleShape;
             document.getElementById('sizeVar').value = sizeVariation;
             document.getElementById('windX').value = windX;
@@ -1735,6 +1753,7 @@
             document.getElementById('trailOpacityValue').textContent = trailOpacity.toFixed(2);
             document.getElementById('mouseForceValue').textContent = mouseForce.toFixed(1);
             document.getElementById('bgValue').textContent = document.getElementById('background').options[document.getElementById('background').selectedIndex].text;
+            document.getElementById('mapValue').textContent = document.getElementById('mapSelector').options[document.getElementById('mapSelector').selectedIndex].text;
             document.getElementById('shapeValue').textContent = document.getElementById('shape').options[document.getElementById('shape').selectedIndex].text;
             document.getElementById('sizeVarValue').textContent = sizeVariation + '%';
             document.getElementById('windXValue').textContent = windX.toFixed(1);
@@ -1817,6 +1836,7 @@
             trailOpacity = 0.3;
             mouseForce = 1.0;
             backgroundMode = 'dark';
+            currentMap = 'void';
             particleShape = 'circle';
             sizeVariation = 50;
             windX = 0;
@@ -2695,11 +2715,96 @@
         }
 
         function getBackgroundColor() {
-            switch(backgroundMode) {
-                case 'black': return 'rgba(0, 0, 0, 0.2)';
-                case 'gray': return 'rgba(30, 30, 30, 0.15)';
-                default: return 'rgba(10, 10, 10, 0.15)';
+            if (currentMap === 'space') {
+                return 'rgba(5, 5, 15, 0.1)';
+            } else if (currentMap === 'moon') {
+                return 'rgba(40, 40, 50, 0.15)';
+            } else if (currentMap === 'mars') {
+                return 'rgba(60, 30, 20, 0.15)';
+            } else {
+                switch(backgroundMode) {
+                    case 'black': return 'rgba(0, 0, 0, 0.2)';
+                    case 'gray': return 'rgba(30, 30, 30, 0.15)';
+                    default: return 'rgba(10, 10, 10, 0.15)';
+                }
             }
+        }
+
+        function switchMap(map) {
+            window.spaceStars = null;
+            window.moonStars = null;
+            window.moonCraters = null;
+            window.marsRocks = null;
+            window.earthTerrain = null;
+            window.voidParticles = null;
+            
+            if (map === 'space') {
+                gravity = 0;
+                backgroundMode = 'dark';
+                currentColor = '#4a9eff';
+                document.getElementById('gravity').value = 0;
+                document.getElementById('gravityValue').textContent = '0.00';
+                document.getElementById('background').value = 'dark';
+                document.getElementById('bgValue').textContent = 'Dark';
+            } else if (map === 'moon') {
+                gravity = 0.16;
+                backgroundMode = 'gray';
+                currentColor = '#c0c0c0';
+                document.getElementById('gravity').value = 0.16;
+                document.getElementById('gravityValue').textContent = '0.16';
+                document.getElementById('background').value = 'gray';
+                document.getElementById('bgValue').textContent = 'Gray';
+            } else if (map === 'mars') {
+                gravity = 0.38;
+                backgroundMode = 'dark';
+                currentColor = '#cd5c5c';
+                document.getElementById('gravity').value = 0.38;
+                document.getElementById('gravityValue').textContent = '0.38';
+                document.getElementById('background').value = 'dark';
+                document.getElementById('bgValue').textContent = 'Dark';
+            } else if (map === 'void') {
+                gravity = 0;
+                backgroundMode = 'black';
+                currentColor = '#ffffff';
+                document.getElementById('gravity').value = 0;
+                document.getElementById('gravityValue').textContent = '0.00';
+                document.getElementById('background').value = 'black';
+                document.getElementById('bgValue').textContent = 'Black';
+            } else if (map === 'white') {
+                gravity = 0.1;
+                backgroundMode = 'gray';
+                currentColor = '#000000';
+                document.getElementById('gravity').value = 0.1;
+                document.getElementById('gravityValue').textContent = '0.10';
+                document.getElementById('background').value = 'gray';
+                document.getElementById('bgValue').textContent = 'Gray';
+            } else if (map === 'green') {
+                gravity = 0.1;
+                backgroundMode = 'dark';
+                currentColor = '#00ff00';
+                document.getElementById('gravity').value = 0.1;
+                document.getElementById('gravityValue').textContent = '0.10';
+                document.getElementById('background').value = 'dark';
+                document.getElementById('bgValue').textContent = 'Dark';
+            } else {
+                gravity = 0.1;
+                backgroundMode = 'dark';
+                currentColor = '#4a9eff';
+                document.getElementById('gravity').value = 0.1;
+                document.getElementById('gravityValue').textContent = '0.10';
+                document.getElementById('background').value = 'dark';
+                document.getElementById('bgValue').textContent = 'Dark';
+            }
+            
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            const colorBtns = document.querySelectorAll('.color-btn');
+            for (let i = 0; i < colorBtns.length; i++) {
+                if (colorBtns[i].style.background === currentColor) {
+                    colorBtns[i].classList.add('active');
+                    break;
+                }
+            }
+            document.getElementById('customColor').value = currentColor;
         }
 
         canvas.addEventListener('mousedown', (e) => {
@@ -2753,7 +2858,7 @@
             const config = {
                 particleSize, gravity, friction, interactionForce, connectionDistance,
                 particleCount, mode, speed, lifetime, trailLength, trailOpacity,
-                mouseForce, backgroundMode, particleShape, sizeVariation, windX, windY,
+                mouseForce, backgroundMode, currentMap, particleShape, sizeVariation, windX, windY,
                 collisionsEnabled, bounce, emitterMode, emitRate, colorMode, currentColor,
                 magneticField, vortexStrength, noiseAmount, flockingEnabled, sizeOverLife,
                 colorOverLife, blendMode, velocityViz, maxParticles, vhsMode, scanlinesIntensity,
@@ -2802,6 +2907,10 @@
                             if (config.trailOpacity !== undefined) trailOpacity = config.trailOpacity;
                             if (config.mouseForce !== undefined) mouseForce = config.mouseForce;
                             if (config.backgroundMode !== undefined) backgroundMode = config.backgroundMode;
+                            if (config.currentMap !== undefined) {
+                                currentMap = config.currentMap;
+                                switchMap(currentMap);
+                            }
                             if (config.particleShape !== undefined) particleShape = config.particleShape;
                             if (config.sizeVariation !== undefined) sizeVariation = config.sizeVariation;
                             if (config.windX !== undefined) windX = config.windX;
@@ -3081,8 +3190,305 @@
             }
 
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = getBackgroundColor();
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (currentMap === 'space') {
+                const spaceGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                spaceGradient.addColorStop(0, 'rgba(5, 5, 15, 0.4)');
+                spaceGradient.addColorStop(0.3, 'rgba(10, 5, 30, 0.3)');
+                spaceGradient.addColorStop(0.6, 'rgba(15, 5, 40, 0.35)');
+                spaceGradient.addColorStop(1, 'rgba(5, 5, 15, 0.4)');
+                ctx.fillStyle = spaceGradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < 3; i++) {
+                    const nebulaX = (canvas.width * 0.2) + (i * canvas.width * 0.3);
+                    const nebulaY = canvas.height * (0.2 + i * 0.25);
+                    const nebulaRadius = 150 + Math.sin(Date.now() * 0.0005 + i) * 30;
+                    
+                    const nebulaGradient = ctx.createRadialGradient(nebulaX, nebulaY, 0, nebulaX, nebulaY, nebulaRadius);
+                    nebulaGradient.addColorStop(0, `rgba(${100 + i * 20}, ${50 + i * 10}, ${150 + i * 30}, 0.3)`);
+                    nebulaGradient.addColorStop(0.5, `rgba(${80 + i * 15}, ${40 + i * 8}, ${120 + i * 25}, 0.2)`);
+                    nebulaGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    
+                    ctx.fillStyle = nebulaGradient;
+                    ctx.beginPath();
+                    ctx.arc(nebulaX, nebulaY, nebulaRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                for (let i = 0; i < 2; i++) {
+                    const planetX = canvas.width * (0.15 + i * 0.7);
+                    const planetY = canvas.height * (0.3 + i * 0.4);
+                    const planetRadius = 40 + i * 20;
+                    
+                    const planetGradient = ctx.createRadialGradient(planetX - planetRadius * 0.3, planetY - planetRadius * 0.3, 0, planetX, planetY, planetRadius);
+                    planetGradient.addColorStop(0, `rgba(${150 + i * 30}, ${100 + i * 20}, ${80 + i * 15}, 0.4)`);
+                    planetGradient.addColorStop(0.7, `rgba(${100 + i * 20}, ${70 + i * 15}, ${50 + i * 10}, 0.3)`);
+                    planetGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    
+                    ctx.fillStyle = planetGradient;
+                    ctx.beginPath();
+                    ctx.arc(planetX, planetY, planetRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                if (!window.spaceStars) {
+                    window.spaceStars = [];
+                    for (let i = 0; i < 200; i++) {
+                        window.spaceStars.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            size: Math.random() * 2 + 0.5,
+                            brightness: Math.random() * 0.7 + 0.3,
+                            twinkle: Math.random() * Math.PI * 2,
+                            color: Math.random() < 0.1 ? ['rgba(200, 220, 255, ', 'rgba(255, 220, 200, '][Math.floor(Math.random() * 2)] : 'rgba(255, 255, 255, '
+                        });
+                    }
+                }
+                
+                for (const star of window.spaceStars) {
+                    star.twinkle += 0.03;
+                    const twinkleBrightness = star.brightness + Math.sin(star.twinkle) * 0.25;
+                    ctx.fillStyle = `${star.color}${Math.max(0.2, Math.min(1, twinkleBrightness))})`;
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (currentMap === 'moon') {
+                const moonGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                moonGradient.addColorStop(0, 'rgba(20, 20, 30, 0.3)');
+                moonGradient.addColorStop(0.5, 'rgba(40, 40, 50, 0.25)');
+                moonGradient.addColorStop(1, 'rgba(50, 50, 60, 0.3)');
+                ctx.fillStyle = moonGradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                if (!window.moonStars) {
+                    window.moonStars = [];
+                    for (let i = 0; i < 80; i++) {
+                        window.moonStars.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height * 0.6,
+                            size: Math.random() * 1.2 + 0.3,
+                            brightness: Math.random() * 0.5 + 0.3
+                        });
+                    }
+                }
+                
+                for (const star of window.moonStars) {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness})`;
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                if (!window.moonCraters) {
+                    window.moonCraters = [];
+                    for (let i = 0; i < 15; i++) {
+                        window.moonCraters.push({
+                            x: Math.random() * canvas.width,
+                            y: canvas.height * (0.6 + Math.random() * 0.4),
+                            radius: 15 + Math.random() * 25,
+                            depth: Math.random() * 0.3 + 0.2
+                        });
+                    }
+                }
+                
+                for (const crater of window.moonCraters) {
+                    const craterGradient = ctx.createRadialGradient(crater.x, crater.y, 0, crater.x, crater.y, crater.radius);
+                    craterGradient.addColorStop(0, `rgba(30, 30, 40, ${0.4 + crater.depth})`);
+                    craterGradient.addColorStop(0.6, `rgba(50, 50, 60, ${0.3 + crater.depth * 0.5})`);
+                    craterGradient.addColorStop(1, 'rgba(60, 60, 70, 0)');
+                    
+                    ctx.fillStyle = craterGradient;
+                    ctx.beginPath();
+                    ctx.arc(crater.x, crater.y, crater.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = `rgba(25, 25, 35, ${0.5 + crater.depth})`;
+                    ctx.beginPath();
+                    ctx.arc(crater.x - crater.radius * 0.3, crater.y - crater.radius * 0.3, crater.radius * 0.4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (currentMap === 'mars') {
+                const marsGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                marsGradient.addColorStop(0, 'rgba(120, 60, 50, 0.2)');
+                marsGradient.addColorStop(0.3, 'rgba(140, 70, 60, 0.25)');
+                marsGradient.addColorStop(0.6, 'rgba(160, 80, 70, 0.3)');
+                marsGradient.addColorStop(1, 'rgba(100, 50, 40, 0.2)');
+                ctx.fillStyle = marsGradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < 5; i++) {
+                    const dustX = (canvas.width * 0.1) + (i * canvas.width * 0.2);
+                    const dustY = canvas.height * (0.3 + Math.random() * 0.4);
+                    const dustRadius = 80 + Math.random() * 60;
+                    const dustOpacity = 0.15 + Math.random() * 0.1;
+                    
+                    const dustGradient = ctx.createRadialGradient(dustX, dustY, 0, dustX, dustY, dustRadius);
+                    dustGradient.addColorStop(0, `rgba(120, 80, 60, ${dustOpacity})`);
+                    dustGradient.addColorStop(0.5, `rgba(100, 60, 50, ${dustOpacity * 0.7})`);
+                    dustGradient.addColorStop(1, 'rgba(80, 50, 40, 0)');
+                    
+                    ctx.fillStyle = dustGradient;
+                    ctx.beginPath();
+                    ctx.arc(dustX, dustY, dustRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                if (!window.marsRocks) {
+                    window.marsRocks = [];
+                    for (let i = 0; i < 20; i++) {
+                        window.marsRocks.push({
+                            x: Math.random() * canvas.width,
+                            y: canvas.height * (0.5 + Math.random() * 0.5),
+                            size: 8 + Math.random() * 15,
+                            color: `rgba(${80 + Math.random() * 40}, ${40 + Math.random() * 30}, ${30 + Math.random() * 20}, 0.6)`
+                        });
+                    }
+                }
+                
+                for (const rock of window.marsRocks) {
+                    ctx.fillStyle = rock.color;
+                    ctx.beginPath();
+                    ctx.arc(rock.x, rock.y, rock.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = `rgba(${parseInt(rock.color.match(/\d+/g)[0]) - 20}, ${parseInt(rock.color.match(/\d+/g)[1]) - 10}, ${parseInt(rock.color.match(/\d+/g)[2]) - 10}, 0.4)`;
+                    ctx.beginPath();
+                    ctx.arc(rock.x - rock.size * 0.3, rock.y - rock.size * 0.3, rock.size * 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (currentMap === 'earth') {
+                const earthGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                earthGradient.addColorStop(0, 'rgba(135, 206, 250, 0.15)');
+                earthGradient.addColorStop(0.3, 'rgba(135, 206, 235, 0.12)');
+                earthGradient.addColorStop(0.6, 'rgba(100, 149, 237, 0.1)');
+                earthGradient.addColorStop(1, 'rgba(70, 130, 180, 0.12)');
+                ctx.fillStyle = earthGradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < 8; i++) {
+                    const cloudX = (canvas.width * 0.1) + (i * canvas.width * 0.12);
+                    const cloudY = canvas.height * (0.1 + Math.random() * 0.3);
+                    const cloudSize = 60 + Math.random() * 40;
+                    
+                    const cloudGradient = ctx.createRadialGradient(cloudX, cloudY, 0, cloudX, cloudY, cloudSize);
+                    cloudGradient.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+                    cloudGradient.addColorStop(0.5, 'rgba(240, 240, 240, 0.1)');
+                    cloudGradient.addColorStop(1, 'rgba(200, 200, 200, 0)');
+                    
+                    ctx.fillStyle = cloudGradient;
+                    ctx.beginPath();
+                    ctx.arc(cloudX, cloudY, cloudSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.arc(cloudX + cloudSize * 0.5, cloudY, cloudSize * 0.7, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.arc(cloudX - cloudSize * 0.5, cloudY, cloudSize * 0.6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                if (!window.earthTerrain) {
+                    window.earthTerrain = [];
+                    for (let i = 0; i < 12; i++) {
+                        window.earthTerrain.push({
+                            x: (canvas.width * 0.05) + (i * canvas.width * 0.08),
+                            y: canvas.height * (0.7 + Math.random() * 0.25),
+                            height: 20 + Math.random() * 40,
+                            color: `rgba(${34 + Math.random() * 20}, ${139 + Math.random() * 30}, ${34 + Math.random() * 20}, 0.3)`
+                        });
+                    }
+                }
+                
+                ctx.fillStyle = 'rgba(34, 139, 34, 0.2)';
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                for (const terrain of window.earthTerrain) {
+                    ctx.lineTo(terrain.x, terrain.y);
+                }
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.closePath();
+                ctx.fill();
+            } else if (currentMap === 'void') {
+                ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                if (!window.voidParticles) {
+                    window.voidParticles = [];
+                    for (let i = 0; i < 30; i++) {
+                        window.voidParticles.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            size: Math.random() * 0.8 + 0.2,
+                            brightness: Math.random() * 0.3 + 0.1,
+                            speed: Math.random() * 0.5 + 0.2
+                        });
+                    }
+                }
+                
+                for (const particle of window.voidParticles) {
+                    particle.x += (Math.random() - 0.5) * particle.speed;
+                    particle.y += (Math.random() - 0.5) * particle.speed;
+                    
+                    if (particle.x < 0) particle.x = canvas.width;
+                    if (particle.x > canvas.width) particle.x = 0;
+                    if (particle.y < 0) particle.y = canvas.height;
+                    if (particle.y > canvas.height) particle.y = 0;
+                    
+                    ctx.fillStyle = `rgba(255, 255, 255, ${particle.brightness})`;
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (currentMap === 'white') {
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.3)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < 4; i++) {
+                    const lineX = (canvas.width * 0.2) + (i * canvas.width * 0.2);
+                    ctx.strokeStyle = 'rgba(220, 220, 220, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(lineX, 0);
+                    ctx.lineTo(lineX, canvas.height);
+                    ctx.stroke();
+                }
+                
+                for (let i = 0; i < 3; i++) {
+                    const lineY = (canvas.height * 0.25) + (i * canvas.height * 0.25);
+                    ctx.strokeStyle = 'rgba(220, 220, 220, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(0, lineY);
+                    ctx.lineTo(canvas.width, lineY);
+                    ctx.stroke();
+                }
+            } else if (currentMap === 'green') {
+                ctx.fillStyle = 'rgba(0, 200, 0, 0.3)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < 5; i++) {
+                    const patternX = (canvas.width * 0.15) + (i * canvas.width * 0.18);
+                    const patternY = canvas.height * (0.2 + Math.random() * 0.6);
+                    const patternSize = 40 + Math.random() * 30;
+                    
+                    const patternGradient = ctx.createRadialGradient(patternX, patternY, 0, patternX, patternY, patternSize);
+                    patternGradient.addColorStop(0, 'rgba(0, 180, 0, 0.2)');
+                    patternGradient.addColorStop(0.5, 'rgba(0, 200, 0, 0.15)');
+                    patternGradient.addColorStop(1, 'rgba(0, 220, 0, 0)');
+                    
+                    ctx.fillStyle = patternGradient;
+                    ctx.beginPath();
+                    ctx.arc(patternX, patternY, patternSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else {
+                ctx.fillStyle = getBackgroundColor();
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
             
             if (blendMode !== 'normal') {
                 ctx.globalCompositeOperation = blendMode;
@@ -3752,6 +4158,13 @@
             canvas.height = window.innerHeight;
             vhsCanvas.width = canvas.width;
             vhsCanvas.height = canvas.height;
+            
+            window.spaceStars = null;
+            window.moonStars = null;
+            window.moonCraters = null;
+            window.marsRocks = null;
+            window.earthTerrain = null;
+            window.voidParticles = null;
         });
     </script>
 </body>
