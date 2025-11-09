@@ -63,14 +63,14 @@
             <div class="control-group">
                 <label>Particle Count: <span class="value-display" id="countValue">20</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="count" min="1" max="200" value="20">
+                <input type="range" id="count" min="1" max="200" value="20">
                     <input type="number" id="countInput" min="1" max="200" value="20">
                 </div>
             </div>
             <div class="control-group">
                 <label>Speed: <span class="value-display" id="speedValue">1.0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1.0">
+                <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1.0">
                     <input type="number" id="speedInput" min="0.1" max="5" step="0.1" value="1.0">
                 </div>
             </div>
@@ -83,24 +83,25 @@
             <div class="control-group">
                 <label>Size: <span class="value-display" id="sizeValue">3</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="size" min="1" max="20" value="3">
+                <input type="range" id="size" min="1" max="20" value="3">
                     <input type="number" id="sizeInput" min="1" max="20" value="3">
                 </div>
             </div>
             <div class="control-group">
                 <label>Lifetime: <span class="value-display" id="lifetimeValue">100</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="lifetime" min="10" max="200" value="100">
+                <input type="range" id="lifetime" min="10" max="200" value="100">
                     <input type="number" id="lifetimeInput" min="10" max="200" value="100">
                 </div>
             </div>
             <div class="control-group">
                 <label>Trail Length: <span class="value-display" id="trailValue">5</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="trail" min="0" max="20" value="5">
+                <input type="range" id="trail" min="0" max="20" value="5">
                     <input type="number" id="trailInput" min="0" max="20" value="5">
                 </div>
             </div>
+            <div id="purchasedEffectsContainer" class="purchased-effects-container"></div>
             </div>
         </div>
         
@@ -110,28 +111,28 @@
             <div class="control-group">
                 <label>Gravity: <span class="value-display" id="gravityValue">0.1</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="gravity" min="0" max="1" step="0.05" value="0.1">
+                <input type="range" id="gravity" min="0" max="1" step="0.05" value="0.1">
                     <input type="number" id="gravityInput" min="0" max="1" step="0.05" value="0.1">
                 </div>
             </div>
             <div class="control-group">
                 <label>Friction: <span class="value-display" id="frictionValue">0.99</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="friction" min="0.85" max="1" step="0.01" value="0.99">
+                <input type="range" id="friction" min="0.85" max="1" step="0.01" value="0.99">
                     <input type="number" id="frictionInput" min="0.85" max="1" step="0.01" value="0.99">
                 </div>
             </div>
             <div class="control-group">
                 <label>Interaction: <span class="value-display" id="interactionValue">0.5</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="interaction" min="0" max="3" step="0.1" value="0.5">
+                <input type="range" id="interaction" min="0" max="3" step="0.1" value="0.5">
                     <input type="number" id="interactionInput" min="0" max="3" step="0.1" value="0.5">
                 </div>
             </div>
             <div class="control-group">
                 <label>Mouse Force: <span class="value-display" id="mouseForceValue">1.0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="mouseForce" min="0" max="5" step="0.1" value="1.0">
+                <input type="range" id="mouseForce" min="0" max="5" step="0.1" value="1.0">
                     <input type="number" id="mouseForceInput" min="0" max="5" step="0.1" value="1.0">
                 </div>
             </div>
@@ -154,23 +155,23 @@
             <div class="control-group">
                 <label>Size Variation: <span class="value-display" id="sizeVarValue">50</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="sizeVar" min="0" max="100" value="50">
+                <input type="range" id="sizeVar" min="0" max="100" value="50">
                     <input type="number" id="sizeVarInput" min="0" max="100" value="50">
                 </div>
             </div>
             <div class="control-group">
                 <label>Connection Distance: <span class="value-display" id="distanceValue">100</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="distance" min="0" max="300" value="100">
+                <input type="range" id="distance" min="0" max="300" value="100">
                     <input type="number" id="distanceInput" min="0" max="300" value="100">
                 </div>
             </div>
             <div class="control-group">
                 <label>Trail Opacity: <span class="value-display" id="trailOpacityValue">0.3</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="trailOpacity" min="0" max="1" step="0.05" value="0.3">
+                <input type="range" id="trailOpacity" min="0" max="1" step="0.05" value="0.3">
                     <input type="number" id="trailOpacityInput" min="0" max="1" step="0.05" value="0.3">
-                </div>
+            </div>
             </div>
             </div>
         </div>
@@ -181,14 +182,14 @@
             <div class="control-group">
                 <label>Wind X: <span class="value-display" id="windXValue">0.0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="windX" min="-2" max="2" step="0.1" value="0">
+                <input type="range" id="windX" min="-2" max="2" step="0.1" value="0">
                     <input type="number" id="windXInput" min="-2" max="2" step="0.1" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>Wind Y: <span class="value-display" id="windYValue">0.0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="windY" min="-2" max="2" step="0.1" value="0">
+                <input type="range" id="windY" min="-2" max="2" step="0.1" value="0">
                     <input type="number" id="windYInput" min="-2" max="2" step="0.1" value="0">
                 </div>
             </div>
@@ -202,7 +203,7 @@
             <div class="control-group">
                 <label>Bounce: <span class="value-display" id="bounceValue">0.8</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="bounce" min="0" max="1" step="0.1" value="0.8">
+                <input type="range" id="bounce" min="0" max="1" step="0.1" value="0.8">
                     <input type="number" id="bounceInput" min="0" max="1" step="0.1" value="0.8">
                 </div>
             </div>
@@ -224,7 +225,7 @@
             <div class="control-group">
                 <label>Emit Rate: <span class="value-display" id="emitRateValue">5</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="emitRate" min="1" max="50" value="5">
+                <input type="range" id="emitRate" min="1" max="50" value="5">
                     <input type="number" id="emitRateInput" min="1" max="50" value="5">
                 </div>
             </div>
@@ -248,8 +249,10 @@
             <div class="control-group">
                 <label>Custom Color:</label>
                 <div class="color-picker-wrapper">
-                    <input type="color" id="customColor" value="#4a9eff">
+                    <input type="color" id="customColor" value="#4a9eff" title="Click to open color picker">
+                    <input type="text" id="customColorText" value="#4a9eff" placeholder="#4a9eff" maxlength="7" title="Type hex color code">
                 </div>
+                <div id="purchasedColorsContainer" class="purchased-colors-container"></div>
             </div>
             <div id="colorPalette"></div>
             </div>
@@ -261,21 +264,21 @@
             <div class="control-group">
                 <label>Magnetic Field: <span class="value-display" id="magneticValue">0.0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="magnetic" min="0" max="5" step="0.1" value="0">
+                <input type="range" id="magnetic" min="0" max="5" step="0.1" value="0">
                     <input type="number" id="magneticInput" min="0" max="5" step="0.1" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>Vortex Strength: <span class="value-display" id="vortexValue">0.0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="vortex" min="0" max="5" step="0.1" value="0">
+                <input type="range" id="vortex" min="0" max="5" step="0.1" value="0">
                     <input type="number" id="vortexInput" min="0" max="5" step="0.1" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>Noise: <span class="value-display" id="noiseValue">0.0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="noise" min="0" max="2" step="0.1" value="0">
+                <input type="range" id="noise" min="0" max="2" step="0.1" value="0">
                     <input type="number" id="noiseInput" min="0" max="2" step="0.1" value="0">
                 </div>
             </div>
@@ -337,7 +340,7 @@
             <div class="control-group">
                 <label>Max Particles: <span class="value-display" id="maxParticlesValue">10000</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="maxParticles" min="100" max="50000" step="100" value="10000">
+                <input type="range" id="maxParticles" min="100" max="50000" step="100" value="10000">
                     <input type="number" id="maxParticlesInput" min="100" max="50000" step="100" value="10000">
                 </div>
             </div>
@@ -357,56 +360,56 @@
             <div class="control-group">
                 <label>Scanlines: <span class="value-display" id="scanlinesValue">0</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="scanlines" min="0" max="100" value="0">
+                <input type="range" id="scanlines" min="0" max="100" value="0">
                     <input type="number" id="scanlinesInput" min="0" max="100" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>Chromatic Aberration: <span class="value-display" id="chromaticValue">0</span></label>
                 <div class="input-wrapper">
-                    <input type="range" id="chromatic" min="0" max="10" step="0.5" value="0">
+                <input type="range" id="chromatic" min="0" max="10" step="0.5" value="0">
                     <input type="number" id="chromaticInput" min="0" max="10" step="0.5" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>Film Grain: <span class="value-display" id="grainValue">0</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="grain" min="0" max="100" value="0">
+                <input type="range" id="grain" min="0" max="100" value="0">
                     <input type="number" id="grainInput" min="0" max="100" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>VHS Tracking: <span class="value-display" id="trackingValue">0</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="tracking" min="0" max="100" value="0">
+                <input type="range" id="tracking" min="0" max="100" value="0">
                     <input type="number" id="trackingInput" min="0" max="100" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>Static Noise: <span class="value-display" id="staticValue">0</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="static" min="0" max="100" value="0">
+                <input type="range" id="static" min="0" max="100" value="0">
                     <input type="number" id="staticInput" min="0" max="100" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>Color Bleed: <span class="value-display" id="bleedValue">0</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="bleed" min="0" max="100" value="0">
+                <input type="range" id="bleed" min="0" max="100" value="0">
                     <input type="number" id="bleedInput" min="0" max="100" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>CRT Curvature: <span class="value-display" id="curvatureValue">0</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="curvature" min="0" max="100" value="0">
+                <input type="range" id="curvature" min="0" max="100" value="0">
                     <input type="number" id="curvatureInput" min="0" max="100" value="0">
                 </div>
             </div>
             <div class="control-group">
                 <label>VHS Glitch: <span class="value-display" id="glitchValue">0</span>%</label>
                 <div class="input-wrapper">
-                    <input type="range" id="glitch" min="0" max="100" value="0">
+                <input type="range" id="glitch" min="0" max="100" value="0">
                     <input type="number" id="glitchInput" min="0" max="100" value="0">
                 </div>
             </div>
@@ -430,7 +433,7 @@
             </div>
             </div>
         </div>
-        
+
         <div class="section collapsed">
             <div class="section-title" onclick="toggleSection(this)">Gravitational Waves</div>
             <div class="section-content">
@@ -832,7 +835,7 @@
             </div>
         </div>
         
-        <div class="section collapsed">
+        <div class="section">
             <div class="section-title" onclick="toggleSection(this)">Controls</div>
             <div class="section-content">
             <div class="button-group">
@@ -845,6 +848,8 @@
             </div>
             <div class="button-group">
                 <button id="devModeBtn" onclick="toggleDevMode()" style="background: #ff4444; color: white;">Dev Mode: OFF</button>
+                <button id="disableWarningsBtn" onclick="toggleWarnings()" style="background: rgba(255, 165, 0, 0.3); color: white; border: 1px solid rgba(255, 165, 0, 0.5);">Warnings: ON</button>
+                <button id="openShopBtn" onclick="openShop()" style="background: rgba(74, 158, 255, 0.3); color: white; border: 1px solid rgba(74, 158, 255, 0.5);">Open Shop</button>
             </div>
             </div>
         </div>
@@ -855,6 +860,27 @@
             Right-click: Repel particles<br>
             Middle-click: Attract particles
         </div>
+        </div>
+    </div>
+
+    <div id="shopModal" class="shop-modal hidden">
+        <div class="shop-content">
+            <div class="shop-header">
+                <h2>Coscoins Shop</h2>
+                <div class="shop-currency">
+                    <img src="assets/coscoin.png" alt="Coscoin" class="currency-icon-img">
+                    <span id="coscoinsDisplay">0</span> Coscoins
+                </div>
+                <button class="shop-close" onclick="closeShop()">×</button>
+            </div>
+            <div class="shop-tabs">
+                <button class="shop-tab active" onclick="switchShopTab('effects')">Effects</button>
+                <button class="shop-tab" onclick="switchShopTab('colors')">Colors</button>
+                <button class="shop-tab" onclick="switchShopTab('themes')">Themes</button>
+                <button class="shop-tab" onclick="switchShopTab('environments')">Environments</button>
+            </div>
+            <div class="shop-items" id="shopItems">
+            </div>
         </div>
     </div>
 
