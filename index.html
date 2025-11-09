@@ -546,18 +546,10 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        vhsCanvas = document.createElement('canvas');
-        vhsCtx = vhsCanvas.getContext('2d');
-        vhsCanvas.width = canvas.width;
-        vhsCanvas.height = canvas.height;
-
+        // Declare all variables first
         let particles = [];
+        let vhsCanvas = null;
+        let vhsCtx = null;
         let mouseDown = false;
         let rightMouseDown = false;
         let middleMouseDown = false;
@@ -620,10 +612,20 @@
         let colorBleed = 0;
         let crtCurvature = 0;
         let vhsGlitch = 0;
-        let vhsCanvas = null;
-        let vhsCtx = null;
         let glitchTimer = 0;
         let devMode = false;
+
+        // Initialize canvas
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        vhsCanvas = document.createElement('canvas');
+        vhsCtx = vhsCanvas.getContext('2d');
+        vhsCanvas.width = canvas.width;
+        vhsCanvas.height = canvas.height;
 
         const colors = [
             '#4a9eff', '#ff4a9e', '#4aff9e', '#ffff4a', 
@@ -2046,8 +2048,4 @@
         animate(performance.now());
     </script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 0e9e5dc41099f3a5a982cde1746055d0c3509fc4
