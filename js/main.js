@@ -50,13 +50,6 @@
         let velocityViz = false;
         let maxParticles = 10000;
         let customColorInput = null;
-        let customColorText = null;
-        let warningsEnabled = true;
-        let particleGlowEnabled = false;
-        let enhancedTrailsEnabled = false;
-        let sparklesEnabled = false;
-        let shockwaveEnabled = false;
-        let shockwaves = [];
         let attractors = [];
         let repellers = [];
         let gifFrames = [];
@@ -95,19 +88,6 @@
         let conveyors = [];
         let placementHistory = [];
         let ragdolls = [];
-        let coscoins = 0;
-        let ownedItems = new Set();
-        let achievements = {
-            explosions: 0,
-            particlesSpawned: 0,
-            timePlayed: 0,
-            lagDetected: 0,
-            blocksPlaced: 0,
-            ragdollsSpawned: 0
-        };
-        let lastCoinEarnTime = 0;
-        const COIN_EARN_INTERVAL = 60000;
-        const COINS_PER_INTERVAL = 1;
         let devMode = false;
         let tornadoEnabled = false;
         let tornadoStrength = 5.0;
@@ -257,8 +237,6 @@
                 thunderEnabled, thunderFreq, rainEnabled, rainIntensity,
                 snowEnabled, snowIntensity, hurricaneEnabled, hurricaneStrength,
                 earthquakeEnabled, earthquakeIntensity,
-                warningsEnabled,
-                particleGlowEnabled, enhancedTrailsEnabled, sparklesEnabled, shockwaveEnabled,
                 sectionStates: getSectionStates()
             };
             localStorage.setItem('particleSandbox_settings', JSON.stringify(settings));
@@ -345,11 +323,6 @@
                 hurricaneStrength = settings.hurricaneStrength ?? hurricaneStrength;
                 earthquakeEnabled = settings.earthquakeEnabled ?? earthquakeEnabled;
                 earthquakeIntensity = settings.earthquakeIntensity ?? earthquakeIntensity;
-                warningsEnabled = settings.warningsEnabled ?? warningsEnabled;
-                particleGlowEnabled = settings.particleGlowEnabled ?? particleGlowEnabled;
-                enhancedTrailsEnabled = settings.enhancedTrailsEnabled ?? enhancedTrailsEnabled;
-                sparklesEnabled = settings.sparklesEnabled ?? sparklesEnabled;
-                shockwaveEnabled = settings.shockwaveEnabled ?? shockwaveEnabled;
                 
                 if (currentMap) switchMap(currentMap);
                 if (gravWavesEnabled) initializeBlackHoles();
@@ -360,13 +333,6 @@
                     setTimeout(() => {
                         restoreSectionStates(settings.sectionStates);
                     }, 50);
-                }
-                
-                const warningsBtn = document.getElementById('disableWarningsBtn');
-                if (warningsBtn) {
-                    warningsBtn.textContent = `Warnings: ${warningsEnabled ? 'ON' : 'OFF'}`;
-                    warningsBtn.style.background = warningsEnabled ? 'rgba(255, 165, 0, 0.3)' : 'rgba(100, 100, 100, 0.3)';
-                    warningsBtn.style.borderColor = warningsEnabled ? 'rgba(255, 165, 0, 0.5)' : 'rgba(100, 100, 100, 0.5)';
                 }
                 
                 return true;
@@ -410,7 +376,6 @@
         let particlesLoadPrompted = false;
         function promptLoadParticles() {
             if (particlesLoadPrompted) return;
-            if (!warningsEnabled) return;
             const savedParticles = localStorage.getItem('particleSandbox_particles');
             const savedSettings = localStorage.getItem('particleSandbox_settings');
             
@@ -477,7 +442,7 @@
         let notificationStack = [];
         let notificationTopOffset = 20;
 
-        function showNotification(title, message, buttons = [], imageUrl = '') {
+        function showNotification(title, message, buttons = []) {
             const existing = document.querySelectorAll('.notification');
             const notificationCount = existing.length;
             
@@ -486,7 +451,6 @@
             notification.style.top = `${notificationTopOffset + (notificationCount * 120)}px`;
             
             notification.innerHTML = `
-                ${imageUrl ? `<img src="${imageUrl}" class="notification-image" alt="${title}">` : ''}
                 <div class="notification-title">${title}</div>
                 <div class="notification-message">${message}</div>
                 ${buttons.length > 0 ? `
@@ -543,7 +507,7 @@
             if (now - lastLagCheck < LAG_CHECK_INTERVAL) return;
             lastLagCheck = now;
 
-            if (warningsEnabled && fps < LAG_THRESHOLD && particles.length > 100 && !lagNotificationShown) {
+            if (fps < LAG_THRESHOLD && particles.length > 100 && !lagNotificationShown) {
                 lagNotificationShown = true;
                 const oldCount = particles.length;
                 const cleanAmount = Math.floor(particles.length * 0.5);
@@ -579,13 +543,8 @@
             } else if (fps >= LAG_THRESHOLD + 10) {
                 lagNotificationShown = false;
             }
-            
-            if (fps < LAG_THRESHOLD && achievements.lagDetected === 0 && !localStorage.getItem('achievement_lag')) {
-                achievements.lagDetected = 1;
-                checkAchievements();
-            }
         }
-        
+
         window.addEventListener('beforeunload', () => {
             saveSettings();
             if (particles.length > 0) {
@@ -596,8 +555,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             checkWarningSeen();
             loadSettings();
-            loadCoscoins();
-            setTimeout(() => updatePurchasedEffectsControls(), 200);
         });
 
         const colors = [
@@ -768,40 +725,17 @@
             autoSaveSettings();
         };
 
-        customColorInput = document.getElementById('customColor');
-        customColorText = document.getElementById('customColorText');
-        
-        function updateCustomColor(color) {
-            currentColor = color;
-            customColor = color;
-            customColorInput.value = color;
-            customColorText.value = color;
+        document.getElementById('customColor').oninput = (e) => {
+            currentColor = e.target.value;
+            customColor = currentColor;
             document.querySelectorAll('.color-btn').forEach(b => {
-                if (b.style.background === color) {
+                if (b.style.background === currentColor) {
                     b.classList.add('active');
                 } else {
                     b.classList.remove('active');
                 }
             });
             autoSaveSettings();
-        }
-        
-        customColorInput.oninput = (e) => {
-            updateCustomColor(e.target.value);
-        };
-        
-        customColorText.oninput = (e) => {
-            const value = e.target.value.trim();
-            if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
-                updateCustomColor(value);
-            }
-        };
-        
-        customColorText.onblur = (e) => {
-            const value = e.target.value.trim();
-            if (!/^#[0-9A-Fa-f]{6}$/.test(value)) {
-                e.target.value = customColor;
-            }
         };
 
         syncInputs('magnetic', 'magneticInput', (val) => {
@@ -1189,8 +1123,6 @@
             ];
             
             ragdolls.push(ragdoll);
-            achievements.ragdollsSpawned++;
-            checkAchievements();
         }
 
         function getRagdollPartAt(x, y) {
@@ -1327,8 +1259,6 @@
                     };
                     placedBlocks.push(newBlock);
                     placementHistory.push({ type: 'block', x: placeX, y: placeY });
-                    achievements.blocksPlaced++;
-                    checkAchievements();
                 }
             }
         }
@@ -1849,355 +1779,6 @@
                 }
             };
         }
-
-        function loadCoscoins() {
-            const saved = localStorage.getItem('particleSandbox_coscoins');
-            if (saved) coscoins = parseInt(saved) || 0;
-            const savedOwned = localStorage.getItem('particleSandbox_ownedItems');
-            if (savedOwned) ownedItems = new Set(JSON.parse(savedOwned));
-            const savedAchievements = localStorage.getItem('particleSandbox_achievements');
-            if (savedAchievements) achievements = { ...achievements, ...JSON.parse(savedAchievements) };
-            updateCoscoinsDisplay();
-            setTimeout(() => {
-                updatePurchasedColorsButtons();
-                updatePurchasedEffectsControls();
-            }, 100);
-        }
-
-        function saveCoscoins() {
-            localStorage.setItem('particleSandbox_coscoins', coscoins.toString());
-            localStorage.setItem('particleSandbox_ownedItems', JSON.stringify([...ownedItems]));
-            localStorage.setItem('particleSandbox_achievements', JSON.stringify(achievements));
-        }
-
-        function getAchievementImage(achievementType) {
-            const images = {
-                'explosion': 'assets/achievements/achievement_first_explosion.png',
-                'particles': 'assets/achievements/achievement_1000_particles.png',
-                'lag': 'assets/achievements/achievement_lag.png',
-                'blocks': 'assets/achievements/achievement_50_blocks.png',
-                'ragdolls': 'assets/achievements/achievement_5_ragdolls.png'
-            };
-            return images[achievementType] || '';
-        }
-
-        function addCoscoins(amount, reason = '', showNotif = true) {
-            coscoins += amount;
-            updateCoscoinsDisplay();
-            saveCoscoins();
-            if (reason && showNotif) {
-                let achievementType = '';
-                if (reason.includes('Explosion')) achievementType = 'explosion';
-                else if (reason.includes('Particles')) achievementType = 'particles';
-                else if (reason.includes('Lag')) achievementType = 'lag';
-                else if (reason.includes('Blocks')) achievementType = 'blocks';
-                else if (reason.includes('Ragdolls')) achievementType = 'ragdolls';
-                
-                const achievementImg = achievementType ? getAchievementImage(achievementType) : '';
-                const message = `<img src="assets/coscoin.png" alt="Coscoin" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px; display: inline-block;">+${amount} Coscoins${reason ? ': ' + reason : ''}`;
-                showNotification('Coscoins Earned', message, [], achievementImg);
-            }
-        }
-
-        function updateCoscoinsDisplay() {
-            const display = document.getElementById('coscoinsDisplay');
-            if (display) display.textContent = coscoins;
-        }
-
-        function checkAchievements() {
-            if (achievements.explosions >= 1 && !localStorage.getItem('achievement_first_explosion')) {
-                localStorage.setItem('achievement_first_explosion', 'true');
-                const achievementImg = getAchievementImage('explosion');
-                showNotification('Achievement Unlocked!', 'First Explosion!', [], achievementImg);
-                addCoscoins(10, 'First Explosion!', 'achievement_first_explosion');
-            }
-            if (achievements.particlesSpawned >= 1000 && !localStorage.getItem('achievement_1000_particles')) {
-                localStorage.setItem('achievement_1000_particles', 'true');
-                const achievementImg = getAchievementImage('particles');
-                showNotification('Achievement Unlocked!', 'Spawned 1000 Particles!', [], achievementImg);
-                addCoscoins(50, 'Spawned 1000 Particles!', 'achievement_1000_particles');
-            }
-            if (achievements.lagDetected >= 1 && !localStorage.getItem('achievement_lag')) {
-                localStorage.setItem('achievement_lag', 'true');
-                const achievementImg = getAchievementImage('lag');
-                showNotification('Achievement Unlocked!', 'Experienced Lag!', [], achievementImg);
-                addCoscoins(25, 'Experienced Lag!', 'achievement_lag');
-            }
-            if (achievements.blocksPlaced >= 50 && !localStorage.getItem('achievement_50_blocks')) {
-                localStorage.setItem('achievement_50_blocks', 'true');
-                const achievementImg = getAchievementImage('blocks');
-                showNotification('Achievement Unlocked!', 'Placed 50 Blocks!', [], achievementImg);
-                addCoscoins(30, 'Placed 50 Blocks!', 'achievement_50_blocks');
-            }
-            if (achievements.ragdollsSpawned >= 5 && !localStorage.getItem('achievement_5_ragdolls')) {
-                localStorage.setItem('achievement_5_ragdolls', 'true');
-                const achievementImg = getAchievementImage('ragdolls');
-                showNotification('Achievement Unlocked!', 'Spawned 5 Ragdolls!', [], achievementImg);
-                addCoscoins(20, 'Spawned 5 Ragdolls!', 'achievement_5_ragdolls');
-            }
-        }
-
-        const shopItems = {
-            effects: [
-                { id: 'glow', name: 'Particle Glow', desc: 'Adds glow effect', price: 100 },
-                { id: 'trail_enhanced', name: 'Enhanced Trails', desc: 'Longer, more vibrant trails', price: 150 },
-                { id: 'sparkles', name: 'Sparkle Effect', desc: 'Adds sparkle particles', price: 200 },
-                { id: 'shockwave', name: 'Shockwave Effect', desc: 'Shockwaves on particle spawn', price: 250 }
-            ],
-            colors: [
-                { id: 'neon_purple', name: 'Neon Purple', desc: 'Vibrant purple color', price: 50, hex: '#a855f7' },
-                { id: 'neon_green', name: 'Neon Green', desc: 'Vibrant green color', price: 50, hex: '#10b981' },
-                { id: 'neon_pink', name: 'Neon Pink', desc: 'Vibrant pink color', price: 50, hex: '#ec4899' },
-                { id: 'gold', name: 'Gold', desc: 'Prestigious gold color', price: 100, hex: '#fbbf24' },
-                { id: 'rainbow', name: 'Rainbow', desc: 'Dynamic rainbow colors', price: 200, hex: '#ff0000' }
-            ],
-            themes: [
-                { id: 'dark_blue', name: 'Dark Blue Theme', desc: 'Cool blue interface theme', price: 150 },
-                { id: 'purple', name: 'Purple Theme', desc: 'Purple interface theme', price: 150 },
-                { id: 'green', name: 'Green Theme', desc: 'Green interface theme', price: 150 },
-                { id: 'neon', name: 'Neon Theme', desc: 'Neon cyberpunk theme', price: 300 }
-            ],
-            environments: [
-                { id: 'nebula', name: 'Nebula', desc: 'Colorful nebula environment', price: 200 },
-                { id: 'ocean', name: 'Ocean', desc: 'Underwater ocean environment', price: 200 },
-                { id: 'city', name: 'City', desc: 'Urban cityscape environment', price: 250 },
-                { id: 'forest', name: 'Forest', desc: 'Peaceful forest environment', price: 200 }
-            ]
-        };
-
-        let currentShopTab = 'effects';
-
-        function openShop() {
-            const modal = document.getElementById('shopModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                switchShopTab('effects');
-            }
-        }
-
-        function closeShop() {
-            const modal = document.getElementById('shopModal');
-            if (modal) {
-                modal.classList.add('hidden');
-            }
-        }
-        
-        document.addEventListener('click', (e) => {
-            const modal = document.getElementById('shopModal');
-            if (modal && !modal.classList.contains('hidden')) {
-                if (e.target === modal) {
-                    closeShop();
-                }
-            }
-        });
-
-        function switchShopTab(tab) {
-            currentShopTab = tab;
-            const tabs = document.querySelectorAll('.shop-tab');
-            tabs.forEach(t => {
-                t.classList.remove('active');
-                const tabText = t.textContent.trim().toLowerCase();
-                if ((tab === 'effects' && tabText.includes('effects')) ||
-                    (tab === 'colors' && tabText.includes('colors')) ||
-                    (tab === 'themes' && tabText.includes('themes')) ||
-                    (tab === 'environments' && tabText.includes('environments'))) {
-                    t.classList.add('active');
-                }
-            });
-            renderShopItems();
-        }
-
-        window.openShop = openShop;
-        window.closeShop = closeShop;
-        window.switchShopTab = switchShopTab;
-        window.buyItem = buyItem;
-
-        function renderShopItems() {
-            const container = document.getElementById('shopItems');
-            if (!container) return;
-            
-            const items = shopItems[currentShopTab] || [];
-            container.innerHTML = items.map(item => {
-                const owned = ownedItems.has(item.id);
-                const canAfford = coscoins >= item.price;
-                return `
-                    <div class="shop-item ${owned ? 'owned' : ''}" style="position: relative;">
-                        <div class="shop-item-name">${item.name}</div>
-                        <div class="shop-item-desc">${item.desc}</div>
-                        <div class="shop-item-price ${!canAfford && !owned ? 'insufficient' : ''}">
-                            <img src="assets/coscoin.png" alt="Coscoin" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px; display: inline-block;"> ${item.price}
-                        </div>
-                        <button class="shop-item-buy" ${owned ? 'disabled' : (!canAfford ? 'disabled' : '')} onclick="buyItem('${item.id}', '${currentShopTab}')">
-                            ${owned ? 'Owned' : 'Buy'}
-                        </button>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function buyItem(itemId, category) {
-            const categoryItems = shopItems[category] || [];
-            const item = categoryItems.find(i => i.id === itemId);
-            if (!item) return;
-            
-            if (ownedItems.has(itemId)) {
-                showNotification('Already Owned', 'You already own this item!', []);
-                return;
-            }
-            
-            if (coscoins < item.price) {
-                showNotification('Insufficient Coscoins', `You need ${item.price - coscoins} more Coscoins!`, []);
-                return;
-            }
-            
-            coscoins -= item.price;
-            ownedItems.add(itemId);
-            updateCoscoinsDisplay();
-            saveCoscoins();
-            renderShopItems();
-            showNotification('Purchase Complete', `You bought ${item.name}!`, []);
-            
-            applyItemEffect(item.id);
-            updatePurchasedColorsButtons();
-            updatePurchasedEffectsControls();
-        }
-        
-        function updatePurchasedColorsButtons() {
-            const container = document.getElementById('purchasedColorsContainer');
-            if (!container) return;
-            
-            const purchasedColors = shopItems.colors.filter(color => ownedItems.has(color.id));
-            
-            if (purchasedColors.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            container.innerHTML = purchasedColors.map(color => {
-                return `
-                    <button class="purchased-color-btn" style="background: ${color.hex}; border-color: ${color.hex};" 
-                            onclick="applyPurchasedColor('${color.hex}')" 
-                            title="Apply ${color.name}">
-                        ${color.name}
-                    </button>
-                `;
-            }).join('');
-        }
-        
-        function applyPurchasedColor(hexColor) {
-            updateCustomColor(hexColor);
-        }
-        
-        window.applyPurchasedColor = applyPurchasedColor;
-        
-        function drawShockwave(x, y, radius, alpha) {
-            shockwaves.push({ x, y, radius, alpha, maxRadius: radius * 3, life: 1 });
-        }
-        
-        function updatePurchasedEffectsControls() {
-            const container = document.getElementById('purchasedEffectsContainer');
-            if (!container) return;
-            
-            const purchasedEffects = shopItems.effects.filter(effect => ownedItems.has(effect.id));
-            
-            if (purchasedEffects.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="control-group" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                    <label style="font-weight: 600; color: #4a9eff; margin-bottom: 10px; display: block;">Purchased Effects:</label>
-                    ${purchasedEffects.map(effect => {
-                        const enabled = getEffectEnabled(effect.id);
-                        return `
-                            <div class="control-group" style="margin-bottom: 8px;">
-                                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="togglePurchasedEffect('${effect.id}')">
-                                    <span>${effect.name}</span>
-                                    <input type="checkbox" id="effect_${effect.id}" ${enabled ? 'checked' : ''} onchange="togglePurchasedEffect('${effect.id}')" style="cursor: pointer;">
-                                </label>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        }
-        
-        function getEffectEnabled(effectId) {
-            switch(effectId) {
-                case 'glow': return particleGlowEnabled;
-                case 'trail_enhanced': return enhancedTrailsEnabled;
-                case 'sparkles': return sparklesEnabled;
-                case 'shockwave': return shockwaveEnabled;
-                default: return false;
-            }
-        }
-        
-        function togglePurchasedEffect(effectId) {
-            if (!ownedItems.has(effectId)) return;
-            
-            const checkbox = document.getElementById(`effect_${effectId}`);
-            const enabled = checkbox.checked;
-            
-            switch(effectId) {
-                case 'glow':
-                    particleGlowEnabled = enabled;
-                    break;
-                case 'trail_enhanced':
-                    enhancedTrailsEnabled = enabled;
-                    break;
-                case 'sparkles':
-                    sparklesEnabled = enabled;
-                    break;
-                case 'shockwave':
-                    shockwaveEnabled = enabled;
-                    break;
-            }
-            
-            autoSaveSettings();
-        }
-        
-        window.togglePurchasedEffect = togglePurchasedEffect;
-
-        function applyItemEffect(itemId) {
-            switch(itemId) {
-                case 'glow':
-                    break;
-                case 'trail_enhanced':
-                    break;
-                case 'sparkles':
-                    break;
-                case 'shockwave':
-                    break;
-                case 'neon_purple':
-                    if (!colors.includes('#a855f7')) colors.push('#a855f7');
-                    break;
-                case 'neon_green':
-                    if (!colors.includes('#10b981')) colors.push('#10b981');
-                    break;
-                case 'neon_pink':
-                    if (!colors.includes('#ec4899')) colors.push('#ec4899');
-                    break;
-                case 'gold':
-                    if (!colors.includes('#fbbf24')) colors.push('#fbbf24');
-                    break;
-                case 'rainbow':
-                    break;
-            }
-        }
-
-        function toggleWarnings() {
-            warningsEnabled = !warningsEnabled;
-            const btn = document.getElementById('disableWarningsBtn');
-            if (btn) {
-                btn.textContent = `Warnings: ${warningsEnabled ? 'ON' : 'OFF'}`;
-                btn.style.background = warningsEnabled ? 'rgba(255, 165, 0, 0.3)' : 'rgba(100, 100, 100, 0.3)';
-                btn.style.borderColor = warningsEnabled ? 'rgba(255, 165, 0, 0.5)' : 'rgba(100, 100, 100, 0.5)';
-            }
-            saveSettings();
-        }
-        
-        window.toggleWarnings = toggleWarnings;
 
         function toggleDevMode() {
             devMode = !devMode;
@@ -2843,8 +2424,7 @@
             document.getElementById('glitchValue').textContent = vhsGlitch + '%';
             
             if (currentColor) {
-                customColorInput.value = currentColor;
-                customColorText.value = currentColor;
+                document.getElementById('customColor').value = currentColor;
                 document.querySelectorAll('.color-btn').forEach(b => {
                     if (b.style.background === currentColor) {
                         b.classList.add('active');
@@ -3240,24 +2820,15 @@
             draw() {
                 if (trailLength > 0 && this.history.length > 1) {
                     ctx.strokeStyle = this.color;
-                    if (enhancedTrailsEnabled && ownedItems.has('trail_enhanced')) {
-                        ctx.lineWidth = this.size * 1.2;
-                        ctx.shadowBlur = this.size * 2;
-                        ctx.shadowColor = this.color;
-                    } else {
-                        ctx.lineWidth = this.size * 0.5;
-                    }
+                    ctx.lineWidth = this.size * 0.5;
                     ctx.beginPath();
                     ctx.moveTo(this.history[0].x, this.history[0].y);
                     for (let i = 1; i < this.history.length; i++) {
                         const alpha = (this.history[i].life / this.maxLife) * trailOpacity;
-                        ctx.globalAlpha = enhancedTrailsEnabled && ownedItems.has('trail_enhanced') ? Math.min(1, alpha * 1.5) : alpha;
+                        ctx.globalAlpha = alpha;
                         ctx.lineTo(this.history[i].x, this.history[i].y);
                     }
                     ctx.stroke();
-                    if (enhancedTrailsEnabled && ownedItems.has('trail_enhanced')) {
-                        ctx.shadowBlur = 0;
-                    }
                 }
 
                 if (velocityViz) {
@@ -3313,66 +2884,21 @@
                         ctx.arc(0, 0, this.size, 0, Math.PI * 2);
                 }
                 
-                const neonColors = ['#a855f7', '#10b981', '#ec4899', '#fbbf24'];
-                const isNeonColor = neonColors.some(neon => this.color.toLowerCase().includes(neon.toLowerCase()));
-                const shouldGlow = (particleGlowEnabled && ownedItems.has('glow')) || isNeonColor;
+                ctx.fill();
                 
-                if (shouldGlow) {
-                    ctx.save();
-                    for (let layer = 0; layer < 5; layer++) {
-                        const blur = this.size * (6 + layer * 3);
-                        const alpha = this.life * (0.5 - layer * 0.08);
-                        const radius = this.size * (1.2 + layer * 0.5);
-                        
-                        ctx.globalAlpha = Math.max(0, alpha);
-                        ctx.shadowColor = this.color;
-                        ctx.shadowBlur = blur;
-                        ctx.fillStyle = this.color;
-                        
-                        if (this.shape !== 'line') {
-                            ctx.beginPath();
-                            if (this.shape === 'circle') {
-                                ctx.arc(0, 0, radius, 0, Math.PI * 2);
-                            } else {
-                                ctx.arc(0, 0, radius * 0.7, 0, Math.PI * 2);
-                            }
-                            ctx.fill();
-                        }
-                    }
-                    ctx.shadowBlur = 0;
-                    ctx.restore();
-                    
-                    ctx.globalAlpha = this.life;
-                    ctx.fillStyle = this.color;
-                    ctx.fill();
-                } else {
-                    ctx.globalAlpha = this.life * 0.4;
-                    ctx.shadowColor = this.color;
-                    ctx.shadowBlur = this.size * 2;
-                    if (this.shape !== 'line') {
-                        ctx.beginPath();
-                        if (this.shape === 'circle') {
-                            ctx.arc(0, 0, this.size * 0.6, 0, Math.PI * 2);
-                        } else {
-                            ctx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
-                        }
-                        ctx.fill();
-                    }
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = this.life;
-                    ctx.fillStyle = this.color;
-                    ctx.fill();
-                }
-                
-                if (sparklesEnabled && ownedItems.has('sparkles') && Math.random() < 0.1) {
-                    ctx.save();
-                    ctx.globalAlpha = this.life * 0.8;
-                    ctx.fillStyle = '#ffffff';
+                ctx.globalAlpha = this.life * 0.4;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = this.size * 2;
+                if (this.shape !== 'line') {
                     ctx.beginPath();
-                    ctx.arc((Math.random() - 0.5) * this.size * 2, (Math.random() - 0.5) * this.size * 2, this.size * 0.2, 0, Math.PI * 2);
+                    if (this.shape === 'circle') {
+                        ctx.arc(0, 0, this.size * 0.6, 0, Math.PI * 2);
+                    } else {
+                        ctx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
+                    }
                     ctx.fill();
-                    ctx.restore();
                 }
+                ctx.shadowBlur = 0;
                 
                 ctx.restore();
             }
@@ -3409,15 +2935,6 @@
                     const speed = Math.random() * 10 + 5;
                     vx = Math.cos(angle) * speed;
                     vy = Math.sin(angle) * speed;
-                    achievements.explosions++;
-                    
-                    if (i === 0 && shockwaveEnabled && ownedItems.has('shockwave')) {
-                        for (let j = 0; j < 3; j++) {
-                            setTimeout(() => {
-                                drawShockwave(x, y, 30 + j * 20, 0.3 - j * 0.1);
-                            }, j * 50);
-                        }
-                    }
                 } else if (modeType === 'fountain') {
                     vx = (Math.random() - 0.5) * 3;
                     vy = -Math.random() * 10 - 5;
@@ -3437,8 +2954,6 @@
                 const color = getParticleColor();
                 particles.push(new Particle(x, y, color, vx, vy));
             }
-            achievements.particlesSpawned += count;
-            checkAchievements();
         }
 
         function drawConnections() {
@@ -4024,13 +3539,6 @@
                 updateStats();
                 autoSaveParticles();
                 checkLag();
-                
-                achievements.timePlayed += 1;
-                const now = Date.now();
-                if (now - lastCoinEarnTime >= COIN_EARN_INTERVAL) {
-                    addCoscoins(COINS_PER_INTERVAL, 'Playing');
-                    lastCoinEarnTime = now;
-                }
             }
 
             ctx.globalCompositeOperation = 'source-over';
@@ -5427,26 +4935,6 @@
             particles.forEach(particle => {
                 particle.draw();
             });
-            
-            if (shockwaveEnabled && ownedItems.has('shockwave')) {
-                shockwaves = shockwaves.filter(wave => {
-                    wave.radius += 5;
-                    wave.life -= 0.05;
-                    wave.alpha = wave.life * 0.3;
-                    
-                    if (wave.life > 0 && wave.radius < wave.maxRadius) {
-                        ctx.save();
-                        ctx.strokeStyle = `rgba(255, 255, 255, ${wave.alpha})`;
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
-                        ctx.stroke();
-                        ctx.restore();
-                        return true;
-                    }
-                    return false;
-                });
-            }
 
             if (tornado && tornado.active) {
                 updateTornado();

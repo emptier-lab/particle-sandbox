@@ -101,7 +101,6 @@
                     <input type="number" id="trailInput" min="0" max="20" value="5">
                 </div>
             </div>
-            <div id="purchasedEffectsContainer" class="purchased-effects-container"></div>
             </div>
         </div>
         
@@ -249,10 +248,8 @@
             <div class="control-group">
                 <label>Custom Color:</label>
                 <div class="color-picker-wrapper">
-                    <input type="color" id="customColor" value="#4a9eff" title="Click to open color picker">
-                    <input type="text" id="customColorText" value="#4a9eff" placeholder="#4a9eff" maxlength="7" title="Type hex color code">
+                    <input type="color" id="customColor" value="#4a9eff">
                 </div>
-                <div id="purchasedColorsContainer" class="purchased-colors-container"></div>
             </div>
             <div id="colorPalette"></div>
             </div>
@@ -835,7 +832,7 @@
             </div>
         </div>
         
-        <div class="section">
+        <div class="section collapsed">
             <div class="section-title" onclick="toggleSection(this)">Controls</div>
             <div class="section-content">
             <div class="button-group">
@@ -848,8 +845,6 @@
             </div>
             <div class="button-group">
                 <button id="devModeBtn" onclick="toggleDevMode()" style="background: #ff4444; color: white;">Dev Mode: OFF</button>
-                <button id="disableWarningsBtn" onclick="toggleWarnings()" style="background: rgba(255, 165, 0, 0.3); color: white; border: 1px solid rgba(255, 165, 0, 0.5);">Warnings: ON</button>
-                <button id="openShopBtn" onclick="openShop()" style="background: rgba(74, 158, 255, 0.3); color: white; border: 1px solid rgba(74, 158, 255, 0.5);">Open Shop</button>
             </div>
             </div>
         </div>
@@ -860,27 +855,6 @@
             Right-click: Repel particles<br>
             Middle-click: Attract particles
         </div>
-        </div>
-    </div>
-
-    <div id="shopModal" class="shop-modal hidden">
-        <div class="shop-content">
-            <div class="shop-header">
-                <h2>Coscoins Shop</h2>
-                <div class="shop-currency">
-                    <img src="assets/coscoin.png" alt="Coscoin" class="currency-icon-img">
-                    <span id="coscoinsDisplay">0</span> Coscoins
-                </div>
-                <button class="shop-close" onclick="closeShop()">×</button>
-            </div>
-            <div class="shop-tabs">
-                <button class="shop-tab active" onclick="switchShopTab('effects')">Effects</button>
-                <button class="shop-tab" onclick="switchShopTab('colors')">Colors</button>
-                <button class="shop-tab" onclick="switchShopTab('themes')">Themes</button>
-                <button class="shop-tab" onclick="switchShopTab('environments')">Environments</button>
-            </div>
-            <div class="shop-items" id="shopItems">
-            </div>
         </div>
     </div>
 
