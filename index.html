@@ -508,6 +508,10 @@
                 <button onclick="loadPreset('flocking')">Flocking</button>
                 <button onclick="loadPreset('magnetic')">Magnetic</button>
                 <button onclick="loadPreset('chaos')">Chaos</button>
+                <button onclick="loadPreset('tornado')">Tornado</button>
+                <button onclick="loadPreset('tsunami')">Tsunami</button>
+                <button onclick="loadPreset('volcano')">Volcano</button>
+                <button onclick="loadPreset('thunder')">Thunder</button>
             </div>
         </div>
 
@@ -1239,6 +1243,74 @@
                     colorMode = 'random';
                     interactionForce = 2.5;
                     break;
+                case 'tornado':
+                    particleSize = 4;
+                    particleCount = 150;
+                    mode = 'spiral';
+                    speed = 1.2;
+                    gravity = 0.05;
+                    friction = 0.98;
+                    lifetime = 200;
+                    vortexStrength = 4.5;
+                    windX = 0.2;
+                    windY = -0.1;
+                    colorMode = 'gradient';
+                    interactionForce = 1.2;
+                    trailLength = 10;
+                    sizeOverLife = 'shrink';
+                    break;
+                case 'tsunami':
+                    particleSize = 6;
+                    particleCount = 2;
+                    mode = 'rain';
+                    speed = 1.5;
+                    gravity = 0.08;
+                    friction = 0.97;
+                    lifetime = 250;
+                    windX = 0.3;
+                    windY = 0.15;
+                    colorMode = 'single';
+                    currentColor = '#0066cc';
+                    trailLength = 15;
+                    connectionDistance = 200;
+                    interactionForce = 0.8;
+                    sizeOverLife = 'shrink';
+                    break;
+                case 'volcano':
+                    particleSize = 5;
+                    particleCount = 80;
+                    mode = 'explosion';
+                    speed = 2.5;
+                    gravity = 0.25;
+                    friction = 0.96;
+                    lifetime = 120;
+                    windX = 0.1;
+                    windY = -0.3;
+                    colorMode = 'single';
+                    currentColor = '#ff4400';
+                    trailLength = 12;
+                    sizeOverLife = 'shrink';
+                    colorOverLife = 'fade';
+                    noiseAmount = 0.8;
+                    break;
+                case 'thunder':
+                    particleSize = 8;
+                    particleCount = 100;
+                    mode = 'explosion';
+                    speed = 3.0;
+                    gravity = 0.1;
+                    friction = 0.92;
+                    lifetime = 60;
+                    colorMode = 'single';
+                    currentColor = '#ffffaa';
+                    trailLength = 5;
+                    sizeOverLife = 'shrink';
+                    colorOverLife = 'fade';
+                    staticNoise = 30;
+                    vhsGlitch = 20;
+                    blendMode = 'screen';
+                    noiseAmount = 1.2;
+                    break;
             }
             
             document.getElementById('size').value = particleSize;
@@ -1263,6 +1335,9 @@
             document.getElementById('blendMode').value = blendMode;
             document.getElementById('velocityViz').value = velocityViz ? 'on' : 'off';
             document.getElementById('maxParticles').value = maxParticles;
+            document.getElementById('collisions').value = collisionsEnabled ? 'on' : 'off';
+            document.getElementById('static').value = staticNoise;
+            document.getElementById('glitch').value = vhsGlitch;
             
             document.getElementById('sizeValue').textContent = particleSize;
             document.getElementById('countValue').textContent = particleCount;
@@ -1286,6 +1361,20 @@
             document.getElementById('blendValue').textContent = document.getElementById('blendMode').options[document.getElementById('blendMode').selectedIndex].text;
             document.getElementById('velocityVizValue').textContent = velocityViz ? 'ON' : 'OFF';
             document.getElementById('maxParticlesValue').textContent = maxParticles;
+            document.getElementById('collisionValue').textContent = collisionsEnabled ? 'ON' : 'OFF';
+            document.getElementById('staticValue').textContent = staticNoise + '%';
+            document.getElementById('glitchValue').textContent = vhsGlitch + '%';
+            
+            if (currentColor) {
+                document.getElementById('customColor').value = currentColor;
+                document.querySelectorAll('.color-btn').forEach(b => {
+                    if (b.style.background === currentColor) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+            }
         }
 
         class Particle {
