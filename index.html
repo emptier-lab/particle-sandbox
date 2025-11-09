@@ -45,18 +45,24 @@
             display: none;
         }
         .minimize-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 4px;
+            background: transparent;
+            border: none;
+            color: #aaa;
+            padding: 0;
+            margin: 0;
             cursor: pointer;
-            font-size: 12px;
-            margin-left: 10px;
-            transition: background 0.2s;
+            font-size: 18px;
+            font-weight: 300;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+            line-height: 1;
         }
         .minimize-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
         }
         .controls-header {
             display: flex;
@@ -532,8 +538,27 @@
 
         <div class="section">
             <div class="section-title">Weather</div>
+            <div class="control-group">
+                <label>Tornado: <span class="value-display" id="tornadoEnabledValue">OFF</span></label>
+                <select id="tornadoEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Tornado Strength: <span class="value-display" id="tornadoStrengthValue">5.0</span></label>
+                <input type="range" id="tornadoStrength" min="1" max="10" step="0.5" value="5.0">
+            </div>
+            <div class="control-group">
+                <label>Tornado Speed: <span class="value-display" id="tornadoSpeedValue">2.0</span></label>
+                <input type="range" id="tornadoSpeed" min="0.5" max="5" step="0.1" value="2.0">
+            </div>
+            <div class="control-group">
+                <label>Tornado Size: <span class="value-display" id="tornadoSizeValue">150</span></label>
+                <input type="range" id="tornadoSize" min="50" max="300" step="10" value="150">
+            </div>
             <div class="preset-grid">
-                <button onclick="loadPreset('tornado')">Tornado</button>
+                <button onclick="loadPreset('tornado')">Tornado Preset</button>
                 <button onclick="loadPreset('tsunami')">Tsunami</button>
                 <button onclick="loadPreset('volcano')">Volcano</button>
                 <button onclick="loadPreset('thunder')">Thunder</button>
@@ -657,6 +682,11 @@
         let vhsGlitch = 0;
         let glitchTimer = 0;
         let devMode = false;
+        let tornadoEnabled = false;
+        let tornadoStrength = 5.0;
+        let tornadoSpeed = 2.0;
+        let tornadoSize = 150;
+        let tornado = null;
 
         // Initialize canvas
         const canvas = document.getElementById('canvas');
@@ -903,6 +933,37 @@
         document.getElementById('glitch').oninput = (e) => {
             vhsGlitch = parseInt(e.target.value);
             document.getElementById('glitchValue').textContent = vhsGlitch + '%';
+        };
+
+        document.getElementById('tornadoEnabled').onchange = (e) => {
+            tornadoEnabled = e.target.value === 'on';
+            document.getElementById('tornadoEnabledValue').textContent = tornadoEnabled ? 'ON' : 'OFF';
+            if (tornadoEnabled && !tornado) {
+                tornado = {
+                    x: canvas.width / 2,
+                    y: canvas.height + 50,
+                    rotation: 0,
+                    path: [],
+                    active: true
+                };
+            } else if (!tornadoEnabled) {
+                tornado = null;
+            }
+        };
+
+        document.getElementById('tornadoStrength').oninput = (e) => {
+            tornadoStrength = parseFloat(e.target.value);
+            document.getElementById('tornadoStrengthValue').textContent = tornadoStrength.toFixed(1);
+        };
+
+        document.getElementById('tornadoSpeed').oninput = (e) => {
+            tornadoSpeed = parseFloat(e.target.value);
+            document.getElementById('tornadoSpeedValue').textContent = tornadoSpeed.toFixed(1);
+        };
+
+        document.getElementById('tornadoSize').oninput = (e) => {
+            tornadoSize = parseInt(e.target.value);
+            document.getElementById('tornadoSizeValue').textContent = tornadoSize;
         };
 
         function togglePhysics() {
@@ -1486,6 +1547,7 @@
                 this.applyMouseForce();
                 this.applyFieldForces();
                 this.applyNoise();
+                this.applyTornado();
                 
                 this.age += 0.01;
                 this.updateAging();
@@ -1658,6 +1720,31 @@
                 if (noiseAmount > 0) {
                     this.vx += (Math.random() - 0.5) * noiseAmount * 0.1;
                     this.vy += (Math.random() - 0.5) * noiseAmount * 0.1;
+                }
+            }
+
+            applyTornado() {
+                if (!tornado || !tornado.active) return;
+                
+                const dx = tornado.x - this.x;
+                const dy = tornado.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const maxDist = tornadoSize;
+                
+                if (distance < maxDist && distance > 0) {
+                    const pullStrength = (1 - distance / maxDist) * tornadoStrength;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    const pullX = Math.cos(angle) * pullStrength * 0.05;
+                    const pullY = Math.sin(angle) * pullStrength * 0.05;
+                    
+                    this.vx += pullX;
+                    this.vy += pullY;
+                    
+                    const spinAngle = angle + Math.PI / 2;
+                    const spinForce = pullStrength * 0.3;
+                    this.vx += Math.cos(spinAngle) * spinForce * 0.1;
+                    this.vy += Math.sin(spinAngle) * spinForce * 0.1;
                 }
             }
 
@@ -2284,9 +2371,76 @@
                 particle.draw();
             });
 
+            if (tornado && tornado.active) {
+                updateTornado();
+                drawTornado();
+            }
+
             ctx.globalAlpha = 1;
             applyVHSEffects();
             requestAnimationFrame(animate);
+        }
+
+        function updateTornado() {
+            if (!tornado) return;
+            
+            tornado.rotation += 0.1;
+            
+            if (tornado.y > -100) {
+                tornado.y -= tornadoSpeed;
+                
+                const pathNoise = Math.sin(tornado.rotation * 0.1) * 2;
+                tornado.x += pathNoise;
+                
+                tornado.path.push({ x: tornado.x, y: tornado.y });
+                if (tornado.path.length > 50) {
+                    tornado.path.shift();
+                }
+            } else {
+                tornado.x = canvas.width / 2 + (Math.random() - 0.5) * 200;
+                tornado.y = canvas.height + 50;
+                tornado.path = [];
+            }
+        }
+
+        function drawTornado() {
+            if (!tornado) return;
+            
+            ctx.save();
+            ctx.globalAlpha = 0.6;
+            
+            const centerX = tornado.x;
+            const centerY = tornado.y;
+            const radius = tornadoSize;
+            
+            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
+            gradient.addColorStop(0, 'rgba(150, 150, 150, 0.8)');
+            gradient.addColorStop(0.5, 'rgba(100, 100, 100, 0.4)');
+            gradient.addColorStop(1, 'rgba(50, 50, 50, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            for (let i = 0; i < 8; i++) {
+                const angle = (tornado.rotation + (i * Math.PI / 4)) % (Math.PI * 2);
+                const startRadius = radius * 0.3;
+                const endRadius = radius;
+                const x1 = centerX + Math.cos(angle) * startRadius;
+                const y1 = centerY + Math.sin(angle) * startRadius;
+                const x2 = centerX + Math.cos(angle) * endRadius;
+                const y2 = centerY + Math.sin(angle) * endRadius;
+                
+                ctx.strokeStyle = `rgba(200, 200, 200, ${0.3 - i * 0.03})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
         }
 
         window.addEventListener('resize', () => {
