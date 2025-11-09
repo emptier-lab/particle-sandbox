@@ -89,6 +89,7 @@
         let placementHistory = [];
         let ragdolls = [];
         let devMode = false;
+        let borderEnabled = false;
         let tornadoEnabled = false;
         let tornadoStrength = 5.0;
         let tornadoSpeed = 2.0;
@@ -350,6 +351,170 @@
             localStorage.setItem('particleSandbox_particles', JSON.stringify(particlesData));
         }
 
+        function saveBuilds() {
+            const buildsData = {
+                placedBlocks: placedBlocks.map(block => ({
+                    type: block.type,
+                    x: block.x,
+                    y: block.y,
+                    size: block.size,
+                    color: block.color,
+                    material: block.material,
+                    health: block.health,
+                    vx: block.vx || 0,
+                    vy: block.vy || 0,
+                    rotation: block.rotation || 0,
+                    angularVelocity: block.angularVelocity || 0
+                })),
+                conveyors: conveyors.map(conveyor => ({
+                    x: conveyor.x,
+                    y: conveyor.y,
+                    width: conveyor.width,
+                    height: conveyor.height,
+                    direction: conveyor.direction,
+                    speed: conveyor.speed
+                })),
+                placementHistory: placementHistory
+            };
+            localStorage.setItem('particleSandbox_builds', JSON.stringify(buildsData));
+        }
+
+        function loadBuilds() {
+            const saved = localStorage.getItem('particleSandbox_builds');
+            if (!saved) return false;
+            
+            try {
+                const buildsData = JSON.parse(saved);
+                
+                if (buildsData.placedBlocks) {
+                    placedBlocks = buildsData.placedBlocks.map(block => ({
+                        type: block.type,
+                        x: block.x,
+                        y: block.y,
+                        size: block.size,
+                        color: block.color,
+                        material: block.material,
+                        health: block.health,
+                        vx: block.vx || 0,
+                        vy: block.vy || 0,
+                        rotation: block.rotation || 0,
+                        angularVelocity: block.angularVelocity || 0
+                    }));
+                }
+                
+                if (buildsData.conveyors) {
+                    conveyors = buildsData.conveyors.map(conveyor => ({
+                        x: conveyor.x,
+                        y: conveyor.y,
+                        width: conveyor.width,
+                        height: conveyor.height,
+                        direction: conveyor.direction,
+                        speed: conveyor.speed
+                    }));
+                }
+                
+                if (buildsData.placementHistory) {
+                    placementHistory = buildsData.placementHistory;
+                }
+                
+                return true;
+            } catch (e) {
+                console.error('Error loading builds:', e);
+                return false;
+            }
+        }
+
+        function saveRagdolls() {
+            const ragdollsData = ragdolls.map(ragdoll => ({
+                id: ragdoll.id,
+                parts: ragdoll.parts.map(part => ({
+                    x: part.x,
+                    y: part.y,
+                    vx: part.vx,
+                    vy: part.vy,
+                    rotation: part.rotation || 0,
+                    angularVelocity: part.angularVelocity || 0,
+                    mass: part.mass,
+                    type: part.type,
+                    side: part.side,
+                    ragdollId: part.ragdollId,
+                    radius: part.radius,
+                    width: part.width,
+                    height: part.height
+                })),
+                joints: ragdoll.joints.map(joint => ({
+                    part1Index: ragdoll.parts.indexOf(joint.part1),
+                    part2Index: ragdoll.parts.indexOf(joint.part2),
+                    offset1: joint.offset1,
+                    offset2: joint.offset2,
+                    maxDist: joint.maxDist,
+                    stiffness: joint.stiffness
+                }))
+            }));
+            localStorage.setItem('particleSandbox_ragdolls', JSON.stringify(ragdollsData));
+        }
+
+        function loadRagdolls() {
+            const saved = localStorage.getItem('particleSandbox_ragdolls');
+            if (!saved) return false;
+            
+            try {
+                const ragdollsData = JSON.parse(saved);
+                ragdolls = [];
+                
+                ragdollsData.forEach(ragdollData => {
+                    const ragdoll = {
+                        id: ragdollData.id,
+                        parts: [],
+                        joints: []
+                    };
+                    
+                    ragdoll.parts = ragdollData.parts.map(partData => {
+                        const part = {
+                            x: partData.x,
+                            y: partData.y,
+                            vx: partData.vx || 0,
+                            vy: partData.vy || 0,
+                            rotation: partData.rotation || 0,
+                            angularVelocity: partData.angularVelocity || 0,
+                            mass: partData.mass,
+                            type: partData.type,
+                            side: partData.side,
+                            ragdollId: ragdoll.id
+                        };
+                        
+                        if (partData.radius !== undefined) {
+                            part.radius = partData.radius;
+                        }
+                        if (partData.width !== undefined) {
+                            part.width = partData.width;
+                        }
+                        if (partData.height !== undefined) {
+                            part.height = partData.height;
+                        }
+                        
+                        return part;
+                    });
+                    
+                    ragdoll.joints = ragdollData.joints.map(jointData => ({
+                        part1: ragdoll.parts[jointData.part1Index],
+                        part2: ragdoll.parts[jointData.part2Index],
+                        offset1: jointData.offset1,
+                        offset2: jointData.offset2,
+                        maxDist: jointData.maxDist,
+                        stiffness: jointData.stiffness
+                    }));
+                    
+                    ragdolls.push(ragdoll);
+                });
+                
+                return true;
+            } catch (e) {
+                console.error('Error loading ragdolls:', e);
+                return false;
+            }
+        }
+
         function loadParticles() {
             const saved = localStorage.getItem('particleSandbox_particles');
             if (!saved) return false;
@@ -378,20 +543,26 @@
             if (particlesLoadPrompted) return;
             const savedParticles = localStorage.getItem('particleSandbox_particles');
             const savedSettings = localStorage.getItem('particleSandbox_settings');
+            const savedBuilds = localStorage.getItem('particleSandbox_builds');
+            const savedRagdolls = localStorage.getItem('particleSandbox_ragdolls');
             
-            if (!savedParticles && !savedSettings) return;
+            if (!savedParticles && !savedSettings && !savedBuilds && !savedRagdolls) return;
             
             particlesLoadPrompted = true;
             const hasParticles = !!savedParticles;
             const hasSettings = !!savedSettings;
+            const hasBuilds = !!savedBuilds;
+            const hasRagdolls = !!savedRagdolls;
             
             let message = 'Load previous state?';
-            if (hasParticles && hasSettings) {
-                message = 'Load previous particles, settings, and UI state?';
-            } else if (hasParticles) {
-                message = 'Load previous particles?';
-            } else if (hasSettings) {
-                message = 'Load previous settings and UI state?';
+            const parts = [];
+            if (hasParticles) parts.push('particles');
+            if (hasSettings) parts.push('settings');
+            if (hasBuilds) parts.push('builds');
+            if (hasRagdolls) parts.push('ragdolls');
+            
+            if (parts.length > 0) {
+                message = `Load previous ${parts.join(', ')}?`;
             }
             
             showNotification(
@@ -408,6 +579,12 @@
                             if (hasParticles) {
                                 loadParticles();
                             }
+                            if (hasBuilds) {
+                                loadBuilds();
+                            }
+                            if (hasRagdolls) {
+                                loadRagdolls();
+                            }
                         }
                     },
                     {
@@ -418,6 +595,12 @@
                             }
                             if (hasSettings) {
                                 localStorage.removeItem('particleSandbox_settings');
+                            }
+                            if (hasBuilds) {
+                                localStorage.removeItem('particleSandbox_builds');
+                            }
+                            if (hasRagdolls) {
+                                localStorage.removeItem('particleSandbox_ragdolls');
                             }
                         }
                     }
@@ -431,6 +614,28 @@
             if (now - lastParticleSave > 5000 && particles.length > 0) {
                 saveParticles();
                 lastParticleSave = now;
+            }
+        }
+
+        let lastBuildSave = 0;
+        function autoSaveBuilds() {
+            const now = Date.now();
+            if (now - lastBuildSave > 3000) {
+                if (placedBlocks.length > 0 || conveyors.length > 0) {
+                    saveBuilds();
+                    lastBuildSave = now;
+                }
+            }
+        }
+
+        let lastRagdollSave = 0;
+        function autoSaveRagdolls() {
+            const now = Date.now();
+            if (now - lastRagdollSave > 3000) {
+                if (ragdolls.length > 0) {
+                    saveRagdolls();
+                    lastRagdollSave = now;
+                }
             }
         }
 
@@ -549,6 +754,12 @@
             saveSettings();
             if (particles.length > 0) {
                 saveParticles();
+            }
+            if (placedBlocks.length > 0 || conveyors.length > 0) {
+                saveBuilds();
+            }
+            if (ragdolls.length > 0) {
+                saveRagdolls();
             }
         });
 
@@ -946,6 +1157,8 @@
         let grabOffsetY = 0;
         let lastMouseX = 0;
         let lastMouseY = 0;
+        let dragVelocities = [];
+        let dragStartTime = 0;
 
         function spawnRagdoll() {
             const ragdoll = {
@@ -1123,6 +1336,7 @@
             ];
             
             ragdolls.push(ragdoll);
+            saveRagdolls();
         }
 
         function getRagdollPartAt(x, y) {
@@ -1172,12 +1386,14 @@
 
         function clearRagdolls() {
             ragdolls = [];
+            saveRagdolls();
         }
 
         function clearAllBlocks() {
             placedBlocks = [];
             conveyors = [];
             placementHistory = [];
+            saveBuilds();
         }
 
         function removeLastBlock() {
@@ -1189,6 +1405,7 @@
                     );
                     if (index !== -1) {
                         conveyors.splice(index, 1);
+                        autoSaveBuilds();
                     }
                 } else {
                     const index = placedBlocks.findIndex(b => 
@@ -1196,13 +1413,16 @@
                     );
                     if (index !== -1) {
                         placedBlocks.splice(index, 1);
+                        autoSaveBuilds();
                     }
                 }
             } else {
                 if (conveyors.length > 0) {
                     conveyors.pop();
+                    autoSaveBuilds();
                 } else if (placedBlocks.length > 0) {
                     placedBlocks.pop();
+                    autoSaveBuilds();
                 }
             }
         }
@@ -1242,6 +1462,7 @@
                         };
                         conveyors.push(newConveyor);
                         placementHistory.push({ type: 'conveyor', x: placeX, y: placeY });
+                        autoSaveBuilds();
                     }
                 } else {
                     const newBlock = {
@@ -1259,6 +1480,7 @@
                     };
                     placedBlocks.push(newBlock);
                     placementHistory.push({ type: 'block', x: placeX, y: placeY });
+                    autoSaveBuilds();
                 }
             }
         }
@@ -1780,11 +2002,26 @@
             };
         }
 
+        function toggleBorder() {
+            borderEnabled = !borderEnabled;
+            const btn = document.getElementById('borderToggleBtn');
+            btn.textContent = `Border: ${borderEnabled ? 'ON' : 'OFF'}`;
+            if (borderEnabled) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
         function toggleDevMode() {
             devMode = !devMode;
             const btn = document.getElementById('devModeBtn');
             btn.textContent = `Dev Mode: ${devMode ? 'ON' : 'OFF'}`;
-            btn.style.background = devMode ? '#44ff44' : '#ff4444';
+            if (devMode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
             
             const unlimited = 999999999;
             
@@ -2474,21 +2711,40 @@
                 this.x += this.vx * speed;
                 this.y += this.vy * speed;
 
-                if (this.x < 0) {
-                    this.x = 0;
-                    this.vx *= -bounce;
-                }
-                if (this.x > canvas.width) {
-                    this.x = canvas.width;
-                    this.vx *= -bounce;
-                }
-                if (this.y < 0) {
-                    this.y = 0;
-                    this.vy *= -bounce;
-                }
-                if (this.y > canvas.height) {
-                    this.y = canvas.height;
-                    this.vy *= -bounce;
+                if (borderEnabled) {
+                    if (this.x < 0) {
+                        this.vx = Math.abs(this.vx) * bounce;
+                        this.x = 0;
+                    }
+                    if (this.x > canvas.width) {
+                        this.vx = -Math.abs(this.vx) * bounce;
+                        this.x = canvas.width;
+                    }
+                    if (this.y < 0) {
+                        this.vy = Math.abs(this.vy) * bounce;
+                        this.y = 0;
+                    }
+                    if (this.y > canvas.height) {
+                        this.vy = -Math.abs(this.vy) * bounce;
+                        this.y = canvas.height;
+                    }
+                } else {
+                    if (this.x < 0) {
+                        this.x = 0;
+                        this.vx *= -bounce;
+                    }
+                    if (this.x > canvas.width) {
+                        this.x = canvas.width;
+                        this.vx *= -bounce;
+                    }
+                    if (this.y < 0) {
+                        this.y = 0;
+                        this.vy *= -bounce;
+                    }
+                    if (this.y > canvas.height) {
+                        this.y = canvas.height;
+                        this.vy *= -bounce;
+                    }
                 }
 
                 if (collisionsEnabled) {
@@ -3092,6 +3348,8 @@
                     grabbedRagdollPart = part;
                     grabOffsetX = mouseX - part.x;
                     grabOffsetY = mouseY - part.y;
+                    dragVelocities = [];
+                    dragStartTime = Date.now();
                     part.vx = 0;
                     part.vy = 0;
                     if (part.angularVelocity !== undefined) {
@@ -3118,10 +3376,21 @@
             const newMouseY = e.clientY;
             
             if (grabbedRagdollPart) {
+                const dx = newMouseX - lastMouseX;
+                const dy = newMouseY - lastMouseY;
+                const dt = 16;
+                const vx = dx / dt * 60;
+                const vy = dy / dt * 60;
+                
+                dragVelocities.push({ vx, vy, time: Date.now() });
+                if (dragVelocities.length > 10) {
+                    dragVelocities.shift();
+                }
+                
                 grabbedRagdollPart.x = newMouseX - grabOffsetX;
                 grabbedRagdollPart.y = newMouseY - grabOffsetY;
-                grabbedRagdollPart.vx = (newMouseX - lastMouseX) * 0.5;
-                grabbedRagdollPart.vy = (newMouseY - lastMouseY) * 0.5;
+                grabbedRagdollPart.vx = vx * 0.3;
+                grabbedRagdollPart.vy = vy * 0.3;
             }
             
             mouseX = newMouseX;
@@ -3141,18 +3410,49 @@
         canvas.addEventListener('mouseup', (e) => {
             if (e.button === 0) {
                 if (grabbedRagdollPart) {
-                    const throwSpeed = 1.2;
-                    const dx = mouseX - lastMouseX;
-                    const dy = mouseY - lastMouseY;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    const speed = Math.min(dist * 0.1, 15);
-                    const angle = Math.atan2(dy, dx);
+                    let avgVx = 0;
+                    let avgVy = 0;
                     
-                    grabbedRagdollPart.vx = Math.cos(angle) * speed * throwSpeed;
-                    grabbedRagdollPart.vy = Math.sin(angle) * speed * throwSpeed;
-                    if (grabbedRagdollPart.angularVelocity !== undefined) {
-                        grabbedRagdollPart.angularVelocity = (Math.random() - 0.5) * 0.3;
+                    if (dragVelocities.length > 0) {
+                        const recentVelocities = dragVelocities.slice(-5);
+                        avgVx = recentVelocities.reduce((sum, v) => sum + v.vx, 0) / recentVelocities.length;
+                        avgVy = recentVelocities.reduce((sum, v) => sum + v.vy, 0) / recentVelocities.length;
+                    } else {
+                        const dx = mouseX - lastMouseX;
+                        const dy = mouseY - lastMouseY;
+                        const dt = 16;
+                        avgVx = (dx / dt * 60) * 0.5;
+                        avgVy = (dy / dt * 60) * 0.5;
                     }
+                    
+                    const throwMultiplier = 1.5;
+                    const throwVx = avgVx * throwMultiplier;
+                    const throwVy = avgVy * throwMultiplier;
+                    
+                    const ragdoll = ragdolls.find(r => r.id === grabbedRagdollPart.ragdollId);
+                    if (ragdoll) {
+                        ragdoll.parts.forEach(part => {
+                            part.vx += throwVx * 0.8;
+                            part.vy += throwVy * 0.8;
+                            
+                            if (part.angularVelocity !== undefined) {
+                                const spin = (throwVx * 0.005 + (Math.random() - 0.5) * 0.1);
+                                part.angularVelocity += spin;
+                                const maxSpin = 0.3;
+                                if (Math.abs(part.angularVelocity) > maxSpin) {
+                                    part.angularVelocity = Math.sign(part.angularVelocity) * maxSpin;
+                                }
+                            }
+                        });
+                    } else {
+                        grabbedRagdollPart.vx = throwVx;
+                        grabbedRagdollPart.vy = throwVy;
+                        if (grabbedRagdollPart.angularVelocity !== undefined) {
+                            grabbedRagdollPart.angularVelocity = (Math.random() - 0.5) * 0.3;
+                        }
+                    }
+                    
+                    dragVelocities = [];
                     grabbedRagdollPart = null;
                 }
                 mouseDown = false;
@@ -3187,7 +3487,56 @@
                 rainEnabled, rainIntensity,
                 snowEnabled, snowIntensity,
                 hurricaneEnabled, hurricaneStrength,
-                earthquakeEnabled, earthquakeIntensity
+                earthquakeEnabled, earthquakeIntensity,
+                buildingMode, selectedBlockType, blockSize, blockColor, snapToGrid, gridSize,
+                blockPhysicsEnabled, blockMaterial, conveyorSpeed, conveyorDirection,
+                placedBlocks: placedBlocks.map(block => ({
+                    type: block.type,
+                    x: block.x,
+                    y: block.y,
+                    size: block.size,
+                    color: block.color,
+                    material: block.material,
+                    health: block.health,
+                    vx: block.vx || 0,
+                    vy: block.vy || 0,
+                    rotation: block.rotation || 0,
+                    angularVelocity: block.angularVelocity || 0
+                })),
+                conveyors: conveyors.map(conveyor => ({
+                    x: conveyor.x,
+                    y: conveyor.y,
+                    width: conveyor.width,
+                    height: conveyor.height,
+                    direction: conveyor.direction,
+                    speed: conveyor.speed
+                })),
+                ragdolls: ragdolls.map(ragdoll => ({
+                    id: ragdoll.id,
+                    parts: ragdoll.parts.map(part => ({
+                        x: part.x,
+                        y: part.y,
+                        vx: part.vx,
+                        vy: part.vy,
+                        rotation: part.rotation || 0,
+                        angularVelocity: part.angularVelocity || 0,
+                        mass: part.mass,
+                        type: part.type,
+                        side: part.side,
+                        ragdollId: part.ragdollId,
+                        radius: part.radius,
+                        width: part.width,
+                        height: part.height
+                    })),
+                    joints: ragdoll.joints.map(joint => ({
+                        part1Index: ragdoll.parts.indexOf(joint.part1),
+                        part2Index: ragdoll.parts.indexOf(joint.part2),
+                        offset1: joint.offset1,
+                        offset2: joint.offset2,
+                        maxDist: joint.maxDist,
+                        stiffness: joint.stiffness
+                    }))
+                }))
             };
             const json = JSON.stringify(config, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
@@ -3274,6 +3623,93 @@
                             if (config.hurricaneStrength !== undefined) hurricaneStrength = config.hurricaneStrength;
                             if (config.earthquakeEnabled !== undefined) earthquakeEnabled = config.earthquakeEnabled;
                             if (config.earthquakeIntensity !== undefined) earthquakeIntensity = config.earthquakeIntensity;
+                            
+                            if (config.buildingMode !== undefined) buildingMode = config.buildingMode;
+                            if (config.selectedBlockType !== undefined) selectedBlockType = config.selectedBlockType;
+                            if (config.blockSize !== undefined) blockSize = config.blockSize;
+                            if (config.blockColor !== undefined) blockColor = config.blockColor;
+                            if (config.snapToGrid !== undefined) snapToGrid = config.snapToGrid;
+                            if (config.gridSize !== undefined) gridSize = config.gridSize;
+                            if (config.blockPhysicsEnabled !== undefined) blockPhysicsEnabled = config.blockPhysicsEnabled;
+                            if (config.blockMaterial !== undefined) blockMaterial = config.blockMaterial;
+                            if (config.conveyorSpeed !== undefined) conveyorSpeed = config.conveyorSpeed;
+                            if (config.conveyorDirection !== undefined) conveyorDirection = config.conveyorDirection;
+                            
+                            if (config.placedBlocks) {
+                                placedBlocks = config.placedBlocks.map(block => ({
+                                    type: block.type,
+                                    x: block.x,
+                                    y: block.y,
+                                    size: block.size,
+                                    color: block.color,
+                                    material: block.material,
+                                    health: block.health,
+                                    vx: block.vx || 0,
+                                    vy: block.vy || 0,
+                                    rotation: block.rotation || 0,
+                                    angularVelocity: block.angularVelocity || 0
+                                }));
+                            }
+                            
+                            if (config.conveyors) {
+                                conveyors = config.conveyors.map(conveyor => ({
+                                    x: conveyor.x,
+                                    y: conveyor.y,
+                                    width: conveyor.width,
+                                    height: conveyor.height,
+                                    direction: conveyor.direction,
+                                    speed: conveyor.speed
+                                }));
+                            }
+                            
+                            if (config.ragdolls) {
+                                ragdolls = [];
+                                config.ragdolls.forEach(ragdollData => {
+                                    const ragdoll = {
+                                        id: ragdollData.id,
+                                        parts: [],
+                                        joints: []
+                                    };
+                                    
+                                    ragdoll.parts = ragdollData.parts.map(partData => {
+                                        const part = {
+                                            x: partData.x,
+                                            y: partData.y,
+                                            vx: partData.vx || 0,
+                                            vy: partData.vy || 0,
+                                            rotation: partData.rotation || 0,
+                                            angularVelocity: partData.angularVelocity || 0,
+                                            mass: partData.mass,
+                                            type: partData.type,
+                                            side: partData.side,
+                                            ragdollId: ragdoll.id
+                                        };
+                                        
+                                        if (partData.radius !== undefined) {
+                                            part.radius = partData.radius;
+                                        }
+                                        if (partData.width !== undefined) {
+                                            part.width = partData.width;
+                                        }
+                                        if (partData.height !== undefined) {
+                                            part.height = partData.height;
+                                        }
+                                        
+                                        return part;
+                                    });
+                                    
+                                    ragdoll.joints = ragdollData.joints.map(jointData => ({
+                                        part1: ragdoll.parts[jointData.part1Index],
+                                        part2: ragdoll.parts[jointData.part2Index],
+                                        offset1: jointData.offset1,
+                                        offset2: jointData.offset2,
+                                        maxDist: jointData.maxDist,
+                                        stiffness: jointData.stiffness
+                                    }));
+                                    
+                                    ragdolls.push(ragdoll);
+                                });
+                            }
                             
                             if (tornadoEnabled && !tornado) {
                                 tornado = { x: canvas.width / 2, y: canvas.height + 50, rotation: 0, path: [], active: true };
@@ -3538,6 +3974,8 @@
                 fpsTimer = 0;
                 updateStats();
                 autoSaveParticles();
+                autoSaveBuilds();
+                autoSaveRagdolls();
                 checkLag();
             }
 
@@ -4234,22 +4672,46 @@
                     block.y += block.vy;
                     block.rotation += block.angularVelocity;
                     
-                    if (block.y + block.size / 2 > canvas.height) {
-                        block.y = canvas.height - block.size / 2;
-                        block.vy *= -0.6;
-                        block.vx *= 0.8;
-                        if (block.material === 'breakable') {
-                            block.health -= 5;
+                    if (borderEnabled) {
+                        if (block.y + block.size / 2 > canvas.height) {
+                            block.vy = -Math.abs(block.vy) * 0.8;
+                            block.y = canvas.height - block.size / 2;
+                            block.vx *= 0.9;
+                            if (block.material === 'breakable') {
+                                block.health -= 3;
+                            }
                         }
-                    }
-                    
-                    if (block.x - block.size / 2 < 0) {
-                        block.x = block.size / 2;
-                        block.vx *= -0.6;
-                    }
-                    if (block.x + block.size / 2 > canvas.width) {
-                        block.x = canvas.width - block.size / 2;
-                        block.vx *= -0.6;
+                        if (block.y - block.size / 2 < 0) {
+                            block.vy = Math.abs(block.vy) * 0.8;
+                            block.y = block.size / 2;
+                            block.vx *= 0.9;
+                        }
+                        if (block.x - block.size / 2 < 0) {
+                            block.vx = Math.abs(block.vx) * 0.8;
+                            block.x = block.size / 2;
+                        }
+                        if (block.x + block.size / 2 > canvas.width) {
+                            block.vx = -Math.abs(block.vx) * 0.8;
+                            block.x = canvas.width - block.size / 2;
+                        }
+                    } else {
+                        if (block.y + block.size / 2 > canvas.height) {
+                            block.y = canvas.height - block.size / 2;
+                            block.vy *= -0.6;
+                            block.vx *= 0.8;
+                            if (block.material === 'breakable') {
+                                block.health -= 5;
+                            }
+                        }
+                        
+                        if (block.x - block.size / 2 < 0) {
+                            block.x = block.size / 2;
+                            block.vx *= -0.6;
+                        }
+                        if (block.x + block.size / 2 > canvas.width) {
+                            block.x = canvas.width - block.size / 2;
+                            block.vx *= -0.6;
+                        }
                     }
                     
                     for (let i = index + 1; i < placedBlocks.length; i++) {
@@ -4332,8 +4794,22 @@
                         part.vx *= 0.985;
                         part.vy *= 0.985;
                         if (part.angularVelocity !== undefined) {
-                            part.angularVelocity *= 0.98;
+                            part.angularVelocity *= 0.95;
+                            if (Math.abs(part.angularVelocity) < 0.01) {
+                                part.angularVelocity = 0;
+                            }
                             part.rotation += part.angularVelocity;
+                            
+                            if (part.rotation > Math.PI * 2) {
+                                part.rotation -= Math.PI * 2;
+                            } else if (part.rotation < 0) {
+                                part.rotation += Math.PI * 2;
+                            }
+                            
+                            const maxAngularVelocity = 0.5;
+                            if (Math.abs(part.angularVelocity) > maxAngularVelocity) {
+                                part.angularVelocity = Math.sign(part.angularVelocity) * maxAngularVelocity;
+                            }
                         }
                         
                         part.x += part.vx;
@@ -4623,56 +5099,122 @@
                         }
                     });
                     
-                    if (part.type === 'head') {
-                        if (part.y + part.radius > canvas.height) {
-                            part.y = canvas.height - part.radius;
-                            part.vy *= -0.4;
-                            part.vx *= 0.8;
-                        }
-                        if (part.x - part.radius < 0) {
-                            part.x = part.radius;
-                            part.vx *= -0.4;
-                        }
-                        if (part.x + part.radius > canvas.width) {
-                            part.x = canvas.width - part.radius;
-                            part.vx *= -0.4;
+                    if (borderEnabled) {
+                        if (part.type === 'head') {
+                            if (part.y + part.radius > canvas.height) {
+                                part.vy = -Math.abs(part.vy) * 0.6;
+                                part.y = canvas.height - part.radius;
+                                part.vx *= 0.9;
+                            }
+                            if (part.y - part.radius < 0) {
+                                part.vy = Math.abs(part.vy) * 0.6;
+                                part.y = part.radius;
+                                part.vx *= 0.9;
+                            }
+                            if (part.x - part.radius < 0) {
+                                part.vx = Math.abs(part.vx) * 0.6;
+                                part.x = part.radius;
+                            }
+                            if (part.x + part.radius > canvas.width) {
+                                part.vx = -Math.abs(part.vx) * 0.6;
+                                part.x = canvas.width - part.radius;
+                            }
+                        } else {
+                            const cos = Math.cos(part.rotation || 0);
+                            const sin = Math.sin(part.rotation || 0);
+                            const halfW = part.width / 2;
+                            const halfH = part.height / 2;
+                            
+                            const corners = [
+                                { x: -halfW, y: -halfH },
+                                { x: halfW, y: -halfH },
+                                { x: halfW, y: halfH },
+                                { x: -halfW, y: halfH }
+                            ].map(c => ({
+                                x: part.x + c.x * cos - c.y * sin,
+                                y: part.y + c.x * sin + c.y * cos
+                            }));
+                            
+                            let minY = Math.min(...corners.map(c => c.y));
+                            let maxY = Math.max(...corners.map(c => c.y));
+                            let minX = Math.min(...corners.map(c => c.x));
+                            let maxX = Math.max(...corners.map(c => c.x));
+                            
+                            if (maxY > canvas.height) {
+                                const overlap = maxY - canvas.height;
+                                part.y -= overlap;
+                                part.vy = -Math.abs(part.vy) * 0.6;
+                                part.vx *= 0.9;
+                            }
+                            if (minY < 0) {
+                                const overlap = -minY;
+                                part.y += overlap;
+                                part.vy = Math.abs(part.vy) * 0.6;
+                                part.vx *= 0.9;
+                            }
+                            if (minX < 0) {
+                                const overlap = -minX;
+                                part.x += overlap;
+                                part.vx = Math.abs(part.vx) * 0.6;
+                            }
+                            if (maxX > canvas.width) {
+                                const overlap = maxX - canvas.width;
+                                part.x -= overlap;
+                                part.vx = -Math.abs(part.vx) * 0.6;
+                            }
                         }
                     } else {
-                        const cos = Math.cos(part.rotation || 0);
-                        const sin = Math.sin(part.rotation || 0);
-                        const halfW = part.width / 2;
-                        const halfH = part.height / 2;
-                        
-                        const corners = [
-                            { x: -halfW, y: -halfH },
-                            { x: halfW, y: -halfH },
-                            { x: halfW, y: halfH },
-                            { x: -halfW, y: halfH }
-                        ].map(c => ({
-                            x: part.x + c.x * cos - c.y * sin,
-                            y: part.y + c.x * sin + c.y * cos
-                        }));
-                        
-                        let minY = Math.min(...corners.map(c => c.y));
-                        let maxY = Math.max(...corners.map(c => c.y));
-                        let minX = Math.min(...corners.map(c => c.x));
-                        let maxX = Math.max(...corners.map(c => c.x));
-                        
-                        if (maxY > canvas.height) {
-                            const overlap = maxY - canvas.height;
-                            part.y -= overlap;
-                            part.vy *= -0.4;
-                            part.vx *= 0.8;
-                        }
-                        if (minX < 0) {
-                            const overlap = -minX;
-                            part.x += overlap;
-                            part.vx *= -0.4;
-                        }
-                        if (maxX > canvas.width) {
-                            const overlap = maxX - canvas.width;
-                            part.x -= overlap;
-                            part.vx *= -0.4;
+                        if (part.type === 'head') {
+                            if (part.y + part.radius > canvas.height) {
+                                part.y = canvas.height - part.radius;
+                                part.vy *= -0.4;
+                                part.vx *= 0.8;
+                            }
+                            if (part.x - part.radius < 0) {
+                                part.x = part.radius;
+                                part.vx *= -0.4;
+                            }
+                            if (part.x + part.radius > canvas.width) {
+                                part.x = canvas.width - part.radius;
+                                part.vx *= -0.4;
+                            }
+                        } else {
+                            const cos = Math.cos(part.rotation || 0);
+                            const sin = Math.sin(part.rotation || 0);
+                            const halfW = part.width / 2;
+                            const halfH = part.height / 2;
+                            
+                            const corners = [
+                                { x: -halfW, y: -halfH },
+                                { x: halfW, y: -halfH },
+                                { x: halfW, y: halfH },
+                                { x: -halfW, y: halfH }
+                            ].map(c => ({
+                                x: part.x + c.x * cos - c.y * sin,
+                                y: part.y + c.x * sin + c.y * cos
+                            }));
+                            
+                            let minY = Math.min(...corners.map(c => c.y));
+                            let maxY = Math.max(...corners.map(c => c.y));
+                            let minX = Math.min(...corners.map(c => c.x));
+                            let maxX = Math.max(...corners.map(c => c.x));
+                            
+                            if (maxY > canvas.height) {
+                                const overlap = maxY - canvas.height;
+                                part.y -= overlap;
+                                part.vy *= -0.4;
+                                part.vx *= 0.8;
+                            }
+                            if (minX < 0) {
+                                const overlap = -minX;
+                                part.x += overlap;
+                                part.vx *= -0.4;
+                            }
+                            if (maxX > canvas.width) {
+                                const overlap = maxX - canvas.width;
+                                part.x -= overlap;
+                                part.vx *= -0.4;
+                            }
                         }
                     }
                 });
