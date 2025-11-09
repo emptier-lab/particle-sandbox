@@ -33,6 +33,36 @@
             width: 300px;
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+        .controls.minimized {
+            width: 300px;
+            height: auto;
+            overflow: hidden;
+        }
+        .controls.minimized .section,
+        .controls.minimized .info {
+            display: none;
+        }
+        .minimize-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+            transition: background 0.2s;
+        }
+        .minimize-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
         .controls::-webkit-scrollbar {
             width: 6px;
@@ -225,8 +255,11 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div class="controls">
-        <h3>Particle Sandbox <span class="stats" id="stats">0 particles | 60 FPS</span></h3>
+    <div class="controls" id="controlsPanel">
+        <div class="controls-header">
+            <h3>Particle Sandbox <span class="stats" id="stats">0 particles | 60 FPS</span></h3>
+            <button class="minimize-btn" id="minimizeBtn" onclick="toggleMinimize()">−</button>
+        </div>
         
         <div class="section">
             <div class="section-title">Spawn</div>
@@ -498,20 +531,26 @@
         </div>
 
         <div class="section">
+            <div class="section-title">Weather</div>
+            <div class="preset-grid">
+                <button onclick="loadPreset('tornado')">Tornado</button>
+                <button onclick="loadPreset('tsunami')">Tsunami</button>
+                <button onclick="loadPreset('volcano')">Volcano</button>
+                <button onclick="loadPreset('thunder')">Thunder</button>
+                <button onclick="loadPreset('snow')">Snow</button>
+            </div>
+        </div>
+
+        <div class="section">
             <div class="section-title">Presets</div>
             <div class="preset-grid">
                 <button onclick="loadPreset('fireworks')">Fireworks</button>
                 <button onclick="loadPreset('galaxy')">Galaxy</button>
-                <button onclick="loadPreset('snow')">Snow</button>
                 <button onclick="loadPreset('plasma')">Plasma</button>
                 <button onclick="loadPreset('vortex')">Vortex</button>
                 <button onclick="loadPreset('flocking')">Flocking</button>
                 <button onclick="loadPreset('magnetic')">Magnetic</button>
                 <button onclick="loadPreset('chaos')">Chaos</button>
-                <button onclick="loadPreset('tornado')">Tornado</button>
-                <button onclick="loadPreset('tsunami')">Tsunami</button>
-                <button onclick="loadPreset('volcano')">Volcano</button>
-                <button onclick="loadPreset('thunder')">Thunder</button>
             </div>
         </div>
 
@@ -876,6 +915,13 @@
             connectionsEnabled = !connectionsEnabled;
             document.getElementById('connectionsBtn').textContent = `Connections: ${connectionsEnabled ? 'ON' : 'OFF'}`;
             document.getElementById('connectionsBtn').classList.toggle('active', connectionsEnabled);
+        }
+
+        function toggleMinimize() {
+            const panel = document.getElementById('controlsPanel');
+            const btn = document.getElementById('minimizeBtn');
+            panel.classList.toggle('minimized');
+            btn.textContent = panel.classList.contains('minimized') ? '+' : '−';
         }
 
         function setupValueDoubleClick(valueId, sliderId, setter, parser = parseInt, formatter = (v) => v) {
