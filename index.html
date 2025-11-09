@@ -878,24 +878,78 @@
             btn.textContent = `Dev Mode: ${devMode ? 'ON' : 'OFF'}`;
             btn.style.background = devMode ? '#44ff44' : '#ff4444';
             
+            const unlimited = 999999999;
+            
             if (devMode) {
                 maxParticles = Infinity;
-                document.getElementById('maxParticles').max = 999999999;
-                document.getElementById('maxParticles').value = 999999999;
+                document.getElementById('maxParticles').max = unlimited;
+                document.getElementById('maxParticles').value = unlimited;
                 document.getElementById('maxParticlesValue').textContent = 'UNLIMITED';
-                document.getElementById('count').max = 10000;
-                document.getElementById('emitRate').max = 1000;
-                document.getElementById('distance').max = 10000;
-                document.getElementById('trail').max = 1000;
+                
+                document.getElementById('size').max = unlimited;
+                document.getElementById('count').max = unlimited;
+                document.getElementById('speed').max = unlimited;
+                document.getElementById('lifetime').max = unlimited;
+                document.getElementById('trail').max = unlimited;
+                document.getElementById('gravity').max = unlimited;
+                document.getElementById('friction').max = unlimited;
+                document.getElementById('interaction').max = unlimited;
+                document.getElementById('mouseForce').max = unlimited;
+                document.getElementById('sizeVar').max = unlimited;
+                document.getElementById('distance').max = unlimited;
+                document.getElementById('trailOpacity').max = unlimited;
+                document.getElementById('windX').max = unlimited;
+                document.getElementById('windX').min = -unlimited;
+                document.getElementById('windY').max = unlimited;
+                document.getElementById('windY').min = -unlimited;
+                document.getElementById('bounce').max = unlimited;
+                document.getElementById('emitRate').max = unlimited;
+                document.getElementById('magnetic').max = unlimited;
+                document.getElementById('vortex').max = unlimited;
+                document.getElementById('noise').max = unlimited;
+                document.getElementById('scanlines').max = unlimited;
+                document.getElementById('chromatic').max = unlimited;
+                document.getElementById('grain').max = unlimited;
+                document.getElementById('tracking').max = unlimited;
+                document.getElementById('static').max = unlimited;
+                document.getElementById('bleed').max = unlimited;
+                document.getElementById('curvature').max = unlimited;
+                document.getElementById('glitch').max = unlimited;
             } else {
                 maxParticles = 10000;
                 document.getElementById('maxParticles').max = 50000;
                 document.getElementById('maxParticles').value = 10000;
                 document.getElementById('maxParticlesValue').textContent = '10000';
-                document.getElementById('count').max = 500;
-                document.getElementById('emitRate').max = 50;
+                
+                document.getElementById('size').max = 20;
+                document.getElementById('count').max = 200;
+                document.getElementById('speed').max = 5;
+                document.getElementById('lifetime').max = 200;
+                document.getElementById('trail').max = 20;
+                document.getElementById('gravity').max = 1;
+                document.getElementById('friction').max = 1;
+                document.getElementById('interaction').max = 3;
+                document.getElementById('mouseForce').max = 5;
+                document.getElementById('sizeVar').max = 100;
                 document.getElementById('distance').max = 300;
-                document.getElementById('trail').max = 50;
+                document.getElementById('trailOpacity').max = 1;
+                document.getElementById('windX').max = 2;
+                document.getElementById('windX').min = -2;
+                document.getElementById('windY').max = 2;
+                document.getElementById('windY').min = -2;
+                document.getElementById('bounce').max = 1;
+                document.getElementById('emitRate').max = 50;
+                document.getElementById('magnetic').max = 5;
+                document.getElementById('vortex').max = 5;
+                document.getElementById('noise').max = 2;
+                document.getElementById('scanlines').max = 100;
+                document.getElementById('chromatic').max = 10;
+                document.getElementById('grain').max = 100;
+                document.getElementById('tracking').max = 100;
+                document.getElementById('static').max = 100;
+                document.getElementById('bleed').max = 100;
+                document.getElementById('curvature').max = 100;
+                document.getElementById('glitch').max = 100;
             }
         }
 
@@ -1262,8 +1316,9 @@
                     const dy = other.y - this.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    if (distance > 0 && distance < 60) {
-                        const force = (60 - distance) / 60 * interactionForce;
+                    const maxDist = devMode ? 10000 : 60;
+                    if (distance > 0 && distance < maxDist) {
+                        const force = (maxDist - distance) / maxDist * interactionForce;
                         const angle = Math.atan2(dy, dx);
                         this.vx += Math.cos(angle) * force * 0.02;
                         this.vy += Math.sin(angle) * force * 0.02;
@@ -1276,8 +1331,9 @@
                 const dy = mouseY - this.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
-                if (distance < 150 && distance > 0) {
-                    const force = (150 - distance) / 150 * mouseForce;
+                const mouseMaxDist = devMode ? 10000 : 150;
+                if (distance < mouseMaxDist && distance > 0) {
+                    const force = (mouseMaxDist - distance) / mouseMaxDist * mouseForce;
                     const angle = Math.atan2(dy, dx);
                     
                     if (rightMouseDown) {
@@ -1370,7 +1426,8 @@
                     const dx = other.x - this.x;
                     const dy = other.y - this.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 80 && distance > 0) {
+                    const flockDist = devMode ? 10000 : 80;
+                    if (distance < flockDist && distance > 0) {
                         neighbors.push({ particle: other, distance });
                     }
                 }
