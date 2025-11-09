@@ -1010,48 +1010,7 @@
             }
         }
 
-        function resetSettings() {
-            particleSize = 3;
-            gravity = 0.1;
-            friction = 0.99;
-            interactionForce = 0.5;
-            connectionDistance = 100;
-            particleCount = 20;
-            mode = 'click';
-            speed = 1.0;
-            lifetime = 100;
-            trailLength = 5;
-            trailOpacity = 0.3;
-            mouseForce = 1.0;
-            backgroundMode = 'dark';
-            particleShape = 'circle';
-            sizeVariation = 50;
-            windX = 0;
-            windY = 0;
-            collisionsEnabled = false;
-            bounce = 0.8;
-            emitterMode = 'off';
-            emitRate = 5;
-            colorMode = 'single';
-            magneticField = 0;
-            vortexStrength = 0;
-            noiseAmount = 0;
-            flockingEnabled = false;
-            sizeOverLife = 'off';
-            colorOverLife = 'off';
-            blendMode = 'normal';
-            velocityViz = false;
-            maxParticles = 10000;
-            vhsMode = false;
-            scanlinesIntensity = 0;
-            chromaticAberration = 0;
-            filmGrain = 0;
-            vhsTracking = 0;
-            staticNoise = 0;
-            colorBleed = 0;
-            crtCurvature = 0;
-            vhsGlitch = 0;
-            
+        function updateUIFromVariables() {
             document.getElementById('size').value = particleSize;
             document.getElementById('gravity').value = gravity;
             document.getElementById('friction').value = friction;
@@ -1099,41 +1058,86 @@
             document.getElementById('interactionValue').textContent = interactionForce.toFixed(1);
             document.getElementById('distanceValue').textContent = connectionDistance;
             document.getElementById('countValue').textContent = particleCount;
-            document.getElementById('modeValue').textContent = 'Click & Drag';
+            document.getElementById('modeValue').textContent = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
             document.getElementById('speedValue').textContent = speed.toFixed(1);
             document.getElementById('lifetimeValue').textContent = lifetime + '%';
             document.getElementById('trailValue').textContent = trailLength;
             document.getElementById('trailOpacityValue').textContent = trailOpacity.toFixed(2);
             document.getElementById('mouseForceValue').textContent = mouseForce.toFixed(1);
-            document.getElementById('bgValue').textContent = 'Dark';
-            document.getElementById('shapeValue').textContent = 'Circle';
+            document.getElementById('bgValue').textContent = document.getElementById('background').options[document.getElementById('background').selectedIndex].text;
+            document.getElementById('shapeValue').textContent = document.getElementById('shape').options[document.getElementById('shape').selectedIndex].text;
             document.getElementById('sizeVarValue').textContent = sizeVariation + '%';
             document.getElementById('windXValue').textContent = windX.toFixed(1);
             document.getElementById('windYValue').textContent = windY.toFixed(1);
             document.getElementById('collisionValue').textContent = collisionsEnabled ? 'ON' : 'OFF';
             document.getElementById('bounceValue').textContent = bounce.toFixed(1);
-            document.getElementById('emitterValue').textContent = emitterMode.toUpperCase();
+            document.getElementById('emitterValue').textContent = document.getElementById('emitter').options[document.getElementById('emitter').selectedIndex].text.toUpperCase();
             document.getElementById('emitRateValue').textContent = emitRate;
-            document.getElementById('colorModeValue').textContent = 'Single';
+            document.getElementById('colorModeValue').textContent = document.getElementById('colorMode').options[document.getElementById('colorMode').selectedIndex].text;
             document.getElementById('magneticValue').textContent = magneticField.toFixed(1);
             document.getElementById('vortexValue').textContent = vortexStrength.toFixed(1);
             document.getElementById('noiseValue').textContent = noiseAmount.toFixed(1);
             document.getElementById('flockingValue').textContent = flockingEnabled ? 'ON' : 'OFF';
-            document.getElementById('sizeOverLifeValue').textContent = 'OFF';
-            document.getElementById('colorOverLifeValue').textContent = 'OFF';
-            document.getElementById('blendValue').textContent = 'Normal';
-            document.getElementById('velocityVizValue').textContent = 'OFF';
-            document.getElementById('maxParticlesValue').textContent = maxParticles;
-            document.getElementById('vhsModeValue').textContent = 'OFF';
-            document.getElementById('scanlinesValue').textContent = '0%';
-            document.getElementById('chromaticValue').textContent = '0';
-            document.getElementById('grainValue').textContent = '0%';
-            document.getElementById('trackingValue').textContent = '0%';
-            document.getElementById('staticValue').textContent = '0%';
-            document.getElementById('bleedValue').textContent = '0%';
-            document.getElementById('curvatureValue').textContent = '0%';
-            document.getElementById('glitchValue').textContent = '0%';
-            ctx.globalCompositeOperation = 'normal';
+            document.getElementById('sizeOverLifeValue').textContent = document.getElementById('sizeOverLife').options[document.getElementById('sizeOverLife').selectedIndex].text;
+            document.getElementById('colorOverLifeValue').textContent = document.getElementById('colorOverLife').options[document.getElementById('colorOverLife').selectedIndex].text;
+            document.getElementById('blendValue').textContent = document.getElementById('blendMode').options[document.getElementById('blendMode').selectedIndex].text;
+            document.getElementById('velocityVizValue').textContent = velocityViz ? 'ON' : 'OFF';
+            document.getElementById('maxParticlesValue').textContent = maxParticles === Infinity ? 'UNLIMITED' : maxParticles;
+            document.getElementById('vhsModeValue').textContent = vhsMode ? 'ON' : 'OFF';
+            document.getElementById('scanlinesValue').textContent = scanlinesIntensity + '%';
+            document.getElementById('chromaticValue').textContent = chromaticAberration.toFixed(1);
+            document.getElementById('grainValue').textContent = filmGrain + '%';
+            document.getElementById('trackingValue').textContent = vhsTracking + '%';
+            document.getElementById('staticValue').textContent = staticNoise + '%';
+            document.getElementById('bleedValue').textContent = colorBleed + '%';
+            document.getElementById('curvatureValue').textContent = crtCurvature + '%';
+            document.getElementById('glitchValue').textContent = vhsGlitch + '%';
+            ctx.globalCompositeOperation = blendMode;
+        }
+
+        function resetSettings() {
+            particleSize = 3;
+            gravity = 0.1;
+            friction = 0.99;
+            interactionForce = 0.5;
+            connectionDistance = 100;
+            particleCount = 20;
+            mode = 'click';
+            speed = 1.0;
+            lifetime = 100;
+            trailLength = 5;
+            trailOpacity = 0.3;
+            mouseForce = 1.0;
+            backgroundMode = 'dark';
+            particleShape = 'circle';
+            sizeVariation = 50;
+            windX = 0;
+            windY = 0;
+            collisionsEnabled = false;
+            bounce = 0.8;
+            emitterMode = 'off';
+            emitRate = 5;
+            colorMode = 'single';
+            magneticField = 0;
+            vortexStrength = 0;
+            noiseAmount = 0;
+            flockingEnabled = false;
+            sizeOverLife = 'off';
+            colorOverLife = 'off';
+            blendMode = 'normal';
+            velocityViz = false;
+            maxParticles = 10000;
+            vhsMode = false;
+            scanlinesIntensity = 0;
+            chromaticAberration = 0;
+            filmGrain = 0;
+            vhsTracking = 0;
+            staticNoise = 0;
+            colorBleed = 0;
+            crtCurvature = 0;
+            vhsGlitch = 0;
+            
+            updateUIFromVariables();
         }
 
         function loadPreset(name) {
@@ -1862,7 +1866,7 @@
                             if (config.crtCurvature !== undefined) crtCurvature = config.crtCurvature;
                             if (config.vhsGlitch !== undefined) vhsGlitch = config.vhsGlitch;
                             
-                            resetSettings();
+                            updateUIFromVariables();
                             alert('Configuration loaded!');
                         } catch (error) {
                             alert('Error loading configuration: ' + error.message);
