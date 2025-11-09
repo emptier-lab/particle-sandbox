@@ -1009,6 +1009,8 @@
         let thunderSize = 100;
         let thunderTimer = 0;
         let lightningStrikes = [];
+        let thunderFlash = 0;
+        let thunderShake = { x: 0, y: 0 };
         let rainEnabled = false;
         let rainIntensity = 3.0;
         let rainSpeed = 3.0;
@@ -1857,6 +1859,8 @@
             thunderFreq = 2.0;
             thunderTimer = 0;
             lightningStrikes = [];
+            thunderFlash = 0;
+            thunderShake = { x: 0, y: 0 };
             rainEnabled = false;
             rainIntensity = 3.0;
             rainDrops = [];
@@ -2162,7 +2166,11 @@
 
             update() {
                 if (physicsEnabled) {
-                    this.vy += gravity;
+                    if (this.isVolcano && this.volcanoGravity !== undefined) {
+                        this.vy += this.volcanoGravity;
+                    } else {
+                        this.vy += gravity;
+                    }
                     this.vx += windX;
                     this.vy += windY;
                     this.vx *= friction;
@@ -2205,6 +2213,7 @@
                 this.applyVolcano();
                 this.applyHurricane();
                 this.applyEarthquake();
+                this.applyThunderShake();
                 
                 this.age += 0.01;
                 this.updateAging();
@@ -2465,6 +2474,13 @@
                 
                 this.x += earthquakeShake.x;
                 this.y += earthquakeShake.y;
+            }
+
+            applyThunderShake() {
+                if (!thunderEnabled) return;
+                
+                this.x += thunderShake.x;
+                this.y += thunderShake.y;
             }
 
             updateAging() {
@@ -3204,39 +3220,74 @@
             if (!tornado) return;
             
             ctx.save();
-            ctx.globalAlpha = 0.6;
             
             const centerX = tornado.x;
             const centerY = tornado.y;
             const radius = tornadoSize;
             
-            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
-            gradient.addColorStop(0, 'rgba(150, 150, 150, 0.8)');
-            gradient.addColorStop(0.5, 'rgba(100, 100, 100, 0.4)');
-            gradient.addColorStop(1, 'rgba(50, 50, 50, 0)');
-            
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-            ctx.fill();
-            
-            for (let i = 0; i < 8; i++) {
-                const angle = (tornado.rotation + (i * Math.PI / 4)) % (Math.PI * 2);
-                const startRadius = radius * 0.3;
-                const endRadius = radius;
-                const x1 = centerX + Math.cos(angle) * startRadius;
-                const y1 = centerY + Math.sin(angle) * startRadius;
-                const x2 = centerX + Math.cos(angle) * endRadius;
-                const y2 = centerY + Math.sin(angle) * endRadius;
+            for (let layer = 0; layer < 3; layer++) {
+                const layerRadius = radius * (0.3 + layer * 0.25);
+                const layerAlpha = 0.5 - layer * 0.1;
                 
-                ctx.strokeStyle = `rgba(200, 200, 200, ${0.3 - i * 0.03})`;
-                ctx.lineWidth = 2;
+                const gradient = ctx.createRadialGradient(centerX, centerY, layerRadius * 0.2, centerX, centerY, layerRadius);
+                if (layer === 0) {
+                    gradient.addColorStop(0, `rgba(80, 60, 50, ${layerAlpha})`);
+                    gradient.addColorStop(0.3, `rgba(100, 80, 70, ${layerAlpha * 0.8})`);
+                    gradient.addColorStop(0.6, `rgba(120, 100, 90, ${layerAlpha * 0.5})`);
+                    gradient.addColorStop(1, 'rgba(60, 50, 40, 0)');
+                } else if (layer === 1) {
+                    gradient.addColorStop(0, `rgba(90, 70, 60, ${layerAlpha})`);
+                    gradient.addColorStop(0.4, `rgba(110, 90, 80, ${layerAlpha * 0.7})`);
+                    gradient.addColorStop(0.8, `rgba(130, 110, 100, ${layerAlpha * 0.4})`);
+                    gradient.addColorStop(1, 'rgba(70, 60, 50, 0)');
+                } else {
+                    gradient.addColorStop(0, `rgba(100, 80, 70, ${layerAlpha})`);
+                    gradient.addColorStop(0.5, `rgba(120, 100, 90, ${layerAlpha * 0.6})`);
+                    gradient.addColorStop(1, 'rgba(80, 70, 60, 0)');
+                }
+                
+                ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
+                ctx.arc(centerX, centerY, layerRadius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            for (let i = 0; i < 12; i++) {
+                const baseAngle = (tornado.rotation * 2 + (i * Math.PI / 6)) % (Math.PI * 2);
+                const spiralOffset = i * 0.3;
+                const startRadius = radius * 0.15;
+                const endRadius = radius * 0.95;
+                
+                ctx.strokeStyle = `rgba(120, 100, 90, ${0.5 - i * 0.03})`;
+                ctx.lineWidth = 2.5;
+                ctx.shadowBlur = 3;
+                ctx.shadowColor = 'rgba(100, 80, 70, 0.5)';
+                
+                ctx.beginPath();
+                for (let r = startRadius; r < endRadius; r += 2) {
+                    const angle = baseAngle + (r / radius) * Math.PI * 2 + spiralOffset;
+                    const x = centerX + Math.cos(angle) * r;
+                    const y = centerY + Math.sin(angle) * r;
+                    if (r === startRadius) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
                 ctx.stroke();
             }
             
+            const innerGradient = ctx.createRadialGradient(centerX, centerY, radius * 0.1, centerX, centerY, radius * 0.3);
+            innerGradient.addColorStop(0, 'rgba(60, 50, 40, 0.9)');
+            innerGradient.addColorStop(0.5, 'rgba(80, 70, 60, 0.6)');
+            innerGradient.addColorStop(1, 'rgba(100, 90, 80, 0)');
+            
+            ctx.fillStyle = innerGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.shadowBlur = 0;
             ctx.restore();
         }
 
@@ -3297,18 +3348,26 @@
             if (volcano.eruptionTimer > 60 / (volcanoIntensity * volcanoSpeed)) {
                 volcano.eruptionTimer = 0;
                 
-                for (let i = 0; i < 5; i++) {
+                const baseWidth = volcanoSize * 0.4;
+                const height = volcanoSize * 0.3;
+                const topY = volcano.y - height;
+                
+                const particleCount = Math.floor(volcanoIntensity * 2);
+                for (let i = 0; i < particleCount; i++) {
                     if (devMode || particles.length < maxParticles) {
-                        const angle = (Math.PI / 2) + (Math.random() - 0.5) * 0.8;
-                        const speed = volcanoSpeed * (2 + Math.random() * 2);
-                        const color = `hsl(${Math.random() * 30 + 10}, 100%, ${50 + Math.random() * 20}%)`;
+                        const angle = (-Math.PI / 2) + (Math.random() - 0.5) * 0.6;
+                        const speed = volcanoSpeed * (4 + Math.random() * 4);
+                        const colors = ['#ff4500', '#ff6347', '#ff8c00', '#ffa500', '#ff6600', '#ff3300', '#ff0000', '#ff5500'];
+                        const color = colors[Math.floor(Math.random() * colors.length)];
                         const particle = new Particle(
                             volcano.x + (Math.random() - 0.5) * (volcanoSize * 0.1),
-                            volcano.y,
+                            topY,
                             color,
                             Math.cos(angle) * speed,
                             Math.sin(angle) * speed
                         );
+                        particle.isVolcano = true;
+                        particle.volcanoGravity = -0.05;
                         particles.push(particle);
                     }
                 }
@@ -3322,19 +3381,60 @@
             
             const baseWidth = volcanoSize * 0.4;
             const height = volcanoSize * 0.3;
+            const topY = volcano.y - height;
             
-            ctx.fillStyle = 'rgba(60, 40, 30, 0.8)';
+            const baseGradient = ctx.createLinearGradient(volcano.x - baseWidth / 2, volcano.y, volcano.x, topY);
+            baseGradient.addColorStop(0, 'rgba(80, 50, 40, 0.9)');
+            baseGradient.addColorStop(0.5, 'rgba(60, 40, 30, 0.9)');
+            baseGradient.addColorStop(1, 'rgba(50, 30, 20, 0.9)');
+            
+            ctx.fillStyle = baseGradient;
             ctx.beginPath();
             ctx.moveTo(volcano.x - baseWidth / 2, volcano.y);
-            ctx.lineTo(volcano.x, volcano.y - height);
+            ctx.lineTo(volcano.x, topY);
             ctx.lineTo(volcano.x + baseWidth / 2, volcano.y);
             ctx.closePath();
             ctx.fill();
             
-            if (volcano.eruptionTimer < 10) {
-                ctx.fillStyle = `rgba(255, ${100 + volcano.eruptionTimer * 10}, 0, ${0.8 - volcano.eruptionTimer * 0.08})`;
+            ctx.strokeStyle = 'rgba(40, 25, 15, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            for (let i = 0; i < 3; i++) {
+                const offsetX = (Math.random() - 0.5) * baseWidth * 0.3;
+                const offsetY = Math.random() * height * 0.5;
+                const rockY = volcano.y - offsetY;
+                const rockX = volcano.x + offsetX;
+                const rockSize = 3 + Math.random() * 4;
+                
+                ctx.fillStyle = `rgba(${50 + Math.random() * 20}, ${30 + Math.random() * 15}, ${20 + Math.random() * 10}, 0.7)`;
                 ctx.beginPath();
-                ctx.arc(volcano.x, volcano.y - height, volcanoSize * 0.075, 0, Math.PI * 2);
+                ctx.arc(rockX, rockY, rockSize, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            const craterRadius = volcanoSize * 0.08;
+            const glowRadius = volcanoSize * 0.12;
+            
+            if (volcano.eruptionTimer < 15) {
+                const glowGradient = ctx.createRadialGradient(volcano.x, topY, craterRadius * 0.3, volcano.x, topY, glowRadius);
+                glowGradient.addColorStop(0, `rgba(255, ${150 + volcano.eruptionTimer * 5}, 0, ${0.9 - volcano.eruptionTimer * 0.05})`);
+                glowGradient.addColorStop(0.5, `rgba(255, ${100 + volcano.eruptionTimer * 5}, 0, ${0.6 - volcano.eruptionTimer * 0.04})`);
+                glowGradient.addColorStop(1, 'rgba(255, 50, 0, 0)');
+                
+                ctx.fillStyle = glowGradient;
+                ctx.beginPath();
+                ctx.arc(volcano.x, topY, glowRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = `rgba(255, ${100 + volcano.eruptionTimer * 8}, 0, ${0.95 - volcano.eruptionTimer * 0.06})`;
+                ctx.beginPath();
+                ctx.arc(volcano.x, topY, craterRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = `rgba(255, 200, 100, ${0.8 - volcano.eruptionTimer * 0.05})`;
+                ctx.beginPath();
+                ctx.arc(volcano.x, topY, craterRadius * 0.6, 0, Math.PI * 2);
                 ctx.fill();
             }
             
@@ -3370,6 +3470,10 @@
                 
                 lightningStrikes.push(strike);
                 
+                thunderFlash = 1.0;
+                thunderShake.x = (Math.random() - 0.5) * thunderStrength * 3;
+                thunderShake.y = (Math.random() - 0.5) * thunderStrength * 3;
+                
                 for (let i = 0; i < Math.floor(thunderStrength * 4); i++) {
                     if (devMode || particles.length < maxParticles) {
                         const angle = Math.random() * Math.PI * 2;
@@ -3393,6 +3497,10 @@
                     lightningStrikes.splice(i, 1);
                 }
             }
+            
+            thunderFlash *= 0.85;
+            thunderShake.x *= 0.85;
+            thunderShake.y *= 0.85;
         }
 
         function drawThunder() {
@@ -3426,6 +3534,13 @@
                     ctx.lineTo(branch.endX, branch.endY);
                     ctx.stroke();
                 }
+            }
+            
+            if (thunderFlash > 0) {
+                ctx.globalCompositeOperation = 'screen';
+                ctx.fillStyle = `rgba(255, 255, 255, ${thunderFlash * 0.4})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.globalCompositeOperation = 'source-over';
             }
             
             ctx.restore();
@@ -3535,39 +3650,84 @@
             if (!hurricane) return;
             
             ctx.save();
-            ctx.globalAlpha = 0.5;
             
             const centerX = hurricane.x;
             const centerY = hurricane.y;
             const radius = hurricaneSize;
             
-            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.2, centerX, centerY, radius);
-            gradient.addColorStop(0, 'rgba(100, 150, 200, 0.6)');
-            gradient.addColorStop(0.5, 'rgba(80, 120, 180, 0.4)');
-            gradient.addColorStop(1, 'rgba(60, 100, 160, 0)');
-            
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-            ctx.fill();
-            
-            for (let i = 0; i < 16; i++) {
-                const angle = (hurricane.rotation + (i * Math.PI / 8)) % (Math.PI * 2);
-                const startRadius = radius * 0.2;
-                const endRadius = radius;
-                const x1 = centerX + Math.cos(angle) * startRadius;
-                const y1 = centerY + Math.sin(angle) * startRadius;
-                const x2 = centerX + Math.cos(angle) * endRadius;
-                const y2 = centerY + Math.sin(angle) * endRadius;
+            for (let layer = 0; layer < 4; layer++) {
+                const layerRadius = radius * (0.15 + layer * 0.25);
+                const layerAlpha = 0.6 - layer * 0.12;
                 
-                ctx.strokeStyle = `rgba(150, 180, 220, ${0.4 - i * 0.02})`;
-                ctx.lineWidth = 2;
+                const gradient = ctx.createRadialGradient(centerX, centerY, layerRadius * 0.3, centerX, centerY, layerRadius);
+                if (layer === 0) {
+                    gradient.addColorStop(0, `rgba(200, 200, 220, ${layerAlpha})`);
+                    gradient.addColorStop(0.3, `rgba(180, 180, 200, ${layerAlpha * 0.9})`);
+                    gradient.addColorStop(0.6, `rgba(160, 160, 180, ${layerAlpha * 0.7})`);
+                    gradient.addColorStop(1, 'rgba(140, 140, 160, 0)');
+                } else if (layer === 1) {
+                    gradient.addColorStop(0, `rgba(180, 190, 210, ${layerAlpha})`);
+                    gradient.addColorStop(0.4, `rgba(160, 170, 190, ${layerAlpha * 0.8})`);
+                    gradient.addColorStop(0.8, `rgba(140, 150, 170, ${layerAlpha * 0.6})`);
+                    gradient.addColorStop(1, 'rgba(120, 130, 150, 0)');
+                } else if (layer === 2) {
+                    gradient.addColorStop(0, `rgba(160, 170, 190, ${layerAlpha})`);
+                    gradient.addColorStop(0.5, `rgba(140, 150, 170, ${layerAlpha * 0.7})`);
+                    gradient.addColorStop(1, 'rgba(120, 130, 150, 0)');
+                } else {
+                    gradient.addColorStop(0, `rgba(140, 150, 170, ${layerAlpha})`);
+                    gradient.addColorStop(0.6, `rgba(120, 130, 150, ${layerAlpha * 0.6})`);
+                    gradient.addColorStop(1, 'rgba(100, 110, 130, 0)');
+                }
+                
+                ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
+                ctx.arc(centerX, centerY, layerRadius, 0, Math.PI * 2);
+                ctx.fill();
             }
             
+            const eyeRadius = radius * 0.15;
+            const eyeGradient = ctx.createRadialGradient(centerX, centerY, eyeRadius * 0.3, centerX, centerY, eyeRadius);
+            eyeGradient.addColorStop(0, 'rgba(220, 230, 240, 0.8)');
+            eyeGradient.addColorStop(0.5, 'rgba(200, 210, 220, 0.6)');
+            eyeGradient.addColorStop(1, 'rgba(180, 190, 200, 0)');
+            
+            ctx.fillStyle = eyeGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, eyeRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            for (let band = 0; band < 3; band++) {
+                const bandRadius = radius * (0.3 + band * 0.25);
+                const bandSpacing = Math.PI / 12;
+                
+                for (let i = 0; i < 20; i++) {
+                    const baseAngle = (hurricane.rotation * 1.5 + (i * bandSpacing)) % (Math.PI * 2);
+                    const spiralTurns = 1.5;
+                    const startRadius = bandRadius * 0.4;
+                    const endRadius = bandRadius;
+                    
+                    ctx.strokeStyle = `rgba(180, 190, 210, ${0.5 - band * 0.1 - i * 0.015})`;
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 4;
+                    ctx.shadowColor = 'rgba(150, 160, 180, 0.4)';
+                    
+                    ctx.beginPath();
+                    for (let r = startRadius; r < endRadius; r += 3) {
+                        const angle = baseAngle + (r / bandRadius) * Math.PI * spiralTurns;
+                        const x = centerX + Math.cos(angle) * r;
+                        const y = centerY + Math.sin(angle) * r;
+                        if (r === startRadius) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    }
+                    ctx.stroke();
+                }
+            }
+            
+            ctx.shadowBlur = 0;
             ctx.restore();
         }
 
