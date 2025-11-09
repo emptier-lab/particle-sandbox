@@ -874,6 +874,26 @@
             document.getElementById('connectionsBtn').classList.toggle('active', connectionsEnabled);
         }
 
+        function setupValueDoubleClick(valueId, sliderId, setter, parser = parseInt, formatter = (v) => v) {
+            const valueEl = document.getElementById(valueId);
+            valueEl.style.cursor = devMode ? 'pointer' : 'default';
+            valueEl.title = devMode ? 'Double-click to set value' : '';
+            valueEl.ondblclick = () => {
+                if (devMode) {
+                    const current = parser(document.getElementById(sliderId).value);
+                    const input = prompt(`Enter value:`, current);
+                    if (input !== null) {
+                        const val = parser(input);
+                        if (!isNaN(val)) {
+                            document.getElementById(sliderId).value = val;
+                            setter(val);
+                            valueEl.textContent = formatter(val);
+                        }
+                    }
+                }
+            };
+        }
+
         function toggleDevMode() {
             devMode = !devMode;
             const btn = document.getElementById('devModeBtn');
@@ -917,6 +937,34 @@
                 document.getElementById('bleed').max = unlimited;
                 document.getElementById('curvature').max = unlimited;
                 document.getElementById('glitch').max = unlimited;
+                
+                setupValueDoubleClick('sizeValue', 'size', (v) => { particleSize = v; }, parseInt);
+                setupValueDoubleClick('countValue', 'count', (v) => { particleCount = v; }, parseInt);
+                setupValueDoubleClick('speedValue', 'speed', (v) => { speed = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('lifetimeValue', 'lifetime', (v) => { lifetime = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('trailValue', 'trail', (v) => { trailLength = v; }, parseInt);
+                setupValueDoubleClick('gravityValue', 'gravity', (v) => { gravity = v; }, parseFloat, (v) => v.toFixed(2));
+                setupValueDoubleClick('frictionValue', 'friction', (v) => { friction = v; }, parseFloat, (v) => v.toFixed(2));
+                setupValueDoubleClick('interactionValue', 'interaction', (v) => { interactionForce = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('mouseForceValue', 'mouseForce', (v) => { mouseForce = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('sizeVarValue', 'sizeVar', (v) => { sizeVariation = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('distanceValue', 'distance', (v) => { connectionDistance = v; }, parseInt);
+                setupValueDoubleClick('trailOpacityValue', 'trailOpacity', (v) => { trailOpacity = v; }, parseFloat, (v) => v.toFixed(2));
+                setupValueDoubleClick('windXValue', 'windX', (v) => { windX = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('windYValue', 'windY', (v) => { windY = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('bounceValue', 'bounce', (v) => { bounce = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('emitRateValue', 'emitRate', (v) => { emitRate = v; }, parseInt);
+                setupValueDoubleClick('magneticValue', 'magnetic', (v) => { magneticField = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('vortexValue', 'vortex', (v) => { vortexStrength = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('noiseValue', 'noise', (v) => { noiseAmount = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('scanlinesValue', 'scanlines', (v) => { scanlinesIntensity = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('chromaticValue', 'chromatic', (v) => { chromaticAberration = v; }, parseFloat, (v) => v.toFixed(1));
+                setupValueDoubleClick('grainValue', 'grain', (v) => { filmGrain = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('trackingValue', 'tracking', (v) => { vhsTracking = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('staticValue', 'static', (v) => { staticNoise = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('bleedValue', 'bleed', (v) => { colorBleed = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('curvatureValue', 'curvature', (v) => { crtCurvature = v; }, parseInt, (v) => v + '%');
+                setupValueDoubleClick('glitchValue', 'glitch', (v) => { vhsGlitch = v; }, parseInt, (v) => v + '%');
             } else {
                 maxParticles = 10000;
                 document.getElementById('maxParticles').max = 50000;
@@ -952,6 +1000,13 @@
                 document.getElementById('bleed').max = 100;
                 document.getElementById('curvature').max = 100;
                 document.getElementById('glitch').max = 100;
+                
+                const valueDisplays = document.querySelectorAll('.value-display');
+                valueDisplays.forEach(el => {
+                    el.style.cursor = 'default';
+                    el.title = '';
+                    el.ondblclick = null;
+                });
             }
         }
 
@@ -1764,7 +1819,49 @@
                     reader.onload = (event) => {
                         try {
                             const config = JSON.parse(event.target.result);
-                            Object.assign(window, config);
+                            
+                            if (config.particleSize !== undefined) particleSize = config.particleSize;
+                            if (config.gravity !== undefined) gravity = config.gravity;
+                            if (config.friction !== undefined) friction = config.friction;
+                            if (config.interactionForce !== undefined) interactionForce = config.interactionForce;
+                            if (config.connectionDistance !== undefined) connectionDistance = config.connectionDistance;
+                            if (config.particleCount !== undefined) particleCount = config.particleCount;
+                            if (config.mode !== undefined) mode = config.mode;
+                            if (config.speed !== undefined) speed = config.speed;
+                            if (config.lifetime !== undefined) lifetime = config.lifetime;
+                            if (config.trailLength !== undefined) trailLength = config.trailLength;
+                            if (config.trailOpacity !== undefined) trailOpacity = config.trailOpacity;
+                            if (config.mouseForce !== undefined) mouseForce = config.mouseForce;
+                            if (config.backgroundMode !== undefined) backgroundMode = config.backgroundMode;
+                            if (config.particleShape !== undefined) particleShape = config.particleShape;
+                            if (config.sizeVariation !== undefined) sizeVariation = config.sizeVariation;
+                            if (config.windX !== undefined) windX = config.windX;
+                            if (config.windY !== undefined) windY = config.windY;
+                            if (config.collisionsEnabled !== undefined) collisionsEnabled = config.collisionsEnabled;
+                            if (config.bounce !== undefined) bounce = config.bounce;
+                            if (config.emitterMode !== undefined) emitterMode = config.emitterMode;
+                            if (config.emitRate !== undefined) emitRate = config.emitRate;
+                            if (config.colorMode !== undefined) colorMode = config.colorMode;
+                            if (config.currentColor !== undefined) currentColor = config.currentColor;
+                            if (config.magneticField !== undefined) magneticField = config.magneticField;
+                            if (config.vortexStrength !== undefined) vortexStrength = config.vortexStrength;
+                            if (config.noiseAmount !== undefined) noiseAmount = config.noiseAmount;
+                            if (config.flockingEnabled !== undefined) flockingEnabled = config.flockingEnabled;
+                            if (config.sizeOverLife !== undefined) sizeOverLife = config.sizeOverLife;
+                            if (config.colorOverLife !== undefined) colorOverLife = config.colorOverLife;
+                            if (config.blendMode !== undefined) blendMode = config.blendMode;
+                            if (config.velocityViz !== undefined) velocityViz = config.velocityViz;
+                            if (config.maxParticles !== undefined) maxParticles = config.maxParticles;
+                            if (config.vhsMode !== undefined) vhsMode = config.vhsMode;
+                            if (config.scanlinesIntensity !== undefined) scanlinesIntensity = config.scanlinesIntensity;
+                            if (config.chromaticAberration !== undefined) chromaticAberration = config.chromaticAberration;
+                            if (config.filmGrain !== undefined) filmGrain = config.filmGrain;
+                            if (config.vhsTracking !== undefined) vhsTracking = config.vhsTracking;
+                            if (config.staticNoise !== undefined) staticNoise = config.staticNoise;
+                            if (config.colorBleed !== undefined) colorBleed = config.colorBleed;
+                            if (config.crtCurvature !== undefined) crtCurvature = config.crtCurvature;
+                            if (config.vhsGlitch !== undefined) vhsGlitch = config.vhsGlitch;
+                            
                             resetSettings();
                             alert('Configuration loaded!');
                         } catch (error) {
