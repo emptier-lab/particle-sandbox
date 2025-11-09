@@ -23,20 +23,20 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            background: rgba(20, 20, 20, 0.95);
+            background: rgba(20, 20, 20, 0.60);
             padding: 20px;
             border-radius: 8px;
             color: #fff;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             max-height: 90vh;
             overflow-y: auto;
-            width: 300px;
+            width: 380px;
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             transition: width 0.3s ease, height 0.3s ease;
         }
         .controls.minimized {
-            width: 300px;
+            width: 380px;
             height: auto;
             overflow: hidden;
         }
@@ -88,11 +88,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        h3 > span:first-of-type {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .stats {
             font-size: 11px;
             color: #888;
             font-weight: normal;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
         .section {
             margin-bottom: 20px;
@@ -101,14 +112,6 @@
         }
         .section:last-child {
             border-bottom: none;
-        }
-        .section-title {
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
         }
         .control-group {
             margin-bottom: 15px;
@@ -257,18 +260,51 @@
         .preset-grid button {
             margin: 0;
         }
+        .section-title {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .section-title::after {
+            content: '▼';
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+        .section.collapsed .section-title::after {
+            transform: rotate(-90deg);
+        }
+        .section-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .section.collapsed .section-content {
+            max-height: 0;
+            margin-bottom: 0;
+        }
+        .section:not(.collapsed) .section-content {
+            max-height: 5000px;
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
     <div class="controls" id="controlsPanel">
         <div class="controls-header">
-            <h3>Particle Sandbox <span class="stats" id="stats">0 particles | 60 FPS</span></h3>
+            <h3><span>Particle Sandbox</span> <span class="stats" id="stats">0 particles | 60 FPS</span></h3>
             <button class="minimize-btn" id="minimizeBtn" onclick="toggleMinimize()">−</button>
         </div>
         
         <div class="section">
-            <div class="section-title">Spawn</div>
+            <div class="section-title" onclick="toggleSection(this)">Spawn</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Mode: <span class="value-display" id="modeValue">Click & Drag</span></label>
                 <select id="mode">
@@ -288,10 +324,12 @@
                 <label>Speed: <span class="value-display" id="speedValue">1.0</span></label>
                 <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1.0">
             </div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Particle</div>
+            <div class="section-title" onclick="toggleSection(this)">Particle</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Size: <span class="value-display" id="sizeValue">3</span></label>
                 <input type="range" id="size" min="1" max="20" value="3">
@@ -304,10 +342,12 @@
                 <label>Trail Length: <span class="value-display" id="trailValue">5</span></label>
                 <input type="range" id="trail" min="0" max="20" value="5">
             </div>
+            </div>
         </div>
         
         <div class="section">
-            <div class="section-title">Physics</div>
+            <div class="section-title" onclick="toggleSection(this)">Physics</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Gravity: <span class="value-display" id="gravityValue">0.1</span></label>
                 <input type="range" id="gravity" min="0" max="1" step="0.05" value="0.1">
@@ -324,10 +364,12 @@
                 <label>Mouse Force: <span class="value-display" id="mouseForceValue">1.0</span></label>
                 <input type="range" id="mouseForce" min="0" max="5" step="0.1" value="1.0">
             </div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Visual</div>
+            <div class="section-title" onclick="toggleSection(this)">Visual</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Shape: <span class="value-display" id="shapeValue">Circle</span></label>
                 <select id="shape">
@@ -358,10 +400,12 @@
                     <option value="gray">Gray</option>
                 </select>
             </div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Advanced Physics</div>
+            <div class="section-title" onclick="toggleSection(this)">Advanced Physics</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Wind X: <span class="value-display" id="windXValue">0.0</span></label>
                 <input type="range" id="windX" min="-2" max="2" step="0.1" value="0">
@@ -381,10 +425,12 @@
                 <label>Bounce: <span class="value-display" id="bounceValue">0.8</span></label>
                 <input type="range" id="bounce" min="0" max="1" step="0.1" value="0.8">
             </div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Emitter</div>
+            <div class="section-title" onclick="toggleSection(this)">Emitter</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Emitter: <span class="value-display" id="emitterValue">OFF</span></label>
                 <select id="emitter">
@@ -398,10 +444,12 @@
                 <label>Emit Rate: <span class="value-display" id="emitRateValue">5</span></label>
                 <input type="range" id="emitRate" min="1" max="50" value="5">
             </div>
+            </div>
         </div>
         
         <div class="section">
-            <div class="section-title">Colors</div>
+            <div class="section-title" onclick="toggleSection(this)">Colors</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Color Mode: <span class="value-display" id="colorModeValue">Single</span></label>
                 <select id="colorMode">
@@ -420,10 +468,12 @@
                 </div>
             </div>
             <div id="colorPalette"></div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Field Forces</div>
+            <div class="section-title" onclick="toggleSection(this)">Field Forces</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Magnetic Field: <span class="value-display" id="magneticValue">0.0</span></label>
                 <input type="range" id="magnetic" min="0" max="5" step="0.1" value="0">
@@ -443,10 +493,12 @@
                     <option value="on">ON</option>
                 </select>
             </div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Particle Aging</div>
+            <div class="section-title" onclick="toggleSection(this)">Particle Aging</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Size Over Lifetime: <span class="value-display" id="sizeOverLifeValue">OFF</span></label>
                 <select id="sizeOverLife">
@@ -465,10 +517,12 @@
                     <option value="heat">Heat Map</option>
                 </select>
             </div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Rendering</div>
+            <div class="section-title" onclick="toggleSection(this)">Rendering</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Blend Mode: <span class="value-display" id="blendValue">Normal</span></label>
                 <select id="blendMode">
@@ -491,10 +545,12 @@
                 <label>Max Particles: <span class="value-display" id="maxParticlesValue">10000</span></label>
                 <input type="range" id="maxParticles" min="100" max="50000" step="100" value="10000">
             </div>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">VHS / Retro Effects</div>
+            <div class="section-title" onclick="toggleSection(this)">VHS / Retro Effects</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>VHS Mode: <span class="value-display" id="vhsModeValue">OFF</span></label>
                 <select id="vhsMode">
@@ -534,10 +590,12 @@
                 <label>VHS Glitch: <span class="value-display" id="glitchValue">0</span>%</label>
                 <input type="range" id="glitch" min="0" max="100" value="0">
             </div>
+            </div>
         </div>
-
-        <div class="section">
-            <div class="section-title">Weather</div>
+        
+        <div class="section collapsed">
+            <div class="section-title" onclick="toggleSection(this)">Weather</div>
+            <div class="section-content">
             <div class="control-group">
                 <label>Tornado: <span class="value-display" id="tornadoEnabledValue">OFF</span></label>
                 <select id="tornadoEnabled">
@@ -557,17 +615,89 @@
                 <label>Tornado Size: <span class="value-display" id="tornadoSizeValue">150</span></label>
                 <input type="range" id="tornadoSize" min="50" max="300" step="10" value="150">
             </div>
-            <div class="preset-grid">
-                <button onclick="loadPreset('tornado')">Tornado Preset</button>
-                <button onclick="loadPreset('tsunami')">Tsunami</button>
-                <button onclick="loadPreset('volcano')">Volcano</button>
-                <button onclick="loadPreset('thunder')">Thunder</button>
-                <button onclick="loadPreset('snow')">Snow</button>
+            <div class="control-group">
+                <label>Tsunami: <span class="value-display" id="tsunamiEnabledValue">OFF</span></label>
+                <select id="tsunamiEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Tsunami Strength: <span class="value-display" id="tsunamiStrengthValue">3.0</span></label>
+                <input type="range" id="tsunamiStrength" min="1" max="10" step="0.5" value="3.0">
+            </div>
+            <div class="control-group">
+                <label>Volcano: <span class="value-display" id="volcanoEnabledValue">OFF</span></label>
+                <select id="volcanoEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Volcano Intensity: <span class="value-display" id="volcanoIntensityValue">5.0</span></label>
+                <input type="range" id="volcanoIntensity" min="1" max="10" step="0.5" value="5.0">
+            </div>
+            <div class="control-group">
+                <label>Thunder: <span class="value-display" id="thunderEnabledValue">OFF</span></label>
+                <select id="thunderEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Thunder Frequency: <span class="value-display" id="thunderFreqValue">2.0</span></label>
+                <input type="range" id="thunderFreq" min="0.5" max="5" step="0.1" value="2.0">
+            </div>
+            <div class="control-group">
+                <label>Rain: <span class="value-display" id="rainEnabledValue">OFF</span></label>
+                <select id="rainEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Rain Intensity: <span class="value-display" id="rainIntensityValue">3.0</span></label>
+                <input type="range" id="rainIntensity" min="1" max="10" step="0.5" value="3.0">
+            </div>
+            <div class="control-group">
+                <label>Snow: <span class="value-display" id="snowEnabledValue">OFF</span></label>
+                <select id="snowEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Snow Intensity: <span class="value-display" id="snowIntensityValue">2.0</span></label>
+                <input type="range" id="snowIntensity" min="1" max="10" step="0.5" value="2.0">
+            </div>
+            <div class="control-group">
+                <label>Hurricane: <span class="value-display" id="hurricaneEnabledValue">OFF</span></label>
+                <select id="hurricaneEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Hurricane Strength: <span class="value-display" id="hurricaneStrengthValue">6.0</span></label>
+                <input type="range" id="hurricaneStrength" min="1" max="10" step="0.5" value="6.0">
+            </div>
+            <div class="control-group">
+                <label>Earthquake: <span class="value-display" id="earthquakeEnabledValue">OFF</span></label>
+                <select id="earthquakeEnabled">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Earthquake Intensity: <span class="value-display" id="earthquakeIntensityValue">3.0</span></label>
+                <input type="range" id="earthquakeIntensity" min="1" max="10" step="0.5" value="3.0">
+            </div>
             </div>
         </div>
-
+        
         <div class="section">
-            <div class="section-title">Presets</div>
+            <div class="section-title" onclick="toggleSection(this)">Presets</div>
+            <div class="section-content">
             <div class="preset-grid">
                 <button onclick="loadPreset('fireworks')">Fireworks</button>
                 <button onclick="loadPreset('galaxy')">Galaxy</button>
@@ -576,11 +706,22 @@
                 <button onclick="loadPreset('flocking')">Flocking</button>
                 <button onclick="loadPreset('magnetic')">Magnetic</button>
                 <button onclick="loadPreset('chaos')">Chaos</button>
+                <button onclick="loadPreset('nebula')">Nebula</button>
+                <button onclick="loadPreset('stars')">Stars</button>
+                <button onclick="loadPreset('smoke')">Smoke</button>
+                <button onclick="loadPreset('bubbles')">Bubbles</button>
+                <button onclick="loadPreset('sparkles')">Sparkles</button>
+                <button onclick="loadPreset('aurora')">Aurora</button>
+                <button onclick="loadPreset('meteor')">Meteor</button>
+                <button onclick="loadPreset('storm')">Storm</button>
+                <button onclick="loadPreset('energy')">Energy</button>
+            </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Save/Load</div>
+            <div class="section-title" onclick="toggleSection(this)">Save/Load</div>
+            <div class="section-content">
             <div class="button-group">
                 <button onclick="saveConfig()">Save Config</button>
                 <button onclick="loadConfig()">Load Config</button>
@@ -589,9 +730,12 @@
                 <button onclick="exportImage()">Export Image</button>
                 <button onclick="exportGIF()">Export GIF</button>
             </div>
+            </div>
         </div>
         
         <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">Controls</div>
+            <div class="section-content">
             <div class="button-group">
                 <button id="physicsBtn" onclick="togglePhysics()">Physics: ON</button>
                 <button id="connectionsBtn" onclick="toggleConnections()">Connections: ON</button>
@@ -603,6 +747,7 @@
             <div class="button-group">
                 <button id="devModeBtn" onclick="toggleDevMode()" style="background: #ff4444; color: white;">Dev Mode: OFF</button>
             </div>
+            </div>
         </div>
 
         <div class="info">
@@ -610,6 +755,7 @@
             Drag: Create trails<br>
             Right-click: Repel particles<br>
             Middle-click: Attract particles
+        </div>
         </div>
     </div>
 
@@ -687,6 +833,29 @@
         let tornadoSpeed = 2.0;
         let tornadoSize = 150;
         let tornado = null;
+        let tsunamiEnabled = false;
+        let tsunamiStrength = 3.0;
+        let tsunamiWaves = [];
+        let volcanoEnabled = false;
+        let volcanoIntensity = 5.0;
+        let volcano = null;
+        let thunderEnabled = false;
+        let thunderFreq = 2.0;
+        let thunderTimer = 0;
+        let lightningStrikes = [];
+        let rainEnabled = false;
+        let rainIntensity = 3.0;
+        let rainDrops = [];
+        let snowEnabled = false;
+        let snowIntensity = 2.0;
+        let snowFlakes = [];
+        let hurricaneEnabled = false;
+        let hurricaneStrength = 6.0;
+        let hurricane = null;
+        let earthquakeEnabled = false;
+        let earthquakeIntensity = 3.0;
+        let earthquakeTimer = 0;
+        let earthquakeShake = { x: 0, y: 0 };
 
         // Initialize canvas
         const canvas = document.getElementById('canvas');
@@ -966,6 +1135,101 @@
             document.getElementById('tornadoSizeValue').textContent = tornadoSize;
         };
 
+        document.getElementById('tsunamiEnabled').onchange = (e) => {
+            tsunamiEnabled = e.target.value === 'on';
+            document.getElementById('tsunamiEnabledValue').textContent = tsunamiEnabled ? 'ON' : 'OFF';
+            if (!tsunamiEnabled) tsunamiWaves = [];
+        };
+
+        document.getElementById('tsunamiStrength').oninput = (e) => {
+            tsunamiStrength = parseFloat(e.target.value);
+            document.getElementById('tsunamiStrengthValue').textContent = tsunamiStrength.toFixed(1);
+        };
+
+        document.getElementById('volcanoEnabled').onchange = (e) => {
+            volcanoEnabled = e.target.value === 'on';
+            document.getElementById('volcanoEnabledValue').textContent = volcanoEnabled ? 'ON' : 'OFF';
+            if (volcanoEnabled && !volcano) {
+                volcano = {
+                    x: canvas.width / 2,
+                    y: canvas.height - 20,
+                    eruptionTimer: 0,
+                    active: true
+                };
+            } else if (!volcanoEnabled) {
+                volcano = null;
+            }
+        };
+
+        document.getElementById('volcanoIntensity').oninput = (e) => {
+            volcanoIntensity = parseFloat(e.target.value);
+            document.getElementById('volcanoIntensityValue').textContent = volcanoIntensity.toFixed(1);
+        };
+
+        document.getElementById('thunderEnabled').onchange = (e) => {
+            thunderEnabled = e.target.value === 'on';
+            document.getElementById('thunderEnabledValue').textContent = thunderEnabled ? 'ON' : 'OFF';
+            if (!thunderEnabled) lightningStrikes = [];
+        };
+
+        document.getElementById('thunderFreq').oninput = (e) => {
+            thunderFreq = parseFloat(e.target.value);
+            document.getElementById('thunderFreqValue').textContent = thunderFreq.toFixed(1);
+        };
+
+        document.getElementById('rainEnabled').onchange = (e) => {
+            rainEnabled = e.target.value === 'on';
+            document.getElementById('rainEnabledValue').textContent = rainEnabled ? 'ON' : 'OFF';
+            if (!rainEnabled) rainDrops = [];
+        };
+
+        document.getElementById('rainIntensity').oninput = (e) => {
+            rainIntensity = parseFloat(e.target.value);
+            document.getElementById('rainIntensityValue').textContent = rainIntensity.toFixed(1);
+        };
+
+        document.getElementById('snowEnabled').onchange = (e) => {
+            snowEnabled = e.target.value === 'on';
+            document.getElementById('snowEnabledValue').textContent = snowEnabled ? 'ON' : 'OFF';
+            if (!snowEnabled) snowFlakes = [];
+        };
+
+        document.getElementById('snowIntensity').oninput = (e) => {
+            snowIntensity = parseFloat(e.target.value);
+            document.getElementById('snowIntensityValue').textContent = snowIntensity.toFixed(1);
+        };
+
+        document.getElementById('hurricaneEnabled').onchange = (e) => {
+            hurricaneEnabled = e.target.value === 'on';
+            document.getElementById('hurricaneEnabledValue').textContent = hurricaneEnabled ? 'ON' : 'OFF';
+            if (hurricaneEnabled && !hurricane) {
+                hurricane = {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    rotation: 0,
+                    active: true
+                };
+            } else if (!hurricaneEnabled) {
+                hurricane = null;
+            }
+        };
+
+        document.getElementById('hurricaneStrength').oninput = (e) => {
+            hurricaneStrength = parseFloat(e.target.value);
+            document.getElementById('hurricaneStrengthValue').textContent = hurricaneStrength.toFixed(1);
+        };
+
+        document.getElementById('earthquakeEnabled').onchange = (e) => {
+            earthquakeEnabled = e.target.value === 'on';
+            document.getElementById('earthquakeEnabledValue').textContent = earthquakeEnabled ? 'ON' : 'OFF';
+            earthquakeShake = { x: 0, y: 0 };
+        };
+
+        document.getElementById('earthquakeIntensity').oninput = (e) => {
+            earthquakeIntensity = parseFloat(e.target.value);
+            document.getElementById('earthquakeIntensityValue').textContent = earthquakeIntensity.toFixed(1);
+        };
+
         function togglePhysics() {
             physicsEnabled = !physicsEnabled;
             document.getElementById('physicsBtn').textContent = `Physics: ${physicsEnabled ? 'ON' : 'OFF'}`;
@@ -983,6 +1247,11 @@
             const btn = document.getElementById('minimizeBtn');
             panel.classList.toggle('minimized');
             btn.textContent = panel.classList.contains('minimized') ? '+' : '−';
+        }
+
+        function toggleSection(titleElement) {
+            const section = titleElement.parentElement;
+            section.classList.toggle('collapsed');
         }
 
         function setupValueDoubleClick(valueId, sliderId, setter, parser = parseInt, formatter = (v) => v) {
@@ -1203,6 +1472,44 @@
             document.getElementById('bleedValue').textContent = colorBleed + '%';
             document.getElementById('curvatureValue').textContent = crtCurvature + '%';
             document.getElementById('glitchValue').textContent = vhsGlitch + '%';
+            document.getElementById('tornadoEnabled').value = tornadoEnabled ? 'on' : 'off';
+            document.getElementById('tornadoStrength').value = tornadoStrength;
+            document.getElementById('tornadoSpeed').value = tornadoSpeed;
+            document.getElementById('tornadoSize').value = tornadoSize;
+            document.getElementById('tsunamiEnabled').value = tsunamiEnabled ? 'on' : 'off';
+            document.getElementById('tsunamiStrength').value = tsunamiStrength;
+            document.getElementById('volcanoEnabled').value = volcanoEnabled ? 'on' : 'off';
+            document.getElementById('volcanoIntensity').value = volcanoIntensity;
+            document.getElementById('thunderEnabled').value = thunderEnabled ? 'on' : 'off';
+            document.getElementById('thunderFreq').value = thunderFreq;
+            document.getElementById('rainEnabled').value = rainEnabled ? 'on' : 'off';
+            document.getElementById('rainIntensity').value = rainIntensity;
+            document.getElementById('snowEnabled').value = snowEnabled ? 'on' : 'off';
+            document.getElementById('snowIntensity').value = snowIntensity;
+            document.getElementById('hurricaneEnabled').value = hurricaneEnabled ? 'on' : 'off';
+            document.getElementById('hurricaneStrength').value = hurricaneStrength;
+            document.getElementById('earthquakeEnabled').value = earthquakeEnabled ? 'on' : 'off';
+            document.getElementById('earthquakeIntensity').value = earthquakeIntensity;
+            
+            document.getElementById('tornadoEnabledValue').textContent = tornadoEnabled ? 'ON' : 'OFF';
+            document.getElementById('tornadoStrengthValue').textContent = tornadoStrength.toFixed(1);
+            document.getElementById('tornadoSpeedValue').textContent = tornadoSpeed.toFixed(1);
+            document.getElementById('tornadoSizeValue').textContent = tornadoSize;
+            document.getElementById('tsunamiEnabledValue').textContent = tsunamiEnabled ? 'ON' : 'OFF';
+            document.getElementById('tsunamiStrengthValue').textContent = tsunamiStrength.toFixed(1);
+            document.getElementById('volcanoEnabledValue').textContent = volcanoEnabled ? 'ON' : 'OFF';
+            document.getElementById('volcanoIntensityValue').textContent = volcanoIntensity.toFixed(1);
+            document.getElementById('thunderEnabledValue').textContent = thunderEnabled ? 'ON' : 'OFF';
+            document.getElementById('thunderFreqValue').textContent = thunderFreq.toFixed(1);
+            document.getElementById('rainEnabledValue').textContent = rainEnabled ? 'ON' : 'OFF';
+            document.getElementById('rainIntensityValue').textContent = rainIntensity.toFixed(1);
+            document.getElementById('snowEnabledValue').textContent = snowEnabled ? 'ON' : 'OFF';
+            document.getElementById('snowIntensityValue').textContent = snowIntensity.toFixed(1);
+            document.getElementById('hurricaneEnabledValue').textContent = hurricaneEnabled ? 'ON' : 'OFF';
+            document.getElementById('hurricaneStrengthValue').textContent = hurricaneStrength.toFixed(1);
+            document.getElementById('earthquakeEnabledValue').textContent = earthquakeEnabled ? 'ON' : 'OFF';
+            document.getElementById('earthquakeIntensityValue').textContent = earthquakeIntensity.toFixed(1);
+            
             ctx.globalCompositeOperation = blendMode;
         }
 
@@ -1247,6 +1554,34 @@
             colorBleed = 0;
             crtCurvature = 0;
             vhsGlitch = 0;
+            tornadoEnabled = false;
+            tornadoStrength = 5.0;
+            tornadoSpeed = 2.0;
+            tornadoSize = 150;
+            tornado = null;
+            tsunamiEnabled = false;
+            tsunamiStrength = 3.0;
+            tsunamiWaves = [];
+            volcanoEnabled = false;
+            volcanoIntensity = 5.0;
+            volcano = null;
+            thunderEnabled = false;
+            thunderFreq = 2.0;
+            thunderTimer = 0;
+            lightningStrikes = [];
+            rainEnabled = false;
+            rainIntensity = 3.0;
+            rainDrops = [];
+            snowEnabled = false;
+            snowIntensity = 2.0;
+            snowFlakes = [];
+            hurricaneEnabled = false;
+            hurricaneStrength = 6.0;
+            hurricane = null;
+            earthquakeEnabled = false;
+            earthquakeIntensity = 3.0;
+            earthquakeTimer = 0;
+            earthquakeShake = { x: 0, y: 0 };
             
             updateUIFromVariables();
         }
@@ -1276,18 +1611,6 @@
                     connectionDistance = 150;
                     colorMode = 'gradient';
                     interactionForce = 1.5;
-                    break;
-                case 'snow':
-                    particleSize = 3;
-                    particleCount = 1;
-                    mode = 'rain';
-                    speed = 0.5;
-                    gravity = 0.05;
-                    friction = 0.98;
-                    lifetime = 200;
-                    windX = 0.1;
-                    colorMode = 'single';
-                    currentColor = '#ffffff';
                     break;
                 case 'plasma':
                     particleSize = 5;
@@ -1350,73 +1673,115 @@
                     colorMode = 'random';
                     interactionForce = 2.5;
                     break;
-                case 'tornado':
+                case 'nebula':
                     particleSize = 4;
-                    particleCount = 150;
+                    particleCount = 80;
                     mode = 'spiral';
-                    speed = 1.2;
-                    gravity = 0.05;
-                    friction = 0.98;
+                    speed = 0.5;
+                    gravity = 0;
+                    friction = 0.99;
                     lifetime = 200;
-                    vortexStrength = 4.5;
-                    windX = 0.2;
-                    windY = -0.1;
+                    connectionDistance = 180;
                     colorMode = 'gradient';
                     interactionForce = 1.2;
-                    trailLength = 10;
-                    sizeOverLife = 'shrink';
-                    break;
-                case 'tsunami':
-                    particleSize = 6;
-                    particleCount = 2;
-                    mode = 'rain';
-                    speed = 1.5;
-                    gravity = 0.08;
-                    friction = 0.97;
-                    lifetime = 250;
-                    windX = 0.3;
-                    windY = 0.15;
-                    colorMode = 'single';
-                    currentColor = '#0066cc';
-                    trailLength = 15;
-                    connectionDistance = 200;
-                    interactionForce = 0.8;
-                    sizeOverLife = 'shrink';
-                    break;
-                case 'volcano':
-                    particleSize = 5;
-                    particleCount = 80;
-                    mode = 'explosion';
-                    speed = 2.5;
-                    gravity = 0.25;
-                    friction = 0.96;
-                    lifetime = 120;
-                    windX = 0.1;
-                    windY = -0.3;
-                    colorMode = 'single';
-                    currentColor = '#ff4400';
+                    blendMode = 'screen';
                     trailLength = 12;
-                    sizeOverLife = 'shrink';
-                    colorOverLife = 'fade';
-                    noiseAmount = 0.8;
                     break;
-                case 'thunder':
-                    particleSize = 8;
+                case 'stars':
+                    particleSize = 1;
+                    particleCount = 300;
+                    mode = 'auto';
+                    speed = 0.3;
+                    gravity = 0;
+                    friction = 1;
+                    lifetime = 300;
+                    colorMode = 'single';
+                    currentColor = '#ffffff';
+                    trailLength = 0;
+                    sizeOverLife = 'pulse';
+                    break;
+                case 'smoke':
+                    particleSize = 6;
+                    particleCount = 40;
+                    mode = 'fountain';
+                    speed = 0.8;
+                    gravity = -0.05;
+                    friction = 0.98;
+                    lifetime = 150;
+                    colorMode = 'single';
+                    currentColor = '#666666';
+                    trailLength = 15;
+                    sizeOverLife = 'grow';
+                    colorOverLife = 'fade';
+                    windX = 0.2;
+                    break;
+                case 'bubbles':
+                    particleSize = 5;
+                    particleCount = 50;
+                    mode = 'fountain';
+                    speed = 0.6;
+                    gravity = -0.08;
+                    friction = 0.99;
+                    lifetime = 180;
+                    colorMode = 'gradient';
+                    trailLength = 8;
+                    sizeOverLife = 'grow';
+                    bounce = 0.9;
+                    break;
+                case 'sparkles':
+                    particleSize = 2;
                     particleCount = 100;
                     mode = 'explosion';
-                    speed = 3.0;
+                    speed = 1.2;
                     gravity = 0.1;
-                    friction = 0.92;
-                    lifetime = 60;
-                    colorMode = 'single';
-                    currentColor = '#ffffaa';
+                    friction = 0.97;
+                    lifetime = 80;
+                    colorMode = 'rainbow';
                     trailLength = 5;
                     sizeOverLife = 'shrink';
-                    colorOverLife = 'fade';
-                    staticNoise = 30;
-                    vhsGlitch = 20;
+                    break;
+                case 'aurora':
+                    particleSize = 3;
+                    particleCount = 120;
+                    mode = 'spiral';
+                    speed = 0.4;
+                    gravity = 0;
+                    friction = 0.995;
+                    lifetime = 250;
+                    connectionDistance = 200;
+                    colorMode = 'gradient';
+                    interactionForce = 0.8;
                     blendMode = 'screen';
-                    noiseAmount = 1.2;
+                    trailLength = 20;
+                    vortexStrength = 2.0;
+                    break;
+                case 'meteor':
+                    particleSize = 4;
+                    particleCount = 60;
+                    mode = 'explosion';
+                    speed = 1.8;
+                    gravity = 0.12;
+                    friction = 0.96;
+                    lifetime = 90;
+                    colorMode = 'age';
+                    trailLength = 10;
+                    sizeOverLife = 'shrink';
+                    colorOverLife = 'heat';
+                    break;
+                case 'energy':
+                    particleSize = 3;
+                    particleCount = 100;
+                    mode = 'spiral';
+                    speed = 1.0;
+                    gravity = 0;
+                    friction = 0.99;
+                    lifetime = 150;
+                    connectionDistance = 120;
+                    colorMode = 'velocity';
+                    interactionForce = 2.0;
+                    magneticField = 3.0;
+                    trailLength = 8;
+                    blendMode = 'screen';
                     break;
             }
             
@@ -1548,6 +1913,10 @@
                 this.applyFieldForces();
                 this.applyNoise();
                 this.applyTornado();
+                this.applyTsunami();
+                this.applyVolcano();
+                this.applyHurricane();
+                this.applyEarthquake();
                 
                 this.age += 0.01;
                 this.updateAging();
@@ -1746,6 +2115,68 @@
                     this.vx += Math.cos(spinAngle) * spinForce * 0.1;
                     this.vy += Math.sin(spinAngle) * spinForce * 0.1;
                 }
+            }
+
+            applyTsunami() {
+                if (!tsunamiEnabled || tsunamiWaves.length === 0) return;
+                
+                for (const wave of tsunamiWaves) {
+                    const waveY = wave.y;
+                    const distance = Math.abs(this.y - waveY);
+                    const waveWidth = 100;
+                    
+                    if (distance < waveWidth) {
+                        const force = (1 - distance / waveWidth) * tsunamiStrength;
+                        const direction = wave.direction;
+                        this.vx += direction * force * 0.1;
+                        this.vy += (Math.random() - 0.5) * force * 0.05;
+                    }
+                }
+            }
+
+            applyVolcano() {
+                if (!volcano || !volcano.active) return;
+                
+                const dx = volcano.x - this.x;
+                const dy = volcano.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const maxDist = 200;
+                
+                if (distance < maxDist && distance > 0 && this.y > volcano.y) {
+                    const force = (1 - distance / maxDist) * volcanoIntensity;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    this.vx -= Math.cos(angle) * force * 0.08;
+                    this.vy -= Math.sin(angle) * force * 0.15;
+                }
+            }
+
+            applyHurricane() {
+                if (!hurricane || !hurricane.active) return;
+                
+                const dx = this.x - hurricane.x;
+                const dy = this.y - hurricane.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const maxDist = 400;
+                
+                if (distance < maxDist && distance > 0) {
+                    const force = (1 - distance / maxDist) * hurricaneStrength;
+                    const angle = Math.atan2(dy, dx) + Math.PI / 2;
+                    
+                    this.vx += Math.cos(angle) * force * 0.05;
+                    this.vy += Math.sin(angle) * force * 0.05;
+                    
+                    const pullAngle = Math.atan2(dy, dx);
+                    this.vx += Math.cos(pullAngle) * force * 0.02;
+                    this.vy += Math.sin(pullAngle) * force * 0.02;
+                }
+            }
+
+            applyEarthquake() {
+                if (!earthquakeEnabled) return;
+                
+                this.x += earthquakeShake.x;
+                this.y += earthquakeShake.y;
             }
 
             updateAging() {
@@ -2022,7 +2453,15 @@
                 collisionsEnabled, bounce, emitterMode, emitRate, colorMode, currentColor,
                 magneticField, vortexStrength, noiseAmount, flockingEnabled, sizeOverLife,
                 colorOverLife, blendMode, velocityViz, maxParticles, vhsMode, scanlinesIntensity,
-                chromaticAberration, filmGrain, vhsTracking, staticNoise, colorBleed, crtCurvature, vhsGlitch
+                chromaticAberration, filmGrain, vhsTracking, staticNoise, colorBleed, crtCurvature, vhsGlitch,
+                tornadoEnabled, tornadoStrength, tornadoSpeed, tornadoSize,
+                tsunamiEnabled, tsunamiStrength,
+                volcanoEnabled, volcanoIntensity,
+                thunderEnabled, thunderFreq,
+                rainEnabled, rainIntensity,
+                snowEnabled, snowIntensity,
+                hurricaneEnabled, hurricaneStrength,
+                earthquakeEnabled, earthquakeIntensity
             };
             const json = JSON.stringify(config, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
@@ -2087,6 +2526,40 @@
                             if (config.colorBleed !== undefined) colorBleed = config.colorBleed;
                             if (config.crtCurvature !== undefined) crtCurvature = config.crtCurvature;
                             if (config.vhsGlitch !== undefined) vhsGlitch = config.vhsGlitch;
+                            if (config.tornadoEnabled !== undefined) tornadoEnabled = config.tornadoEnabled;
+                            if (config.tornadoStrength !== undefined) tornadoStrength = config.tornadoStrength;
+                            if (config.tornadoSpeed !== undefined) tornadoSpeed = config.tornadoSpeed;
+                            if (config.tornadoSize !== undefined) tornadoSize = config.tornadoSize;
+                            if (config.tsunamiEnabled !== undefined) tsunamiEnabled = config.tsunamiEnabled;
+                            if (config.tsunamiStrength !== undefined) tsunamiStrength = config.tsunamiStrength;
+                            if (config.volcanoEnabled !== undefined) volcanoEnabled = config.volcanoEnabled;
+                            if (config.volcanoIntensity !== undefined) volcanoIntensity = config.volcanoIntensity;
+                            if (config.thunderEnabled !== undefined) thunderEnabled = config.thunderEnabled;
+                            if (config.thunderFreq !== undefined) thunderFreq = config.thunderFreq;
+                            if (config.rainEnabled !== undefined) rainEnabled = config.rainEnabled;
+                            if (config.rainIntensity !== undefined) rainIntensity = config.rainIntensity;
+                            if (config.snowEnabled !== undefined) snowEnabled = config.snowEnabled;
+                            if (config.snowIntensity !== undefined) snowIntensity = config.snowIntensity;
+                            if (config.hurricaneEnabled !== undefined) hurricaneEnabled = config.hurricaneEnabled;
+                            if (config.hurricaneStrength !== undefined) hurricaneStrength = config.hurricaneStrength;
+                            if (config.earthquakeEnabled !== undefined) earthquakeEnabled = config.earthquakeEnabled;
+                            if (config.earthquakeIntensity !== undefined) earthquakeIntensity = config.earthquakeIntensity;
+                            
+                            if (tornadoEnabled && !tornado) {
+                                tornado = { x: canvas.width / 2, y: canvas.height + 50, rotation: 0, path: [], active: true };
+                            } else if (!tornadoEnabled) {
+                                tornado = null;
+                            }
+                            if (volcanoEnabled && !volcano) {
+                                volcano = { x: canvas.width / 2, y: canvas.height - 20, eruptionTimer: 0, active: true };
+                            } else if (!volcanoEnabled) {
+                                volcano = null;
+                            }
+                            if (hurricaneEnabled && !hurricane) {
+                                hurricane = { x: canvas.width / 2, y: canvas.height / 2, rotation: 0, active: true };
+                            } else if (!hurricaneEnabled) {
+                                hurricane = null;
+                            }
                             
                             updateUIFromVariables();
                             alert('Configuration loaded!');
@@ -2376,6 +2849,40 @@
                 drawTornado();
             }
 
+            if (tsunamiEnabled) {
+                updateTsunami();
+                drawTsunami();
+            }
+
+            if (volcano && volcano.active) {
+                updateVolcano();
+                drawVolcano();
+            }
+
+            if (thunderEnabled) {
+                updateThunder();
+                drawThunder();
+            }
+
+            if (rainEnabled) {
+                updateRain();
+                drawRain();
+            }
+
+            if (snowEnabled) {
+                updateSnow();
+                drawSnow();
+            }
+
+            if (hurricane && hurricane.active) {
+                updateHurricane();
+                drawHurricane();
+            }
+
+            if (earthquakeEnabled) {
+                updateEarthquake();
+            }
+
             ctx.globalAlpha = 1;
             applyVHSEffects();
             requestAnimationFrame(animate);
@@ -2441,6 +2948,352 @@
             }
             
             ctx.restore();
+        }
+
+        function updateTsunami() {
+            if (!tsunamiEnabled) return;
+            
+            if (Math.random() < 0.01) {
+                tsunamiWaves.push({
+                    y: canvas.height - 50,
+                    direction: Math.random() < 0.5 ? 1 : -1,
+                    speed: 2 + Math.random() * 2,
+                    width: 150 + Math.random() * 100
+                });
+            }
+            
+            for (let i = tsunamiWaves.length - 1; i >= 0; i--) {
+                const wave = tsunamiWaves[i];
+                wave.y -= wave.speed;
+                
+                if (wave.y < -100) {
+                    tsunamiWaves.splice(i, 1);
+                }
+            }
+        }
+
+        function drawTsunami() {
+            ctx.save();
+            ctx.globalAlpha = 0.7;
+            
+            for (const wave of tsunamiWaves) {
+                const gradient = ctx.createLinearGradient(0, wave.y, 0, wave.y + wave.width);
+                gradient.addColorStop(0, 'rgba(0, 100, 200, 0.6)');
+                gradient.addColorStop(0.5, 'rgba(0, 150, 255, 0.4)');
+                gradient.addColorStop(1, 'rgba(0, 100, 200, 0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, wave.y, canvas.width, wave.width);
+                
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, wave.y);
+                for (let x = 0; x < canvas.width; x += 10) {
+                    const y = wave.y + Math.sin(x * 0.05 + Date.now() * 0.01) * 5;
+                    ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        function updateVolcano() {
+            if (!volcano || !volcano.active) return;
+            
+            volcano.eruptionTimer++;
+            
+            if (volcano.eruptionTimer > 60 / volcanoIntensity) {
+                volcano.eruptionTimer = 0;
+                
+                for (let i = 0; i < 5; i++) {
+                    if (devMode || particles.length < maxParticles) {
+                        const angle = (Math.PI / 2) + (Math.random() - 0.5) * 0.8;
+                        const speed = 2 + Math.random() * 2;
+                        const color = `hsl(${Math.random() * 30 + 10}, 100%, ${50 + Math.random() * 20}%)`;
+                        const particle = new Particle(
+                            volcano.x + (Math.random() - 0.5) * 20,
+                            volcano.y,
+                            color,
+                            Math.cos(angle) * speed,
+                            Math.sin(angle) * speed
+                        );
+                        particles.push(particle);
+                    }
+                }
+            }
+        }
+
+        function drawVolcano() {
+            if (!volcano) return;
+            
+            ctx.save();
+            
+            const baseWidth = 80;
+            const height = 60;
+            
+            ctx.fillStyle = 'rgba(60, 40, 30, 0.8)';
+            ctx.beginPath();
+            ctx.moveTo(volcano.x - baseWidth / 2, volcano.y);
+            ctx.lineTo(volcano.x, volcano.y - height);
+            ctx.lineTo(volcano.x + baseWidth / 2, volcano.y);
+            ctx.closePath();
+            ctx.fill();
+            
+            if (volcano.eruptionTimer < 10) {
+                ctx.fillStyle = `rgba(255, ${100 + volcano.eruptionTimer * 10}, 0, ${0.8 - volcano.eruptionTimer * 0.08})`;
+                ctx.beginPath();
+                ctx.arc(volcano.x, volcano.y - height, 15, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+
+        function updateThunder() {
+            if (!thunderEnabled) return;
+            
+            thunderTimer++;
+            const interval = (60 / thunderFreq) * 60;
+            
+            if (thunderTimer > interval) {
+                thunderTimer = 0;
+                
+                const strike = {
+                    x: Math.random() * canvas.width,
+                    y: 0,
+                    endY: Math.random() * canvas.height * 0.7 + canvas.height * 0.1,
+                    branches: [],
+                    life: 20,
+                    intensity: 0.8 + Math.random() * 0.2
+                };
+                
+                for (let i = 0; i < 3; i++) {
+                    strike.branches.push({
+                        x: strike.x + (Math.random() - 0.5) * 100,
+                        y: strike.endY * (0.3 + Math.random() * 0.4),
+                        endX: strike.x + (Math.random() - 0.5) * 150,
+                        endY: strike.endY + (Math.random() - 0.5) * 50
+                    });
+                }
+                
+                lightningStrikes.push(strike);
+                
+                for (let i = 0; i < 20; i++) {
+                    if (devMode || particles.length < maxParticles) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = 1 + Math.random() * 2;
+                        const particle = new Particle(
+                            strike.x + (Math.random() - 0.5) * 30,
+                            strike.endY + (Math.random() - 0.5) * 30,
+                            '#ffffaa',
+                            Math.cos(angle) * speed,
+                            Math.sin(angle) * speed
+                        );
+                        particle.life = 30;
+                        particles.push(particle);
+                    }
+                }
+            }
+            
+            for (let i = lightningStrikes.length - 1; i >= 0; i--) {
+                lightningStrikes[i].life--;
+                if (lightningStrikes[i].life <= 0) {
+                    lightningStrikes.splice(i, 1);
+                }
+            }
+        }
+
+        function drawThunder() {
+            ctx.save();
+            
+            for (const strike of lightningStrikes) {
+                ctx.strokeStyle = `rgba(255, 255, 200, ${strike.intensity * (strike.life / 20)})`;
+                ctx.lineWidth = 3;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = 'rgba(255, 255, 200, 0.8)';
+                
+                ctx.beginPath();
+                ctx.moveTo(strike.x, strike.y);
+                
+                let currentY = strike.y;
+                let currentX = strike.x;
+                const segments = 10;
+                const stepY = (strike.endY - strike.y) / segments;
+                
+                for (let i = 0; i < segments; i++) {
+                    currentY += stepY;
+                    currentX += (Math.random() - 0.5) * 15;
+                    ctx.lineTo(currentX, currentY);
+                }
+                
+                ctx.stroke();
+                
+                for (const branch of strike.branches) {
+                    ctx.beginPath();
+                    ctx.moveTo(branch.x, branch.y);
+                    ctx.lineTo(branch.endX, branch.endY);
+                    ctx.stroke();
+                }
+            }
+            
+            ctx.restore();
+        }
+
+        function updateRain() {
+            if (!rainEnabled) return;
+            
+            const spawnRate = Math.floor(rainIntensity * 2);
+            
+            for (let i = 0; i < spawnRate; i++) {
+                if (Math.random() < 0.3) {
+                    rainDrops.push({
+                        x: Math.random() * canvas.width,
+                        y: -10,
+                        speed: 3 + Math.random() * 3,
+                        length: 10 + Math.random() * 15
+                    });
+                }
+            }
+            
+            for (let i = rainDrops.length - 1; i >= 0; i--) {
+                const drop = rainDrops[i];
+                drop.y += drop.speed;
+                drop.x += 0.5;
+                
+                if (drop.y > canvas.height + 20) {
+                    rainDrops.splice(i, 1);
+                }
+            }
+        }
+
+        function drawRain() {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(150, 200, 255, 0.6)';
+            ctx.lineWidth = 1;
+            
+            for (const drop of rainDrops) {
+                ctx.beginPath();
+                ctx.moveTo(drop.x, drop.y);
+                ctx.lineTo(drop.x - 2, drop.y + drop.length);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        function updateSnow() {
+            if (!snowEnabled) return;
+            
+            const spawnRate = Math.floor(snowIntensity);
+            
+            for (let i = 0; i < spawnRate; i++) {
+                if (Math.random() < 0.2) {
+                    snowFlakes.push({
+                        x: Math.random() * canvas.width,
+                        y: -10,
+                        speed: 0.5 + Math.random() * 1,
+                        size: 2 + Math.random() * 3,
+                        drift: (Math.random() - 0.5) * 0.5
+                    });
+                }
+            }
+            
+            for (let i = snowFlakes.length - 1; i >= 0; i--) {
+                const flake = snowFlakes[i];
+                flake.y += flake.speed;
+                flake.x += flake.drift + Math.sin(flake.y * 0.01) * 0.3;
+                
+                if (flake.y > canvas.height + 20) {
+                    snowFlakes.splice(i, 1);
+                }
+            }
+        }
+
+        function drawSnow() {
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            
+            for (const flake of snowFlakes) {
+                ctx.beginPath();
+                ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+
+        function updateHurricane() {
+            if (!hurricane || !hurricane.active) return;
+            
+            hurricane.rotation += 0.02;
+            
+            const driftX = Math.sin(hurricane.rotation * 0.1) * 0.5;
+            const driftY = Math.cos(hurricane.rotation * 0.1) * 0.3;
+            
+            hurricane.x += driftX;
+            hurricane.y += driftY;
+            
+            if (hurricane.x < 0) hurricane.x = canvas.width;
+            if (hurricane.x > canvas.width) hurricane.x = 0;
+            if (hurricane.y < 0) hurricane.y = canvas.height;
+            if (hurricane.y > canvas.height) hurricane.y = 0;
+        }
+
+        function drawHurricane() {
+            if (!hurricane) return;
+            
+            ctx.save();
+            ctx.globalAlpha = 0.5;
+            
+            const centerX = hurricane.x;
+            const centerY = hurricane.y;
+            const radius = 300;
+            
+            const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.2, centerX, centerY, radius);
+            gradient.addColorStop(0, 'rgba(100, 150, 200, 0.6)');
+            gradient.addColorStop(0.5, 'rgba(80, 120, 180, 0.4)');
+            gradient.addColorStop(1, 'rgba(60, 100, 160, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            for (let i = 0; i < 16; i++) {
+                const angle = (hurricane.rotation + (i * Math.PI / 8)) % (Math.PI * 2);
+                const startRadius = radius * 0.2;
+                const endRadius = radius;
+                const x1 = centerX + Math.cos(angle) * startRadius;
+                const y1 = centerY + Math.sin(angle) * startRadius;
+                const x2 = centerX + Math.cos(angle) * endRadius;
+                const y2 = centerY + Math.sin(angle) * endRadius;
+                
+                ctx.strokeStyle = `rgba(150, 180, 220, ${0.4 - i * 0.02})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        function updateEarthquake() {
+            if (!earthquakeEnabled) return;
+            
+            earthquakeTimer++;
+            
+            if (earthquakeTimer > 30) {
+                earthquakeTimer = 0;
+                earthquakeShake.x = (Math.random() - 0.5) * earthquakeIntensity * 2;
+                earthquakeShake.y = (Math.random() - 0.5) * earthquakeIntensity * 2;
+            } else {
+                earthquakeShake.x *= 0.9;
+                earthquakeShake.y *= 0.9;
+            }
         }
 
         window.addEventListener('resize', () => {
