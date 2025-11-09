@@ -155,6 +155,9 @@
             canvas.classList.remove('canvas-hidden');
             controls.classList.remove('controls-hidden');
             
+            const sections = document.querySelectorAll('.section.collapsed');
+            sections.forEach(section => section.classList.remove('collapsed'));
+            
             applicationStarted = true;
             
             canvas.width = window.innerWidth;
@@ -178,6 +181,9 @@
                 startScreen.classList.add('hidden');
                 canvas.classList.remove('canvas-hidden');
                 controls.classList.remove('controls-hidden');
+                
+                const sections = document.querySelectorAll('.section.collapsed');
+                sections.forEach(section => section.classList.remove('collapsed'));
                 
                 applicationStarted = true;
                 
