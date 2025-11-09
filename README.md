@@ -172,7 +172,7 @@ The sandbox is optimized to handle thousands of particles while maintaining smoo
 
 ## License
 
-Free to use and modify.
+Free to use.
 
 ## Credits
 
