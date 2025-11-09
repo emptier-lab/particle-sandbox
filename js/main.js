@@ -4112,108 +4112,98 @@
                     });
                     
                     placedBlocks.forEach(block => {
-                        let dist, minDist, dx, dy;
+                        let partHalfW, partHalfH, partCos, partSin, partCenterX, partCenterY;
                         
                         if (part.type === 'head') {
-                            const headWidth = part.radius * 1.6;
-                            const headHeight = part.radius * 1.3;
-                            const cos = Math.cos(part.rotation || 0);
-                            const sin = Math.sin(part.rotation || 0);
-                            const halfW = headWidth / 2;
-                            const halfH = headHeight / 2;
-                            
-                            const closestX = Math.max(part.x - halfW, Math.min(block.x, part.x + halfW));
-                            const closestY = Math.max(part.y - halfH, Math.min(block.y, part.y + halfH));
-                            
-                            const rotX = (closestX - part.x) * cos + (closestY - part.y) * sin;
-                            const rotY = -(closestX - part.x) * sin + (closestY - part.y) * cos;
-                            
-                            if (Math.abs(rotX) < halfW && Math.abs(rotY) < halfH) {
-                                dx = closestX - block.x;
-                                dy = closestY - block.y;
-                                dist = Math.sqrt(dx * dx + dy * dy);
-                                minDist = block.size / 2;
-                                
-                                if (dist < minDist && dist > 0) {
-                                    const overlap = minDist - dist;
-                                    const angle = Math.atan2(dy, dx);
-                                    const moveX = Math.cos(angle) * overlap * 0.5;
-                                    const moveY = Math.sin(angle) * overlap * 0.5;
-                                    
-                                    part.x += moveX;
-                                    part.y += moveY;
-                                    
-                                    if (blockPhysicsEnabled) {
-                                        block.x -= moveX;
-                                        block.y -= moveY;
-                                        
-                                        const relativeVx = part.vx - block.vx;
-                                        const relativeVy = part.vy - block.vy;
-                                        const separationVx = Math.cos(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
-                                        const separationVy = Math.sin(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
-                                        
-                                        part.vx -= separationVx * 0.3;
-                                        part.vy -= separationVy * 0.3;
-                                        block.vx += separationVx * 0.3;
-                                        block.vy += separationVy * 0.3;
-                                        
-                                        if (block.material === 'breakable') {
-                                            block.health -= 1;
-                                        }
-                                    } else {
-                                        part.vx *= 0.8;
-                                        part.vy *= 0.8;
-                                    }
-                                }
-                            }
+                            partHalfW = part.radius * 1.6 / 2;
+                            partHalfH = part.radius * 1.3 / 2;
+                            partCos = Math.cos(part.rotation || 0);
+                            partSin = Math.sin(part.rotation || 0);
+                            partCenterX = part.x;
+                            partCenterY = part.y;
                         } else {
-                            const cos = Math.cos(part.rotation || 0);
-                            const sin = Math.sin(part.rotation || 0);
-                            const halfW = part.width / 2;
-                            const halfH = part.height / 2;
+                            partHalfW = part.width / 2;
+                            partHalfH = part.height / 2;
+                            partCos = Math.cos(part.rotation || 0);
+                            partSin = Math.sin(part.rotation || 0);
+                            partCenterX = part.x;
+                            partCenterY = part.y;
+                        }
+                        
+                        const blockHalfSize = block.size / 2;
+                        const blockMinX = block.x - blockHalfSize;
+                        const blockMaxX = block.x + blockHalfSize;
+                        const blockMinY = block.y - blockHalfSize;
+                        const blockMaxY = block.y + blockHalfSize;
+                        
+                        const partCorners = [
+                            { x: -partHalfW, y: -partHalfH },
+                            { x: partHalfW, y: -partHalfH },
+                            { x: partHalfW, y: partHalfH },
+                            { x: -partHalfW, y: partHalfH }
+                        ].map(c => ({
+                            x: partCenterX + c.x * partCos - c.y * partSin,
+                            y: partCenterY + c.x * partSin + c.y * partCos
+                        }));
+                        
+                        const partMinX = Math.min(...partCorners.map(c => c.x));
+                        const partMaxX = Math.max(...partCorners.map(c => c.x));
+                        const partMinY = Math.min(...partCorners.map(c => c.y));
+                        const partMaxY = Math.max(...partCorners.map(c => c.y));
+                        
+                        if (partMaxX < blockMinX || partMinX > blockMaxX || partMaxY < blockMinY || partMinY > blockMaxY) {
+                            return;
+                        }
+                        
+                        let overlapX = 0, overlapY = 0;
+                        if (partCenterX < block.x) {
+                            overlapX = partMaxX - blockMinX;
+                        } else {
+                            overlapX = blockMaxX - partMinX;
+                        }
+                        if (partCenterY < block.y) {
+                            overlapY = partMaxY - blockMinY;
+                        } else {
+                            overlapY = blockMaxY - partMinY;
+                        }
+                        
+                        const minOverlap = Math.min(overlapX, overlapY);
+                        if (minOverlap > 0) {
+                            let pushX = 0, pushY = 0;
+                            if (overlapX < overlapY) {
+                                pushX = partCenterX < block.x ? -minOverlap : minOverlap;
+                            } else {
+                                pushY = partCenterY < block.y ? -minOverlap : minOverlap;
+                            }
                             
-                            const closestX = Math.max(part.x - halfW, Math.min(block.x, part.x + halfW));
-                            const closestY = Math.max(part.y - halfH, Math.min(block.y, part.y + halfH));
+                            part.x += pushX * 0.5;
+                            part.y += pushY * 0.5;
                             
-                            const rotX = (closestX - part.x) * cos + (closestY - part.y) * sin;
-                            const rotY = -(closestX - part.x) * sin + (closestY - part.y) * cos;
-                            
-                            if (Math.abs(rotX) < halfW && Math.abs(rotY) < halfH) {
-                                dx = closestX - block.x;
-                                dy = closestY - block.y;
-                                dist = Math.sqrt(dx * dx + dy * dy);
-                                minDist = block.size / 2;
+                            if (blockPhysicsEnabled) {
+                                block.x -= pushX * 0.5;
+                                block.y -= pushY * 0.5;
                                 
-                                if (dist < minDist && dist > 0) {
-                                    const overlap = minDist - dist;
-                                    const angle = Math.atan2(dy, dx);
-                                    const moveX = Math.cos(angle) * overlap * 0.5;
-                                    const moveY = Math.sin(angle) * overlap * 0.5;
-                                    
-                                    part.x += moveX;
-                                    part.y += moveY;
-                                    
-                                    if (blockPhysicsEnabled) {
-                                        block.x -= moveX;
-                                        block.y -= moveY;
-                                        
-                                        const relativeVx = part.vx - block.vx;
-                                        const relativeVy = part.vy - block.vy;
-                                        const separationVx = Math.cos(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
-                                        const separationVy = Math.sin(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
-                                        
-                                        part.vx -= separationVx * 0.3;
-                                        part.vy -= separationVy * 0.3;
-                                        block.vx += separationVx * 0.3;
-                                        block.vy += separationVy * 0.3;
-                                        
-                                        if (block.material === 'breakable') {
-                                            block.health -= 1;
-                                        }
-                                    } else {
-                                        part.vx *= 0.8;
-                                        part.vy *= 0.8;
-                                    }
+                                const angle = Math.atan2(pushY, pushX);
+                                const relativeVx = part.vx - block.vx;
+                                const relativeVy = part.vy - block.vy;
+                                const separationVx = Math.cos(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
+                                const separationVy = Math.sin(angle) * (relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle));
+                                
+                                part.vx -= separationVx * 0.3;
+                                part.vy -= separationVy * 0.3;
+                                block.vx += separationVx * 0.3;
+                                block.vy += separationVy * 0.3;
+                                
+                                if (block.material === 'breakable') {
+                                    block.health -= 1;
+                                }
+                            } else {
+                                const angle = Math.atan2(pushY, pushX);
+                                const speed = Math.sqrt(part.vx * part.vx + part.vy * part.vy);
+                                const dot = part.vx * Math.cos(angle) + part.vy * Math.sin(angle);
+                                if (dot < 0) {
+                                    part.vx -= Math.cos(angle) * dot * 1.8;
+                                    part.vy -= Math.sin(angle) * dot * 1.8;
                                 }
                             }
                         }
@@ -4465,72 +4455,60 @@
                         
                         let dist, minDist, dx, dy;
                         
+                        let partHalfW, partHalfH, partCos, partSin, partCenterX, partCenterY;
+                        
                         if (part.type === 'head') {
-                            const headWidth = part.radius * 1.6;
-                            const headHeight = part.radius * 1.3;
-                            const cos = Math.cos(part.rotation || 0);
-                            const sin = Math.sin(part.rotation || 0);
-                            const halfW = headWidth / 2;
-                            const halfH = headHeight / 2;
-                            
-                            const closestX = Math.max(part.x - halfW, Math.min(particle.x, part.x + halfW));
-                            const closestY = Math.max(part.y - halfH, Math.min(particle.y, part.y + halfH));
-                            
-                            const rotX = (closestX - part.x) * cos + (closestY - part.y) * sin;
-                            const rotY = -(closestX - part.x) * sin + (closestY - part.y) * cos;
-                            
-                            if (Math.abs(rotX) < halfW && Math.abs(rotY) < halfH) {
-                                dx = particle.x - closestX;
-                                dy = particle.y - closestY;
-                                dist = Math.sqrt(dx * dx + dy * dy);
-                                minDist = particle.size;
-                                
-                                if (dist < minDist && dist > 0) {
-                                    const overlap = minDist - dist;
-                                    const angle = Math.atan2(dy, dx);
-                                    const pushForce = 0.2;
-                                    
-                                    particle.x += Math.cos(angle) * overlap;
-                                    particle.y += Math.sin(angle) * overlap;
-                                    particle.vx += Math.cos(angle) * pushForce;
-                                    particle.vy += Math.sin(angle) * pushForce;
-                                    
-                                    part.vx -= Math.cos(angle) * pushForce * 0.3;
-                                    part.vy -= Math.sin(angle) * pushForce * 0.3;
-                                }
-                            }
+                            partHalfW = part.radius * 1.6 / 2;
+                            partHalfH = part.radius * 1.3 / 2;
+                            partCos = Math.cos(part.rotation || 0);
+                            partSin = Math.sin(part.rotation || 0);
+                            partCenterX = part.x;
+                            partCenterY = part.y;
                         } else {
-                            const cos = Math.cos(part.rotation || 0);
-                            const sin = Math.sin(part.rotation || 0);
-                            const halfW = part.width / 2;
-                            const halfH = part.height / 2;
+                            partHalfW = part.width / 2;
+                            partHalfH = part.height / 2;
+                            partCos = Math.cos(part.rotation || 0);
+                            partSin = Math.sin(part.rotation || 0);
+                            partCenterX = part.x;
+                            partCenterY = part.y;
+                        }
+                        
+                        const partCorners = [
+                            { x: -partHalfW, y: -partHalfH },
+                            { x: partHalfW, y: -partHalfH },
+                            { x: partHalfW, y: partHalfH },
+                            { x: -partHalfW, y: partHalfH }
+                        ].map(c => ({
+                            x: partCenterX + c.x * partCos - c.y * partSin,
+                            y: partCenterY + c.x * partSin + c.y * partCos
+                        }));
+                        
+                        const partMinX = Math.min(...partCorners.map(c => c.x));
+                        const partMaxX = Math.max(...partCorners.map(c => c.x));
+                        const partMinY = Math.min(...partCorners.map(c => c.y));
+                        const partMaxY = Math.max(...partCorners.map(c => c.y));
+                        
+                        const closestX = Math.max(partMinX, Math.min(particle.x, partMaxX));
+                        const closestY = Math.max(partMinY, Math.min(particle.y, partMaxY));
+                        
+                        dx = particle.x - closestX;
+                        dy = particle.y - closestY;
+                        dist = Math.sqrt(dx * dx + dy * dy);
+                        minDist = particle.size;
+                        
+                        if (dist < minDist && dist > 0) {
+                            const overlap = minDist - dist;
+                            const angle = Math.atan2(dy, dx);
+                            const pushForce = 0.2;
                             
-                            const closestX = Math.max(part.x - halfW, Math.min(particle.x, part.x + halfW));
-                            const closestY = Math.max(part.y - halfH, Math.min(particle.y, part.y + halfH));
+                            particle.x += Math.cos(angle) * overlap;
+                            particle.y += Math.sin(angle) * overlap;
+                            particle.vx += Math.cos(angle) * pushForce;
+                            particle.vy += Math.sin(angle) * pushForce;
                             
-                            const rotX = (closestX - part.x) * cos + (closestY - part.y) * sin;
-                            const rotY = -(closestX - part.x) * sin + (closestY - part.y) * cos;
-                            
-                            if (Math.abs(rotX) < halfW && Math.abs(rotY) < halfH) {
-                                dx = particle.x - closestX;
-                                dy = particle.y - closestY;
-                                dist = Math.sqrt(dx * dx + dy * dy);
-                                minDist = particle.size;
-                                
-                                if (dist < minDist && dist > 0) {
-                                    const overlap = minDist - dist;
-                                    const angle = Math.atan2(dy, dx);
-                                    const pushForce = 0.2;
-                                    
-                                    particle.x += Math.cos(angle) * overlap;
-                                    particle.y += Math.sin(angle) * overlap;
-                                    particle.vx += Math.cos(angle) * pushForce;
-                                    particle.vy += Math.sin(angle) * pushForce;
-                                    
-                                    part.vx -= Math.cos(angle) * pushForce * 0.2;
-                                    part.vy -= Math.sin(angle) * pushForce * 0.2;
-                                }
-                            }
+                            const massRatio = part.mass / (part.mass + 1);
+                            part.vx -= Math.cos(angle) * pushForce * (1 - massRatio);
+                            part.vy -= Math.sin(angle) * pushForce * (1 - massRatio);
                         }
                     });
                 });
