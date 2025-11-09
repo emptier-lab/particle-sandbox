@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Sandbox</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 300px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+        .controls::-webkit-scrollbar {
+            width: 6px;
+        }
+        .controls::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        .controls::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+        h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stats {
+            font-size: 11px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #ccc;
+            font-weight: 500;
+        }
+        .value-display {
+            color: #4a9eff;
+            font-weight: 600;
+            float: right;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #4a9eff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #5aaeff;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #4a9eff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        button {
+            background: #4a9eff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #3a8eef;
+            transform: translateY(-1px);
+        }
+        button.active {
+            background: #2a7edf;
+        }
+        .color-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin: 3px;
+            display: inline-block;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .color-btn:hover {
+            transform: scale(1.15);
+        }
+        .color-btn.active {
+            border-color: white;
+            transform: scale(1.1);
+        }
+        .color-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .color-btn.active::after {
+            opacity: 1;
+        }
+        .info {
+            font-size: 11px;
+            color: #888;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .button-group button {
+            margin: 0;
+            flex: 1;
+            min-width: calc(50% - 3px);
+        }
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            background: transparent;
+        }
+        .color-picker-wrapper {
+            margin-top: 10px;
+        }
+        .preset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .preset-grid button {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="controls">
+        <h3>Particle Sandbox <span class="stats" id="stats">0 particles | 60 FPS</span></h3>
+        
+        <div class="section">
+            <div class="section-title">Spawn</div>
+            <div class="control-group">
+                <label>Mode: <span class="value-display" id="modeValue">Click & Drag</span></label>
+                <select id="mode">
+                    <option value="click">Click & Drag</option>
+                    <option value="auto">Auto Spawn</option>
+                    <option value="explosion">Explosion</option>
+                    <option value="fountain">Fountain</option>
+                    <option value="spiral">Spiral</option>
+                    <option value="rain">Rain</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Particle Count: <span class="value-display" id="countValue">20</span></label>
+                <input type="range" id="count" min="1" max="200" value="20">
+            </div>
+            <div class="control-group">
+                <label>Speed: <span class="value-display" id="speedValue">1.0</span></label>
+                <input type="range" id="speed" min="0.1" max="5" step="0.1" value="1.0">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Particle</div>
+            <div class="control-group">
+                <label>Size: <span class="value-display" id="sizeValue">3</span></label>
+                <input type="range" id="size" min="1" max="20" value="3">
+            </div>
+            <div class="control-group">
+                <label>Lifetime: <span class="value-display" id="lifetimeValue">100</span>%</label>
+                <input type="range" id="lifetime" min="10" max="200" value="100">
+            </div>
+            <div class="control-group">
+                <label>Trail Length: <span class="value-display" id="trailValue">5</span></label>
+                <input type="range" id="trail" min="0" max="20" value="5">
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Physics</div>
+            <div class="control-group">
+                <label>Gravity: <span class="value-display" id="gravityValue">0.1</span></label>
+                <input type="range" id="gravity" min="0" max="1" step="0.05" value="0.1">
+            </div>
+            <div class="control-group">
+                <label>Friction: <span class="value-display" id="frictionValue">0.99</span></label>
+                <input type="range" id="friction" min="0.85" max="1" step="0.01" value="0.99">
+            </div>
+            <div class="control-group">
+                <label>Interaction: <span class="value-display" id="interactionValue">0.5</span></label>
+                <input type="range" id="interaction" min="0" max="3" step="0.1" value="0.5">
+            </div>
+            <div class="control-group">
+                <label>Mouse Force: <span class="value-display" id="mouseForceValue">1.0</span></label>
+                <input type="range" id="mouseForce" min="0" max="5" step="0.1" value="1.0">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Visual</div>
+            <div class="control-group">
+                <label>Shape: <span class="value-display" id="shapeValue">Circle</span></label>
+                <select id="shape">
+                    <option value="circle">Circle</option>
+                    <option value="square">Square</option>
+                    <option value="triangle">Triangle</option>
+                    <option value="star">Star</option>
+                    <option value="line">Line</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Size Variation: <span class="value-display" id="sizeVarValue">50</span>%</label>
+                <input type="range" id="sizeVar" min="0" max="100" value="50">
+            </div>
+            <div class="control-group">
+                <label>Connection Distance: <span class="value-display" id="distanceValue">100</span></label>
+                <input type="range" id="distance" min="0" max="300" value="100">
+            </div>
+            <div class="control-group">
+                <label>Trail Opacity: <span class="value-display" id="trailOpacityValue">0.3</span></label>
+                <input type="range" id="trailOpacity" min="0" max="1" step="0.05" value="0.3">
+            </div>
+            <div class="control-group">
+                <label>Background: <span class="value-display" id="bgValue">Dark</span></label>
+                <select id="background">
+                    <option value="dark">Dark</option>
+                    <option value="black">Black</option>
+                    <option value="gray">Gray</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Advanced Physics</div>
+            <div class="control-group">
+                <label>Wind X: <span class="value-display" id="windXValue">0.0</span></label>
+                <input type="range" id="windX" min="-2" max="2" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>Wind Y: <span class="value-display" id="windYValue">0.0</span></label>
+                <input type="range" id="windY" min="-2" max="2" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>Collisions: <span class="value-display" id="collisionValue">OFF</span></label>
+                <select id="collisions">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Bounce: <span class="value-display" id="bounceValue">0.8</span></label>
+                <input type="range" id="bounce" min="0" max="1" step="0.1" value="0.8">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Emitter</div>
+            <div class="control-group">
+                <label>Emitter: <span class="value-display" id="emitterValue">OFF</span></label>
+                <select id="emitter">
+                    <option value="off">OFF</option>
+                    <option value="mouse">Mouse</option>
+                    <option value="center">Center</option>
+                    <option value="random">Random</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Emit Rate: <span class="value-display" id="emitRateValue">5</span></label>
+                <input type="range" id="emitRate" min="1" max="50" value="5">
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Colors</div>
+            <div class="control-group">
+                <label>Color Mode: <span class="value-display" id="colorModeValue">Single</span></label>
+                <select id="colorMode">
+                    <option value="single">Single</option>
+                    <option value="random">Random</option>
+                    <option value="gradient">Gradient</option>
+                    <option value="rainbow">Rainbow</option>
+                    <option value="age">Age-based</option>
+                    <option value="velocity">Velocity-based</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Custom Color:</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="customColor" value="#4a9eff">
+                </div>
+            </div>
+            <div id="colorPalette"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Field Forces</div>
+            <div class="control-group">
+                <label>Magnetic Field: <span class="value-display" id="magneticValue">0.0</span></label>
+                <input type="range" id="magnetic" min="0" max="5" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>Vortex Strength: <span class="value-display" id="vortexValue">0.0</span></label>
+                <input type="range" id="vortex" min="0" max="5" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>Noise: <span class="value-display" id="noiseValue">0.0</span></label>
+                <input type="range" id="noise" min="0" max="2" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>Flocking: <span class="value-display" id="flockingValue">OFF</span></label>
+                <select id="flocking">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Particle Aging</div>
+            <div class="control-group">
+                <label>Size Over Lifetime: <span class="value-display" id="sizeOverLifeValue">OFF</span></label>
+                <select id="sizeOverLife">
+                    <option value="off">OFF</option>
+                    <option value="shrink">Shrink</option>
+                    <option value="grow">Grow</option>
+                    <option value="pulse">Pulse</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Color Over Lifetime: <span class="value-display" id="colorOverLifeValue">OFF</span></label>
+                <select id="colorOverLife">
+                    <option value="off">OFF</option>
+                    <option value="fade">Fade</option>
+                    <option value="shift">Color Shift</option>
+                    <option value="heat">Heat Map</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Rendering</div>
+            <div class="control-group">
+                <label>Blend Mode: <span class="value-display" id="blendValue">Normal</span></label>
+                <select id="blendMode">
+                    <option value="normal">Normal</option>
+                    <option value="screen">Screen</option>
+                    <option value="multiply">Multiply</option>
+                    <option value="overlay">Overlay</option>
+                    <option value="lighten">Lighten</option>
+                    <option value="darken">Darken</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Show Velocity: <span class="value-display" id="velocityVizValue">OFF</span></label>
+                <select id="velocityViz">
+                    <option value="off">OFF</option>
+                    <option value="on">ON</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Max Particles: <span class="value-display" id="maxParticlesValue">10000</span></label>
+                <input type="range" id="maxParticles" min="100" max="50000" step="100" value="10000">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Presets</div>
+            <div class="preset-grid">
+                <button onclick="loadPreset('fireworks')">Fireworks</button>
+                <button onclick="loadPreset('galaxy')">Galaxy</button>
+                <button onclick="loadPreset('snow')">Snow</button>
+                <button onclick="loadPreset('plasma')">Plasma</button>
+                <button onclick="loadPreset('vortex')">Vortex</button>
+                <button onclick="loadPreset('flocking')">Flocking</button>
+                <button onclick="loadPreset('magnetic')">Magnetic</button>
+                <button onclick="loadPreset('chaos')">Chaos</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Save/Load</div>
+            <div class="button-group">
+                <button onclick="saveConfig()">Save Config</button>
+                <button onclick="loadConfig()">Load Config</button>
+            </div>
+            <div class="button-group">
+                <button onclick="exportImage()">Export Image</button>
+                <button onclick="exportGIF()">Export GIF</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="button-group">
+                <button id="physicsBtn" onclick="togglePhysics()">Physics: ON</button>
+                <button id="connectionsBtn" onclick="toggleConnections()">Connections: ON</button>
+            </div>
+            <div class="button-group">
+                <button onclick="clearParticles()">Clear</button>
+                <button onclick="resetSettings()">Reset</button>
+            </div>
+        </div>
+
+        <div class="info">
+            Left-click: Spawn particles<br>
+            Drag: Create trails<br>
+            Right-click: Repel particles<br>
+            Middle-click: Attract particles
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        let mouseDown = false;
+        let rightMouseDown = false;
+        let middleMouseDown = false;
+        let mouseX = 0;
+        let mouseY = 0;
+        let particleSize = 3;
+        let gravity = 0.1;
+        let friction = 0.99;
+        let interactionForce = 0.5;
+        let connectionDistance = 100;
+        let physicsEnabled = true;
+        let connectionsEnabled = true;
+        let currentColor = '#4a9eff';
+        let mode = 'click';
+        let particleCount = 20;
+        let autoSpawnTimer = 0;
+        let speed = 1.0;
+        let lifetime = 100;
+        let trailLength = 5;
+        let trailOpacity = 0.3;
+        let mouseForce = 1.0;
+        let backgroundMode = 'dark';
+        let lastTime = performance.now();
+        let fps = 60;
+        let frameCount = 0;
+        let fpsTimer = 0;
+        let particleShape = 'circle';
+        let sizeVariation = 50;
+        let windX = 0;
+        let windY = 0;
+        let collisionsEnabled = false;
+        let bounce = 0.8;
+        let emitterMode = 'off';
+        let emitRate = 5;
+        let emitTimer = 0;
+        let colorMode = 'single';
+        let emitterX = 0;
+        let emitterY = 0;
+        let magneticField = 0;
+        let vortexStrength = 0;
+        let noiseAmount = 0;
+        let flockingEnabled = false;
+        let sizeOverLife = 'off';
+        let colorOverLife = 'off';
+        let blendMode = 'normal';
+        let velocityViz = false;
+        let maxParticles = 10000;
+        let customColorInput = null;
+        let attractors = [];
+        let repellers = [];
+        let gifFrames = [];
+        let gifRecording = false;
+        let gifFrameCount = 0;
+
+        const colors = [
+            '#4a9eff', '#ff4a9e', '#4aff9e', '#ffff4a', 
+            '#ff4a4a', '#9e4aff', '#ffffff', '#ff9e4a',
+            '#00ff88', '#ff0088', '#8800ff', '#ff8800'
+        ];
+        
+        const palette = document.getElementById('colorPalette');
+        colors.forEach((color, index) => {
+            const btn = document.createElement('div');
+            btn.className = 'color-btn' + (index === 0 ? ' active' : '');
+            btn.style.background = color;
+            btn.onclick = () => {
+                currentColor = color;
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            };
+            palette.appendChild(btn);
+        });
+
+        function updateStats() {
+            document.getElementById('stats').textContent = `${particles.length} particles | ${Math.round(fps)} FPS`;
+        }
+
+        document.getElementById('size').oninput = (e) => {
+            particleSize = parseInt(e.target.value);
+            document.getElementById('sizeValue').textContent = particleSize;
+        };
+
+        document.getElementById('gravity').oninput = (e) => {
+            gravity = parseFloat(e.target.value);
+            document.getElementById('gravityValue').textContent = gravity.toFixed(2);
+        };
+
+        document.getElementById('friction').oninput = (e) => {
+            friction = parseFloat(e.target.value);
+            document.getElementById('frictionValue').textContent = friction.toFixed(2);
+        };
+
+        document.getElementById('interaction').oninput = (e) => {
+            interactionForce = parseFloat(e.target.value);
+            document.getElementById('interactionValue').textContent = interactionForce.toFixed(1);
+        };
+
+        document.getElementById('distance').oninput = (e) => {
+            connectionDistance = parseInt(e.target.value);
+            document.getElementById('distanceValue').textContent = connectionDistance;
+        };
+
+        document.getElementById('count').oninput = (e) => {
+            particleCount = parseInt(e.target.value);
+            document.getElementById('countValue').textContent = particleCount;
+        };
+
+        document.getElementById('speed').oninput = (e) => {
+            speed = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = speed.toFixed(1);
+        };
+
+        document.getElementById('lifetime').oninput = (e) => {
+            lifetime = parseInt(e.target.value);
+            document.getElementById('lifetimeValue').textContent = lifetime + '%';
+        };
+
+        document.getElementById('trail').oninput = (e) => {
+            trailLength = parseInt(e.target.value);
+            document.getElementById('trailValue').textContent = trailLength;
+        };
+
+        document.getElementById('trailOpacity').oninput = (e) => {
+            trailOpacity = parseFloat(e.target.value);
+            document.getElementById('trailOpacityValue').textContent = trailOpacity.toFixed(2);
+        };
+
+        document.getElementById('mouseForce').oninput = (e) => {
+            mouseForce = parseFloat(e.target.value);
+            document.getElementById('mouseForceValue').textContent = mouseForce.toFixed(1);
+        };
+
+        document.getElementById('mode').onchange = (e) => {
+            mode = e.target.value;
+            document.getElementById('modeValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('background').onchange = (e) => {
+            backgroundMode = e.target.value;
+            document.getElementById('bgValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('shape').onchange = (e) => {
+            particleShape = e.target.value;
+            document.getElementById('shapeValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('sizeVar').oninput = (e) => {
+            sizeVariation = parseInt(e.target.value);
+            document.getElementById('sizeVarValue').textContent = sizeVariation + '%';
+        };
+
+        document.getElementById('windX').oninput = (e) => {
+            windX = parseFloat(e.target.value);
+            document.getElementById('windXValue').textContent = windX.toFixed(1);
+        };
+
+        document.getElementById('windY').oninput = (e) => {
+            windY = parseFloat(e.target.value);
+            document.getElementById('windYValue').textContent = windY.toFixed(1);
+        };
+
+        document.getElementById('collisions').onchange = (e) => {
+            collisionsEnabled = e.target.value === 'on';
+            document.getElementById('collisionValue').textContent = collisionsEnabled ? 'ON' : 'OFF';
+        };
+
+        document.getElementById('bounce').oninput = (e) => {
+            bounce = parseFloat(e.target.value);
+            document.getElementById('bounceValue').textContent = bounce.toFixed(1);
+        };
+
+        document.getElementById('emitter').onchange = (e) => {
+            emitterMode = e.target.value;
+            document.getElementById('emitterValue').textContent = e.target.options[e.target.selectedIndex].text.toUpperCase();
+        };
+
+        document.getElementById('emitRate').oninput = (e) => {
+            emitRate = parseInt(e.target.value);
+            document.getElementById('emitRateValue').textContent = emitRate;
+        };
+
+        document.getElementById('colorMode').onchange = (e) => {
+            colorMode = e.target.value;
+            document.getElementById('colorModeValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('customColor').oninput = (e) => {
+            currentColor = e.target.value;
+            document.querySelectorAll('.color-btn').forEach(b => {
+                if (b.style.background === currentColor) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+        };
+
+        document.getElementById('magnetic').oninput = (e) => {
+            magneticField = parseFloat(e.target.value);
+            document.getElementById('magneticValue').textContent = magneticField.toFixed(1);
+        };
+
+        document.getElementById('vortex').oninput = (e) => {
+            vortexStrength = parseFloat(e.target.value);
+            document.getElementById('vortexValue').textContent = vortexStrength.toFixed(1);
+        };
+
+        document.getElementById('noise').oninput = (e) => {
+            noiseAmount = parseFloat(e.target.value);
+            document.getElementById('noiseValue').textContent = noiseAmount.toFixed(1);
+        };
+
+        document.getElementById('flocking').onchange = (e) => {
+            flockingEnabled = e.target.value === 'on';
+            document.getElementById('flockingValue').textContent = flockingEnabled ? 'ON' : 'OFF';
+        };
+
+        document.getElementById('sizeOverLife').onchange = (e) => {
+            sizeOverLife = e.target.value;
+            document.getElementById('sizeOverLifeValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('colorOverLife').onchange = (e) => {
+            colorOverLife = e.target.value;
+            document.getElementById('colorOverLifeValue').textContent = e.target.options[e.target.selectedIndex].text;
+        };
+
+        document.getElementById('blendMode').onchange = (e) => {
+            blendMode = e.target.value;
+            document.getElementById('blendValue').textContent = e.target.options[e.target.selectedIndex].text;
+            ctx.globalCompositeOperation = blendMode;
+        };
+
+        document.getElementById('velocityViz').onchange = (e) => {
+            velocityViz = e.target.value === 'on';
+            document.getElementById('velocityVizValue').textContent = velocityViz ? 'ON' : 'OFF';
+        };
+
+        document.getElementById('maxParticles').oninput = (e) => {
+            maxParticles = parseInt(e.target.value);
+            document.getElementById('maxParticlesValue').textContent = maxParticles;
+        };
+
+        function togglePhysics() {
+            physicsEnabled = !physicsEnabled;
+            document.getElementById('physicsBtn').textContent = `Physics: ${physicsEnabled ? 'ON' : 'OFF'}`;
+            document.getElementById('physicsBtn').classList.toggle('active', physicsEnabled);
+        }
+
+        function toggleConnections() {
+            connectionsEnabled = !connectionsEnabled;
+            document.getElementById('connectionsBtn').textContent = `Connections: ${connectionsEnabled ? 'ON' : 'OFF'}`;
+            document.getElementById('connectionsBtn').classList.toggle('active', connectionsEnabled);
+        }
+
+        function resetSettings() {
+            particleSize = 3;
+            gravity = 0.1;
+            friction = 0.99;
+            interactionForce = 0.5;
+            connectionDistance = 100;
+            particleCount = 20;
+            mode = 'click';
+            speed = 1.0;
+            lifetime = 100;
+            trailLength = 5;
+            trailOpacity = 0.3;
+            mouseForce = 1.0;
+            backgroundMode = 'dark';
+            particleShape = 'circle';
+            sizeVariation = 50;
+            windX = 0;
+            windY = 0;
+            collisionsEnabled = false;
+            bounce = 0.8;
+            emitterMode = 'off';
+            emitRate = 5;
+            colorMode = 'single';
+            magneticField = 0;
+            vortexStrength = 0;
+            noiseAmount = 0;
+            flockingEnabled = false;
+            sizeOverLife = 'off';
+            colorOverLife = 'off';
+            blendMode = 'normal';
+            velocityViz = false;
+            maxParticles = 10000;
+            
+            document.getElementById('size').value = particleSize;
+            document.getElementById('gravity').value = gravity;
+            document.getElementById('friction').value = friction;
+            document.getElementById('interaction').value = interactionForce;
+            document.getElementById('distance').value = connectionDistance;
+            document.getElementById('count').value = particleCount;
+            document.getElementById('mode').value = mode;
+            document.getElementById('speed').value = speed;
+            document.getElementById('lifetime').value = lifetime;
+            document.getElementById('trail').value = trailLength;
+            document.getElementById('trailOpacity').value = trailOpacity;
+            document.getElementById('mouseForce').value = mouseForce;
+            document.getElementById('background').value = backgroundMode;
+            document.getElementById('shape').value = particleShape;
+            document.getElementById('sizeVar').value = sizeVariation;
+            document.getElementById('windX').value = windX;
+            document.getElementById('windY').value = windY;
+            document.getElementById('collisions').value = collisionsEnabled ? 'on' : 'off';
+            document.getElementById('bounce').value = bounce;
+            document.getElementById('emitter').value = emitterMode;
+            document.getElementById('emitRate').value = emitRate;
+            document.getElementById('colorMode').value = colorMode;
+            document.getElementById('magnetic').value = magneticField;
+            document.getElementById('vortex').value = vortexStrength;
+            document.getElementById('noise').value = noiseAmount;
+            document.getElementById('flocking').value = flockingEnabled ? 'on' : 'off';
+            document.getElementById('sizeOverLife').value = sizeOverLife;
+            document.getElementById('colorOverLife').value = colorOverLife;
+            document.getElementById('blendMode').value = blendMode;
+            document.getElementById('velocityViz').value = velocityViz ? 'on' : 'off';
+            document.getElementById('maxParticles').value = maxParticles;
+            
+            document.getElementById('sizeValue').textContent = particleSize;
+            document.getElementById('gravityValue').textContent = gravity.toFixed(2);
+            document.getElementById('frictionValue').textContent = friction.toFixed(2);
+            document.getElementById('interactionValue').textContent = interactionForce.toFixed(1);
+            document.getElementById('distanceValue').textContent = connectionDistance;
+            document.getElementById('countValue').textContent = particleCount;
+            document.getElementById('modeValue').textContent = 'Click & Drag';
+            document.getElementById('speedValue').textContent = speed.toFixed(1);
+            document.getElementById('lifetimeValue').textContent = lifetime + '%';
+            document.getElementById('trailValue').textContent = trailLength;
+            document.getElementById('trailOpacityValue').textContent = trailOpacity.toFixed(2);
+            document.getElementById('mouseForceValue').textContent = mouseForce.toFixed(1);
+            document.getElementById('bgValue').textContent = 'Dark';
+            document.getElementById('shapeValue').textContent = 'Circle';
+            document.getElementById('sizeVarValue').textContent = sizeVariation + '%';
+            document.getElementById('windXValue').textContent = windX.toFixed(1);
+            document.getElementById('windYValue').textContent = windY.toFixed(1);
+            document.getElementById('collisionValue').textContent = collisionsEnabled ? 'ON' : 'OFF';
+            document.getElementById('bounceValue').textContent = bounce.toFixed(1);
+            document.getElementById('emitterValue').textContent = emitterMode.toUpperCase();
+            document.getElementById('emitRateValue').textContent = emitRate;
+            document.getElementById('colorModeValue').textContent = 'Single';
+            document.getElementById('magneticValue').textContent = magneticField.toFixed(1);
+            document.getElementById('vortexValue').textContent = vortexStrength.toFixed(1);
+            document.getElementById('noiseValue').textContent = noiseAmount.toFixed(1);
+            document.getElementById('flockingValue').textContent = flockingEnabled ? 'ON' : 'OFF';
+            document.getElementById('sizeOverLifeValue').textContent = 'OFF';
+            document.getElementById('colorOverLifeValue').textContent = 'OFF';
+            document.getElementById('blendValue').textContent = 'Normal';
+            document.getElementById('velocityVizValue').textContent = 'OFF';
+            document.getElementById('maxParticlesValue').textContent = maxParticles;
+            ctx.globalCompositeOperation = 'normal';
+        }
+
+        function loadPreset(name) {
+            clearParticles();
+            switch(name) {
+                case 'fireworks':
+                    particleSize = 4;
+                    particleCount = 50;
+                    mode = 'explosion';
+                    speed = 1.5;
+                    gravity = 0.15;
+                    lifetime = 80;
+                    trailLength = 8;
+                    colorMode = 'random';
+                    interactionForce = 0.3;
+                    break;
+                case 'galaxy':
+                    particleSize = 2;
+                    particleCount = 100;
+                    mode = 'spiral';
+                    speed = 0.8;
+                    gravity = 0;
+                    friction = 0.995;
+                    lifetime = 150;
+                    connectionDistance = 150;
+                    colorMode = 'gradient';
+                    interactionForce = 1.5;
+                    break;
+                case 'snow':
+                    particleSize = 3;
+                    particleCount = 1;
+                    mode = 'rain';
+                    speed = 0.5;
+                    gravity = 0.05;
+                    friction = 0.98;
+                    lifetime = 200;
+                    windX = 0.1;
+                    colorMode = 'single';
+                    currentColor = '#ffffff';
+                    break;
+                case 'plasma':
+                    particleSize = 5;
+                    particleCount = 30;
+                    mode = 'auto';
+                    speed = 1.2;
+                    gravity = 0;
+                    friction = 0.97;
+                    lifetime = 120;
+                    connectionDistance = 200;
+                    colorMode = 'rainbow';
+                    interactionForce = 2.0;
+                    break;
+                case 'vortex':
+                    particleSize = 3;
+                    particleCount = 100;
+                    mode = 'spiral';
+                    speed = 0.8;
+                    gravity = 0;
+                    friction = 0.99;
+                    lifetime = 200;
+                    vortexStrength = 3.0;
+                    colorMode = 'gradient';
+                    interactionForce = 1.0;
+                    break;
+                case 'flocking':
+                    particleSize = 2;
+                    particleCount = 150;
+                    mode = 'auto';
+                    speed = 1.0;
+                    gravity = 0;
+                    friction = 0.98;
+                    lifetime = 150;
+                    flockingEnabled = true;
+                    colorMode = 'velocity';
+                    interactionForce = 0.5;
+                    break;
+                case 'magnetic':
+                    particleSize = 4;
+                    particleCount = 80;
+                    mode = 'spiral';
+                    speed = 0.6;
+                    gravity = 0;
+                    friction = 0.995;
+                    lifetime = 180;
+                    magneticField = 4.0;
+                    colorMode = 'age';
+                    interactionForce = 1.5;
+                    break;
+                case 'chaos':
+                    particleSize = 3;
+                    particleCount = 200;
+                    mode = 'explosion';
+                    speed = 2.0;
+                    gravity = 0.2;
+                    friction = 0.95;
+                    lifetime = 100;
+                    noiseAmount = 1.5;
+                    collisionsEnabled = true;
+                    colorMode = 'random';
+                    interactionForce = 2.5;
+                    break;
+            }
+            
+            document.getElementById('size').value = particleSize;
+            document.getElementById('count').value = particleCount;
+            document.getElementById('mode').value = mode;
+            document.getElementById('speed').value = speed;
+            document.getElementById('gravity').value = gravity;
+            document.getElementById('friction').value = friction;
+            document.getElementById('lifetime').value = lifetime;
+            document.getElementById('trail').value = trailLength;
+            document.getElementById('distance').value = connectionDistance;
+            document.getElementById('interaction').value = interactionForce;
+            document.getElementById('windX').value = windX;
+            document.getElementById('windY').value = windY;
+            document.getElementById('colorMode').value = colorMode;
+            document.getElementById('magnetic').value = magneticField;
+            document.getElementById('vortex').value = vortexStrength;
+            document.getElementById('noise').value = noiseAmount;
+            document.getElementById('flocking').value = flockingEnabled ? 'on' : 'off';
+            document.getElementById('sizeOverLife').value = sizeOverLife;
+            document.getElementById('colorOverLife').value = colorOverLife;
+            document.getElementById('blendMode').value = blendMode;
+            document.getElementById('velocityViz').value = velocityViz ? 'on' : 'off';
+            document.getElementById('maxParticles').value = maxParticles;
+            
+            document.getElementById('sizeValue').textContent = particleSize;
+            document.getElementById('countValue').textContent = particleCount;
+            document.getElementById('modeValue').textContent = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
+            document.getElementById('speedValue').textContent = speed.toFixed(1);
+            document.getElementById('gravityValue').textContent = gravity.toFixed(2);
+            document.getElementById('frictionValue').textContent = friction.toFixed(2);
+            document.getElementById('lifetimeValue').textContent = lifetime + '%';
+            document.getElementById('trailValue').textContent = trailLength;
+            document.getElementById('distanceValue').textContent = connectionDistance;
+            document.getElementById('interactionValue').textContent = interactionForce.toFixed(1);
+            document.getElementById('windXValue').textContent = windX.toFixed(1);
+            document.getElementById('windYValue').textContent = windY.toFixed(1);
+            document.getElementById('colorModeValue').textContent = document.getElementById('colorMode').options[document.getElementById('colorMode').selectedIndex].text;
+            document.getElementById('magneticValue').textContent = magneticField.toFixed(1);
+            document.getElementById('vortexValue').textContent = vortexStrength.toFixed(1);
+            document.getElementById('noiseValue').textContent = noiseAmount.toFixed(1);
+            document.getElementById('flockingValue').textContent = flockingEnabled ? 'ON' : 'OFF';
+            document.getElementById('sizeOverLifeValue').textContent = document.getElementById('sizeOverLife').options[document.getElementById('sizeOverLife').selectedIndex].text;
+            document.getElementById('colorOverLifeValue').textContent = document.getElementById('colorOverLife').options[document.getElementById('colorOverLife').selectedIndex].text;
+            document.getElementById('blendValue').textContent = document.getElementById('blendMode').options[document.getElementById('blendMode').selectedIndex].text;
+            document.getElementById('velocityVizValue').textContent = velocityViz ? 'ON' : 'OFF';
+            document.getElementById('maxParticlesValue').textContent = maxParticles;
+        }
+
+        class Particle {
+            constructor(x, y, color, vx = null, vy = null) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx !== null ? vx : (Math.random() - 0.5) * 4;
+                this.vy = vy !== null ? vy : (Math.random() - 0.5) * 4;
+                const sizeVar = (sizeVariation / 100) * particleSize;
+                this.size = particleSize + (Math.random() - 0.5) * sizeVar;
+                this.color = color;
+                this.maxLife = 1;
+                this.life = 1;
+                this.decay = (Math.random() * 0.001 + 0.0005) * (100 / lifetime);
+                this.mass = this.size;
+                this.history = [];
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+                this.shape = particleShape;
+                this.initialSize = this.size;
+                this.initialColor = color;
+                this.age = 0;
+                this.maxAge = 1;
+            }
+
+            update() {
+                if (physicsEnabled) {
+                    this.vy += gravity;
+                    this.vx += windX;
+                    this.vy += windY;
+                    this.vx *= friction;
+                    this.vy *= friction;
+                }
+
+                this.x += this.vx * speed;
+                this.y += this.vy * speed;
+
+                if (this.x < 0) {
+                    this.x = 0;
+                    this.vx *= -bounce;
+                }
+                if (this.x > canvas.width) {
+                    this.x = canvas.width;
+                    this.vx *= -bounce;
+                }
+                if (this.y < 0) {
+                    this.y = 0;
+                    this.vy *= -bounce;
+                }
+                if (this.y > canvas.height) {
+                    this.y = canvas.height;
+                    this.vy *= -bounce;
+                }
+
+                if (collisionsEnabled) {
+                    this.checkCollisions();
+                }
+
+                if (interactionForce > 0) {
+                    this.applyInteractions();
+                }
+
+                this.applyMouseForce();
+                this.applyFieldForces();
+                this.applyNoise();
+                
+                this.age += 0.01;
+                this.updateAging();
+
+                this.rotation += this.rotationSpeed;
+
+                if (trailLength > 0) {
+                    this.history.push({ x: this.x, y: this.y, life: this.life });
+                    if (this.history.length > trailLength) {
+                        this.history.shift();
+                    }
+                }
+
+                this.life -= this.decay;
+            }
+
+            applyInteractions() {
+                const maxCheck = Math.min(particles.length, 50);
+                for (let i = 0; i < maxCheck; i++) {
+                    const other = particles[Math.floor(Math.random() * particles.length)];
+                    if (other === this) continue;
+                    
+                    const dx = other.x - this.x;
+                    const dy = other.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > 0 && distance < 60) {
+                        const force = (60 - distance) / 60 * interactionForce;
+                        const angle = Math.atan2(dy, dx);
+                        this.vx += Math.cos(angle) * force * 0.02;
+                        this.vy += Math.sin(angle) * force * 0.02;
+                    }
+                }
+            }
+
+            applyMouseForce() {
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 150 && distance > 0) {
+                    const force = (150 - distance) / 150 * mouseForce;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    if (rightMouseDown) {
+                        this.vx -= Math.cos(angle) * force * 3;
+                        this.vy -= Math.sin(angle) * force * 3;
+                    } else if (middleMouseDown) {
+                        this.vx += Math.cos(angle) * force * 2;
+                        this.vy += Math.sin(angle) * force * 2;
+                    }
+                }
+            }
+
+            checkCollisions() {
+                const maxCheck = Math.min(particles.length, 30);
+                for (let i = 0; i < maxCheck; i++) {
+                    const other = particles[Math.floor(Math.random() * particles.length)];
+                    if (other === this || other.life <= 0) continue;
+                    
+                    const dx = other.x - this.x;
+                    const dy = other.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const minDist = (this.size + other.size) * 0.8;
+                    
+                    if (distance < minDist && distance > 0) {
+                        const angle = Math.atan2(dy, dx);
+                        const overlap = minDist - distance;
+                        const moveX = Math.cos(angle) * overlap * 0.5;
+                        const moveY = Math.sin(angle) * overlap * 0.5;
+                        
+                        this.x -= moveX;
+                        this.y -= moveY;
+                        other.x += moveX;
+                        other.y += moveY;
+                        
+                        const relativeVx = this.vx - other.vx;
+                        const relativeVy = this.vy - other.vy;
+                        const dotProduct = relativeVx * Math.cos(angle) + relativeVy * Math.sin(angle);
+                        
+                        if (dotProduct > 0) {
+                            const impulse = dotProduct * bounce * 0.5;
+                            this.vx -= Math.cos(angle) * impulse;
+                            this.vy -= Math.sin(angle) * impulse;
+                            other.vx += Math.cos(angle) * impulse;
+                            other.vy += Math.sin(angle) * impulse;
+                        }
+                    }
+                }
+            }
+
+            applyFieldForces() {
+                if (magneticField > 0) {
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    const dx = centerX - this.x;
+                    const dy = centerY - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance > 0) {
+                        const force = magneticField / (distance * 0.01 + 1);
+                        const angle = Math.atan2(dy, dx);
+                        this.vx += Math.cos(angle) * force * 0.01;
+                        this.vy += Math.sin(angle) * force * 0.01;
+                    }
+                }
+
+                if (vortexStrength > 0) {
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    const dx = this.x - centerX;
+                    const dy = this.y - centerY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance > 0) {
+                        const force = vortexStrength / (distance * 0.01 + 1);
+                        const angle = Math.atan2(dy, dx) + Math.PI / 2;
+                        this.vx += Math.cos(angle) * force * 0.01;
+                        this.vy += Math.sin(angle) * force * 0.01;
+                    }
+                }
+
+                if (flockingEnabled) {
+                    this.applyFlocking();
+                }
+            }
+
+            applyFlocking() {
+                const neighbors = [];
+                const maxCheck = Math.min(particles.length, 20);
+                for (let i = 0; i < maxCheck; i++) {
+                    const other = particles[Math.floor(Math.random() * particles.length)];
+                    if (other === this) continue;
+                    const dx = other.x - this.x;
+                    const dy = other.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 80 && distance > 0) {
+                        neighbors.push({ particle: other, distance });
+                    }
+                }
+
+                if (neighbors.length > 0) {
+                    let avgVx = 0, avgVy = 0, avgX = 0, avgY = 0;
+                    neighbors.forEach(n => {
+                        avgVx += n.particle.vx;
+                        avgVy += n.particle.vy;
+                        avgX += n.particle.x;
+                        avgY += n.particle.y;
+                    });
+                    avgVx /= neighbors.length;
+                    avgVy /= neighbors.length;
+                    avgX /= neighbors.length;
+                    avgY /= neighbors.length;
+
+                    this.vx += (avgVx - this.vx) * 0.01;
+                    this.vy += (avgVy - this.vy) * 0.01;
+
+                    const dx = avgX - this.x;
+                    const dy = avgY - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance > 0) {
+                        this.vx += (dx / distance) * 0.005;
+                        this.vy += (dy / distance) * 0.005;
+                    }
+                }
+            }
+
+            applyNoise() {
+                if (noiseAmount > 0) {
+                    this.vx += (Math.random() - 0.5) * noiseAmount * 0.1;
+                    this.vy += (Math.random() - 0.5) * noiseAmount * 0.1;
+                }
+            }
+
+            updateAging() {
+                const lifeRatio = this.life / this.maxLife;
+                
+                if (sizeOverLife !== 'off') {
+                    if (sizeOverLife === 'shrink') {
+                        this.size = this.initialSize * lifeRatio;
+                    } else if (sizeOverLife === 'grow') {
+                        this.size = this.initialSize * (2 - lifeRatio);
+                    } else if (sizeOverLife === 'pulse') {
+                        this.size = this.initialSize * (1 + Math.sin(this.age * 10) * 0.3);
+                    }
+                }
+
+                if (colorOverLife !== 'off') {
+                    if (colorOverLife === 'fade') {
+                        const alpha = lifeRatio;
+                        const rgb = this.hexToRgb(this.initialColor);
+                        this.color = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+                    } else if (colorOverLife === 'shift') {
+                        const hue = (this.age * 50) % 360;
+                        this.color = `hsl(${hue}, 70%, 60%)`;
+                    } else if (colorOverLife === 'heat') {
+                        const heat = lifeRatio;
+                        const r = Math.min(255, heat * 255);
+                        const g = Math.min(255, (1 - Math.abs(heat - 0.5) * 2) * 255);
+                        const b = Math.max(0, (1 - heat) * 255);
+                        this.color = `rgb(${r}, ${g}, ${b})`;
+                    }
+                }
+            }
+
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : { r: 74, g: 158, b: 255 };
+            }
+
+            draw() {
+                if (trailLength > 0 && this.history.length > 1) {
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = this.size * 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(this.history[0].x, this.history[0].y);
+                    for (let i = 1; i < this.history.length; i++) {
+                        const alpha = (this.history[i].life / this.maxLife) * trailOpacity;
+                        ctx.globalAlpha = alpha;
+                        ctx.lineTo(this.history[i].x, this.history[i].y);
+                    }
+                    ctx.stroke();
+                }
+
+                if (velocityViz) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x + this.vx * 5, this.y + this.vy * 5);
+                    ctx.stroke();
+                }
+
+                ctx.globalAlpha = this.life;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                
+                switch(this.shape) {
+                    case 'square':
+                        ctx.rect(-this.size, -this.size, this.size * 2, this.size * 2);
+                        break;
+                    case 'triangle':
+                        ctx.moveTo(0, -this.size);
+                        ctx.lineTo(-this.size, this.size);
+                        ctx.lineTo(this.size, this.size);
+                        ctx.closePath();
+                        break;
+                    case 'star':
+                        for (let i = 0; i < 5; i++) {
+                            const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                            const x = Math.cos(angle) * this.size;
+                            const y = Math.sin(angle) * this.size;
+                            if (i === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                            
+                            const innerAngle = angle + Math.PI / 5;
+                            const innerX = Math.cos(innerAngle) * this.size * 0.5;
+                            const innerY = Math.sin(innerAngle) * this.size * 0.5;
+                            ctx.lineTo(innerX, innerY);
+                        }
+                        ctx.closePath();
+                        break;
+                    case 'line':
+                        ctx.moveTo(-this.size, 0);
+                        ctx.lineTo(this.size, 0);
+                        ctx.lineWidth = this.size * 0.3;
+                        ctx.stroke();
+                        ctx.restore();
+                        return;
+                    default:
+                        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                }
+                
+                ctx.fill();
+                
+                ctx.globalAlpha = this.life * 0.4;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = this.size * 2;
+                if (this.shape !== 'line') {
+                    ctx.beginPath();
+                    if (this.shape === 'circle') {
+                        ctx.arc(0, 0, this.size * 0.6, 0, Math.PI * 2);
+                    } else {
+                        ctx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
+                    }
+                    ctx.fill();
+                }
+                ctx.shadowBlur = 0;
+                
+                ctx.restore();
+            }
+        }
+
+        function getParticleColor() {
+            switch(colorMode) {
+                case 'random':
+                    return colors[Math.floor(Math.random() * colors.length)];
+                case 'gradient':
+                    const hue = (Date.now() * 0.001 + particles.length * 0.01) % 360;
+                    return `hsl(${hue}, 70%, 60%)`;
+                case 'rainbow':
+                    const index = particles.length % colors.length;
+                    return colors[index];
+                case 'age':
+                    const ageHue = (particles.length * 2) % 360;
+                    return `hsl(${ageHue}, 70%, 60%)`;
+                case 'velocity':
+                    const vel = Math.sqrt(particles[particles.length - 1]?.vx ** 2 + particles[particles.length - 1]?.vy ** 2) || 0;
+                    const velHue = (vel * 20) % 360;
+                    return `hsl(${velHue}, 70%, 60%)`;
+                default:
+                    return currentColor;
+            }
+        }
+
+        function spawnParticles(x, y, count, modeType) {
+            for (let i = 0; i < count; i++) {
+                let vx, vy;
+                
+                if (modeType === 'explosion') {
+                    const angle = (Math.PI * 2 * i) / count;
+                    const speed = Math.random() * 10 + 5;
+                    vx = Math.cos(angle) * speed;
+                    vy = Math.sin(angle) * speed;
+                } else if (modeType === 'fountain') {
+                    vx = (Math.random() - 0.5) * 3;
+                    vy = -Math.random() * 10 - 5;
+                } else if (modeType === 'spiral') {
+                    const angle = (Math.PI * 2 * i) / count;
+                    const radius = i * 0.5;
+                    vx = Math.cos(angle) * radius;
+                    vy = Math.sin(angle) * radius;
+                } else if (modeType === 'rain') {
+                    vx = (Math.random() - 0.5) * 2;
+                    vy = Math.random() * 5 + 3;
+                } else {
+                    vx = (Math.random() - 0.5) * 5;
+                    vy = (Math.random() - 0.5) * 5;
+                }
+                
+                const color = getParticleColor();
+                particles.push(new Particle(x, y, color, vx, vy));
+            }
+        }
+
+        function drawConnections() {
+            if (!connectionsEnabled || particles.length === 0) return;
+            
+            const maxConnections = Math.min(particles.length, 100);
+            const checked = new Set();
+            
+            for (let i = 0; i < maxConnections; i++) {
+                const p1 = particles[i];
+                for (let j = i + 1; j < Math.min(particles.length, i + 20); j++) {
+                    const p2 = particles[j];
+                    const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+                    if (checked.has(key)) continue;
+                    checked.add(key);
+                    
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < connectionDistance) {
+                        const opacity = (1 - distance / connectionDistance) * 0.2 * Math.min(p1.life, p2.life);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function getBackgroundColor() {
+            switch(backgroundMode) {
+                case 'black': return 'rgba(0, 0, 0, 0.2)';
+                case 'gray': return 'rgba(30, 30, 30, 0.15)';
+                default: return 'rgba(10, 10, 10, 0.15)';
+            }
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (e.button === 0) {
+                mouseDown = true;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                if (mode === 'click' || mode === 'explosion' || mode === 'fountain' || mode === 'spiral' || mode === 'rain') {
+                    spawnParticles(mouseX, mouseY, particleCount, mode);
+                }
+            } else if (e.button === 2) {
+                rightMouseDown = true;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            } else if (e.button === 1) {
+                middleMouseDown = true;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            if (mouseDown && mode === 'click') {
+                if (particles.length < maxParticles) {
+                    spawnParticles(mouseX, mouseY, 1, 'click');
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (e.button === 0) mouseDown = false;
+            if (e.button === 2) rightMouseDown = false;
+            if (e.button === 1) middleMouseDown = false;
+        });
+
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        function clearParticles() {
+            particles = [];
+            attractors = [];
+            repellers = [];
+        }
+
+        function saveConfig() {
+            const config = {
+                particleSize, gravity, friction, interactionForce, connectionDistance,
+                particleCount, mode, speed, lifetime, trailLength, trailOpacity,
+                mouseForce, backgroundMode, particleShape, sizeVariation, windX, windY,
+                collisionsEnabled, bounce, emitterMode, emitRate, colorMode, currentColor,
+                magneticField, vortexStrength, noiseAmount, flockingEnabled, sizeOverLife,
+                colorOverLife, blendMode, velocityViz, maxParticles
+            };
+            const json = JSON.stringify(config, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'particle-sandbox-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadConfig() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const config = JSON.parse(event.target.result);
+                            Object.assign(window, config);
+                            resetSettings();
+                            alert('Configuration loaded!');
+                        } catch (error) {
+                            alert('Error loading configuration: ' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function exportImage() {
+            const link = document.createElement('a');
+            link.download = 'particle-sandbox-' + Date.now() + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function exportGIF() {
+            if (!gifRecording) {
+                gifRecording = true;
+                gifFrames = [];
+                gifFrameCount = 0;
+                alert('Recording GIF... Click Export GIF again to stop and download.');
+            } else {
+                gifRecording = false;
+                alert('GIF recording stopped. Processing frames...');
+                setTimeout(() => {
+                    alert('GIF export feature requires a library. Use Export Image for screenshots.');
+                }, 100);
+            }
+        }
+
+        function animate(currentTime) {
+            const deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
+            
+            fpsTimer += deltaTime;
+            frameCount++;
+            if (fpsTimer >= 1000) {
+                fps = (frameCount * 1000) / fpsTimer;
+                frameCount = 0;
+                fpsTimer = 0;
+                updateStats();
+            }
+
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = getBackgroundColor();
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (blendMode !== 'normal') {
+                ctx.globalCompositeOperation = blendMode;
+            }
+
+            if (mode === 'auto') {
+                autoSpawnTimer++;
+                if (autoSpawnTimer > 30) {
+                    autoSpawnTimer = 0;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    spawnParticles(x, y, particleCount, 'click');
+                }
+            }
+
+            if (mode === 'rain') {
+                autoSpawnTimer++;
+                if (autoSpawnTimer > 5) {
+                    autoSpawnTimer = 0;
+                    const x = Math.random() * canvas.width;
+                    spawnParticles(x, -10, 1, 'rain');
+                }
+            }
+
+            if (emitterMode !== 'off') {
+                emitTimer++;
+                if (emitTimer >= (60 / emitRate)) {
+                    emitTimer = 0;
+                    let x, y;
+                    switch(emitterMode) {
+                        case 'mouse':
+                            x = mouseX;
+                            y = mouseY;
+                            break;
+                        case 'center':
+                            x = canvas.width / 2;
+                            y = canvas.height / 2;
+                            break;
+                        case 'random':
+                            x = Math.random() * canvas.width;
+                            y = Math.random() * canvas.height;
+                            break;
+                    }
+            if (particles.length < maxParticles) {
+                    spawnParticles(x, y, 1, 'click');
+                }
+                }
+            }
+
+            particles = particles.filter(p => p.life > 0);
+            
+            if (particles.length > maxParticles) {
+                particles = particles.slice(-maxParticles);
+            }
+
+            particles.forEach(particle => {
+                particle.update();
+            });
+
+            if (connectionsEnabled) {
+                drawConnections();
+            }
+
+            particles.forEach(particle => {
+                particle.draw();
+            });
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        animate(performance.now());
+    </script>
+</body>
+</html>
